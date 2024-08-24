@@ -1,45 +1,68 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class GridMaker : MonoBehaviour
-{
-
-   
+{   
     CustomGrid<GridCell> Layout;
+    int GridWxH = 15;
+
+    [Header("Editor Code")]
+    public bool isEditorGridActive;
+    public bool isGridCreated;
+
+    public GameObject PrefabGridUI;
+    public GameObject PrefabGridUIParent;
+    public Color Red, green;
+
     public void Start()
     {
-        //Layout = new CustomGrid<GridCell>(15,15);
         CheckAnchor();
     }
     public void CheckAnchor()
     {
-        Layout = new CustomGrid<GridCell>(15, 15);
-        for (int x = 0; x < 15; x++)
+        Layout = new CustomGrid<GridCell>(GridWxH, GridWxH);
+        for (int x = 0; x < GridWxH; x++)
         {
-            for (int z = 0; z < 15; z++)
+            for (int z = 0; z < GridWxH; z++)
             {
                 GridCell _tempcell = new GridCell(new Vector2(x, z), new Vector2((x*2) + 1, (z*2) + 1), false);
                 Layout.EditIndex(x, z, _tempcell);
             }
         }
-        //for (int x = 0; x < 15; x++)
-        //{
-        //    var String = "";
-        //    for (int z = 0; z < 15; z++)
-        //    {
-        //        //GridCell _tempcell = new GridCell(new Vector2(x, z), new Vector2(x + 1, z + 1), false);                
-        //       String=$"{String},{((GridCell)Layout.GetAtIndex(x, z)).GetCoordinates()}";
-        //    }
-        //    Debug.Log($"<color=red>{String}</color>");
-        //}
+        
     }
+    
+    
     private void OnDrawGizmos()
-    {        
+    {   
+        if (isEditorGridActive )
+        {
+            if( isGridCreated )
+            {
+                isGridCreated = false;
+                for (int x = 0; x < GridWxH; x++)
+                {
+                    for (int z = 0; z < GridWxH; z++)
+                    {
+                        var t = Instantiate(PrefabGridUI, PrefabGridUIParent.transform);
+                        t.transform.position = ((GridCell)Layout.GetAtIndex(x, z)).GetCoordinates3D();
+                        var temp = t.GetComponent<GridUI>();
+                        temp.DisplayTxt.text = $"({x},{z})";
+                        temp.Btn.onClick.RemoveAllListeners();
+                        temp.Btn.onClick.AddListener(delegate (){
+                            IsTableintheLayout(x, z);
+                        });
+                    }
+
+                }
+            }
+        }
         CheckAnchor();
-        for (int x = 0; x < 15; x++)
+        for (int x = 0; x < GridWxH; x++)
         {           
-            for (int z = 0; z < 15; z++)
+            for (int z = 0; z < GridWxH; z++)
             {
                 //GridCell _tempcell = new GridCell(new Vector2(x, z), new Vector2(x + 1, z + 1), false);                
                 Gizmos.DrawSphere(((GridCell)Layout.GetAtIndex(x, z)).GetCoordinates3D(), 0.2f);
@@ -49,6 +72,10 @@ public class GridMaker : MonoBehaviour
         }
     }
 
+    public void IsTableintheLayout(int x,int y)
+    {
+        CustomLogs.CC_Log($"({x},{y})", "cyan");
+    }
     public class CustomGrid<T>
     {
         int _width;

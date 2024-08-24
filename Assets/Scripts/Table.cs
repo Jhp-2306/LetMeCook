@@ -8,6 +8,7 @@ public class Table : MonoBehaviour
     public  Material myMaterial;
 
     public SO_EquipmentData Data;
+    [SerializeField] GameObject ItemParent;
     bool m_isTableEmpty;
     public Transform GetLookPos()
     {
@@ -48,5 +49,12 @@ public class Table : MonoBehaviour
     public void OnMouseHoverExit()
     {
         GetComponent<MeshRenderer>().material = myMaterial;
+    }
+    
+    public void SetOnTable(GameObject prefab)
+    {
+        Instantiate(prefab, ItemParent.transform);
+        if (GetComponentInChildren<IInteractable>() != null)
+            Data = GetComponentInChildren<IInteractable>().GetEquipmentData();
     }
 }

@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: TableEquipmentData
   m_EditorClassIdentifier: 
   DisplayFuntionName: 'Chopping '
-  Type: 0
+  Type: 2
   Functionatily: {fileID: 2854303918285116923, guid: 30edc5c25f903bf41890d483e1b21940, type: 3}

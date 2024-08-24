@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 987cff63cb7c039408e67ae09e9024cb, type: 3}
+  m_Name: EquipmentDataList
+  m_EditorClassIdentifier: 
+  equipmentDataList:
+  - DisplayFuntionName: Heat
+    Type: 0
+    name: Stove
+    price: 200
+    Prefab: {fileID: 2854303918285116923, guid: 8d949e15a2e25ff4b87e144145028dba, type: 3}
+  - DisplayFuntionName: Bake
+    Type: 1
+    name: Oven
+    price: 400
+    Prefab: {fileID: 2854303918285116923, guid: 8d949e15a2e25ff4b87e144145028dba, type: 3}
+  - DisplayFuntionName: Chopping
+    Type: 2
+    name: Cutting Board
+    price: 50
+    Prefab: {fileID: 2854303918285116923, guid: 30edc5c25f903bf41890d483e1b21940, type: 3}
+  - DisplayFuntionName: Mix
+    Type: 3
+    name: Mixing bowl
+    price: 100
+    Prefab: {fileID: 2854303918285116923, guid: 3cadba21cc6875f4a86b2dc5bb2d1ef4, type: 3}
+  - DisplayFuntionName: Whisk
+    Type: 4
+    name: Whisker
+    price: 200
+    Prefab: {fileID: 2854303918285116923, guid: 8200ad283cf411245a2ab7b4dfcb403e, type: 3}

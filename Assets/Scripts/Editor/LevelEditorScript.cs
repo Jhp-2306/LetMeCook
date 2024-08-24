@@ -10,7 +10,7 @@ public class LevelEditorScript : Editor
     {
         base.OnInspectorGUI();
         var t = (LevelEditorGridData)target;
-        if(GUILayout.Button("Generate Grid"))
+        if (GUILayout.Button("Generate Grid"))
         {
             t.CreateGridobjects();
         }
@@ -24,3 +24,4 @@ public class LevelEditorScript : Editor
         }
     }
 }
+    

@@ -10,6 +10,7 @@ public class InteractionBTN : MonoBehaviour
     public TextMeshProUGUI ButtonText;
     Button Interactionbtn;
     const float TAU = 6.283185307179586f;
+
     [Space(10f)]
     [Header("shop Contents")]
     public int segment = 10;
@@ -23,13 +24,11 @@ public class InteractionBTN : MonoBehaviour
     public int VisibleItem=7;
     public List<GameObject> Debuffer;
     float[] m_itemAngle;
-    [SerializeField]
-    GameObject ShopParent;
-    [SerializeField]
-    GameObject ShopUIParent;
+    [SerializeField]GameObject ShopParent;
+    [SerializeField]GameObject ShopUIParent;
     bool isShopOpen;
-    [SerializeField]
-    Slider ShopScroller;
+    [SerializeField]Slider ShopScroller;
+   
     private void Awake()
     {
         Interactionbtn = this.gameObject.GetComponent<Button>();
@@ -38,16 +37,18 @@ public class InteractionBTN : MonoBehaviour
     {
         InputManager.OnDrag -= onValuChange;
     }
-    public void AddEvent(Action Methode, string btnname, bool isbuttonActive,bool isTableEmpty)
+    public void AddEvent(Table table, string btnname, bool isbuttonActive,bool isTableEmpty)
     {
         if (!isbuttonActive)
         {
+            ShopManager.Instance.CurrentSelectTable = null;
             Interactionbtn.gameObject.SetActive(isbuttonActive);
             Interactionbtn.onClick.RemoveAllListeners();
             return;
         }
         if (isTableEmpty)
         {
+            ShopManager.Instance.CurrentSelectTable = table;
             Interactionbtn.gameObject.SetActive(true);
             ButtonText.text = "Buy";
             Interactionbtn.onClick.RemoveAllListeners();
@@ -58,7 +59,7 @@ public class InteractionBTN : MonoBehaviour
         Interactionbtn.gameObject.SetActive(true);
         ButtonText.text = btnname;
         Interactionbtn.onClick.RemoveAllListeners();
-        Interactionbtn.onClick.AddListener(delegate { Methode(); });
+        Interactionbtn.onClick.AddListener(delegate { table.OnClick(); });
         }
     }
     public void ResetButton(string btnname)
@@ -105,25 +106,13 @@ public class InteractionBTN : MonoBehaviour
         CustomLogs.CC_Log("Setting up Shop", "cyan");
         isShopOpen = true;
         ButtonText.gameObject.SetActive(!isShopOpen);
-        {
-
-        //var templist=ShopManager.Instance.GetItems();
-        //var degree = 360 / (ItemHolder.Count);
-        //var currentpos = this.gameObject.GetComponent<RectTransform>().transform.position;
-        //for (int i = 0; i < ItemHolder.Count; i++)
-        //{
-        //    var vec = GetpositionFortheCircle(currentpos, (degree * i));
-        //    ItemHolder[i].transform.position = vec;
-        //    ItemHolder[i].GetComponent<ShopItemHolderUI>().Setup(templist[i].GetName(), templist[i].GetPrice());
-        //}
-        //radius = 300f;
-        }
         StartCoroutine(ShopScrollerUpdate());
     }
     IEnumerator ShopScrollerUpdate()
     {
         ShopParent.SetActive(true);
         var templist = ShopManager.Instance.GetItems();
+        VisibleItem = VisibleItem > ShopManager.Instance.MaxShopItems ? ShopManager.Instance.MaxShopItems : VisibleItem;
         var degree = 360 / (VisibleItem);
         var currentpos = this.gameObject.GetComponent<RectTransform>().transform.position;
         while (radius < 300)
@@ -133,25 +122,15 @@ public class InteractionBTN : MonoBehaviour
             {
                 var vec = GetpositionFortheCircle(currentpos, (degree * i));
                 ItemHolder[i].transform.position = vec;
-                ItemHolder[i].GetComponent<ShopItemHolderUI>().Setup(templist[i].GetName(), templist[i].GetPrice());
+                Debug.Log($"Cehcek {templist[i].GetPrefab() == null}");
+                ItemHolder[i].GetComponent<ShopItemHolderUI>().Setup(templist[i].GetName(), templist[i].GetPrice(), templist[i].GetPrefab());
             }
             radius+=10;
         }
         ShopUIParent.SetActive(true);
     }
     
-    //public void onValuChange()
-    //{
-    //    var templist = ShopManager.Instance.GetItems();
-    //    var degree = 360 / (VisibleItem);
-    //    var currentpos = this.gameObject.GetComponent<RectTransform>().transform.position;
-    //    for (int i = 0; i < VisibleItem; i++)
-    //    {
-    //        var vec = GetpositionFortheCircle(currentpos, ShopScroller.value + (degree * i));
-    //        ItemHolder[i].transform.position = vec;
-    //        ItemHolder[i].GetComponent<ShopItemHolderUI>().Setup(templist[i].GetName(), templist[i].GetPrice());
-    //    }
-    //}
+    
     float currentAngle;
     int m_maxItem;
     public void onValuChange(float val)
@@ -167,21 +146,23 @@ public class InteractionBTN : MonoBehaviour
         {
             var vec = GetpositionFortheCircle(currentpos, currentAngle + (degree * i));
             ItemHolder[i].transform.position = vec;
-            ItemHolder[i].GetComponent<ShopItemHolderUI>().Setup(templist[i].GetName(), templist[i].GetPrice());
+            Debug.Log($"Cehcek {templist[i].GetPrefab() == null}");
+            ItemHolder[i].GetComponent<ShopItemHolderUI>().Setup(templist[i].GetName(), templist[i].GetPrice(), templist[i].GetPrefab());
         }
     }
     public void ShopClose()
     {
+        ShopManager.Instance.CurrentSelectTable = null;
         InputManager.OnDrag -= onValuChange;
         radius = 0f;
         var templist = ShopManager.Instance.GetItems();
-        var degree = 360 / (ItemHolder.Count);
+        var degree = 360 / (VisibleItem);
         var currentpos = this.gameObject.GetComponent<RectTransform>().transform.position;
-        for (int i = 0; i < ItemHolder.Count; i++)
+        for (int i = 0; i < VisibleItem; i++)
         {
             var vec = GetpositionFortheCircle(currentpos, (degree * i));
             ItemHolder[i].transform.position = vec;
-            ItemHolder[i].GetComponent<ShopItemHolderUI>().Setup(templist[i].GetName(), templist[i].GetPrice());
+            ItemHolder[i].GetComponent<ShopItemHolderUI>().Setup(templist[i].GetName(), templist[i].GetPrice(), templist[i].GetPrefab());
         }
         ShopUIParent.SetActive(false);
         ShopParent.SetActive(false);

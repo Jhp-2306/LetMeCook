@@ -13,8 +13,8 @@ GameObject:
   - component: {fileID: 6315806165095466909}
   - component: {fileID: 9215582957941101930}
   - component: {fileID: 6627914519375094254}
-  m_Layer: 0
-  m_Name: Chopping Board
+  m_Layer: 2
+  m_Name: Chopping Board 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -110,5 +110,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ecf53b245588094fbdb86bad0145328, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Type: 0
+  Type: 1
   myEquipmentData: {fileID: 11400000, guid: ca7f6890ff3822141af5130c7611a668, type: 2}

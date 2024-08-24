@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SocialPlatforms;
 using UnityEngine.UI;
 using Util;
 
@@ -87,7 +88,7 @@ public class InputManager : Singletonref<InputManager>
                 if(rayUE.transform.GetComponent<Table>() != null)
                 {
                     ///CustomLogs.CC_Log($"{rayUE.transform.GetComponent<Table>().GetLookPos().position}", "cyan");
-                    Interactionbtn.AddEvent(rayUE.transform.GetComponent<Table>().OnClick, 
+                    Interactionbtn.AddEvent(rayUE.transform.GetComponent<Table>(), 
                         rayUE.transform.GetComponent<Table>().GetInteractableName(), true,
                         rayUE.transform.GetComponent<Table>().isTableEmpty());
                     OnMovementInput(rayUE.transform.GetComponent<Table>().GetLookPos().position);
@@ -145,6 +146,14 @@ public class InputManager : Singletonref<InputManager>
         //    touchsensitive = 0f;
         //}
         OnDrag(touchsensitive);
+    }
+
+    public void InteractionButtonClick(Table table)
+    {
+        Interactionbtn.AddEvent(table,
+                        table.GetInteractableName(), true,
+                        table.isTableEmpty());
+        OnMovementInput(table.GetLookPos().position);
     }
 
 }
