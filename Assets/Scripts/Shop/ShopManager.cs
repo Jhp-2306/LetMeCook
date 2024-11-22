@@ -34,6 +34,7 @@ public class ShopManager : Singletonref<ShopManager>
         public int GetPrice() => price;
         public Sprite GetIcon() => icon;
         public GameObject GetPrefab() => Prefab;
+        public EquipmentType GetEquipmentType() => type;
     }
     public List<ShopItems> Items;
     public int MaxShopItems;

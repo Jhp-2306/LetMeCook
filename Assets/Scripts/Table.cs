@@ -1,9 +1,13 @@
+using Constants;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Table : MonoBehaviour
 {
+    public int TableID;
+    public string TableName;
+    public EquipmentType equipmentType;
     public Transform LookAtMe;
     public  Material myMaterial;
 
@@ -17,8 +21,7 @@ public class Table : MonoBehaviour
     public void Awake()
     {
         myMaterial = GetComponent<MeshRenderer>().sharedMaterials[0];
-        if (GetComponentInChildren<IInteractable>() != null)
-        Data = GetComponentInChildren<IInteractable>().GetEquipmentData();
+        TableDataRefresh();
     }
     public void TableDataRefresh()
     {
@@ -51,10 +54,11 @@ public class Table : MonoBehaviour
         GetComponent<MeshRenderer>().material = myMaterial;
     }
     
-    public void SetOnTable(GameObject prefab)
+    public void SetOnTable(GameObject prefab,string tablename,EquipmentType type)
     {
+        equipmentType=type;
+        TableName = tablename;
         Instantiate(prefab, ItemParent.transform);
-        if (GetComponentInChildren<IInteractable>() != null)
-            Data = GetComponentInChildren<IInteractable>().GetEquipmentData();
+        TableDataRefresh();
     }
 }

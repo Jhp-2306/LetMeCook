@@ -23,7 +23,7 @@ namespace Util
                 return instance;
             }
         }
-        private void Awake()
+        public void Awake()
         {
             if (instance == null)
             {

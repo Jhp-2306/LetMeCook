@@ -31,7 +31,8 @@ namespace Constants
         Blender,
         Grater,
         Pizza_cutter,
-        Grill_pan
+        Grill_pan,
+        none
     }
 
     [System.Serializable]
@@ -66,6 +67,11 @@ namespace Constants
         count,
     }
 
+    public class IngredientData
+    {
+        public IngredientType Type;
+        public int Count;
+    }
     public struct ProcedureStep
     {
         public IngredientData Ingredient;

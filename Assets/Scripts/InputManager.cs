@@ -33,7 +33,7 @@ public class InputManager : Singletonref<InputManager>
             //on InteractionBButton
             if (Input.GetMouseButtonDown(0))
             {
-                CustomLogs.CC_Log("drag is true", "red");
+                //CustomLogs.CC_Log("drag is true", "red");
                 isDrag = true;
                 resetDragPositions();
                 setDragPosition(Camera.main.ScreenPointToRay(Input.mousePosition).GetPoint(1000), 
@@ -42,7 +42,7 @@ public class InputManager : Singletonref<InputManager>
             }
             if (Input.GetMouseButtonUp(0))
             {
-                CustomLogs.CC_Log("drag is false", "red");
+                //CustomLogs.CC_Log("drag is false", "red");
                 isDrag = false;
                 resetDragPositions();
 
@@ -79,7 +79,7 @@ public class InputManager : Singletonref<InputManager>
             RaycastHit ray;
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out ray, 1000f))
             {
-                //CustomLogs.CC_Log($"{ray.point}", "cyan");
+                CustomLogs.CC_Log($"{ray.point}", "cyan");
                 if (ray.transform.tag == "unlocked")
                 {
                     Interactionbtn.ResetButton("Interact");

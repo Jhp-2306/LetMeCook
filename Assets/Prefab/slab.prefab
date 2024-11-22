@@ -112,6 +112,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ad51a633f88af94c8608aa09118c44c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TableID: 0
+  TableName: 
+  equipmentType: 0
   LookAtMe: {fileID: 3928230200113677246}
   myMaterial: {fileID: 0}
   Data: {fileID: 0}

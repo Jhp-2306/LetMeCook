@@ -122,8 +122,9 @@ public class InteractionBTN : MonoBehaviour
             {
                 var vec = GetpositionFortheCircle(currentpos, (degree * i));
                 ItemHolder[i].transform.position = vec;
-                Debug.Log($"Cehcek {templist[i].GetPrefab() == null}");
-                ItemHolder[i].GetComponent<ShopItemHolderUI>().Setup(templist[i].GetName(), templist[i].GetPrice(), templist[i].GetPrefab());
+                //Debug.Log($"Cehcek {templist[i].GetPrefab() == null}");
+
+                ItemHolder[i].GetComponent<ShopItemHolderUI>().Setup(templist[i].GetName(), templist[i].GetPrice(), templist[i].GetPrefab(), templist[i].GetEquipmentType()) ;
             }
             radius+=10;
         }
@@ -147,7 +148,7 @@ public class InteractionBTN : MonoBehaviour
             var vec = GetpositionFortheCircle(currentpos, currentAngle + (degree * i));
             ItemHolder[i].transform.position = vec;
             Debug.Log($"Cehcek {templist[i].GetPrefab() == null}");
-            ItemHolder[i].GetComponent<ShopItemHolderUI>().Setup(templist[i].GetName(), templist[i].GetPrice(), templist[i].GetPrefab());
+            ItemHolder[i].GetComponent<ShopItemHolderUI>().Setup(templist[i].GetName(), templist[i].GetPrice(), templist[i].GetPrefab(), templist[i].GetEquipmentType());
         }
     }
     public void ShopClose()
@@ -162,7 +163,7 @@ public class InteractionBTN : MonoBehaviour
         {
             var vec = GetpositionFortheCircle(currentpos, (degree * i));
             ItemHolder[i].transform.position = vec;
-            ItemHolder[i].GetComponent<ShopItemHolderUI>().Setup(templist[i].GetName(), templist[i].GetPrice(), templist[i].GetPrefab());
+            ItemHolder[i].GetComponent<ShopItemHolderUI>().Setup(templist[i].GetName(), templist[i].GetPrice(), templist[i].GetPrefab(), templist[i].GetEquipmentType());
         }
         ShopUIParent.SetActive(false);
         ShopParent.SetActive(false);
