@@ -36,6 +36,8 @@ namespace Util
                     Destroy(this);
             }
         }
+
+        public static bool HasInstance()=>instance != null;
         
     }
 }

@@ -38,3 +38,8 @@ MonoBehaviour:
     name: Whisker
     price: 200
     Prefab: {fileID: 2854303918285116923, guid: 8200ad283cf411245a2ab7b4dfcb403e, type: 3}
+  - DisplayFuntionName: Refrigerator
+    Type: 10
+    name: Refrigerator
+    price: 1000
+    Prefab: {fileID: 2854303918285116923, guid: 8200ad283cf411245a2ab7b4dfcb403e, type: 3}

@@ -9,7 +9,7 @@ using Util;
 
 public class InputManager : Singletonref<InputManager>
 {
-    public static Action<Vector3> OnMovementInput = delegate { };
+    public static Action<Vector3,bool> OnMovementInput = delegate { };
     Transform previousdata;
     public InteractionBTN Interactionbtn;
     public EventSystem Esystem;
@@ -19,6 +19,7 @@ public class InputManager : Singletonref<InputManager>
     Vector2 startPositions, currentPositions, updatedPositions;
     [SerializeField][Range(-10f,10f)]
     float touchsensitive=0;
+    public GameObject Selector;
     //Events
     public static Action<float> OnDrag = delegate { };
 
@@ -53,6 +54,7 @@ public class InputManager : Singletonref<InputManager>
         RaycastHit rayUE;
         if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out rayUE, 1000f))
         {
+            Selector.transform.position = Conversions.Converions.Vector3DFloatToInt(rayUE.point);
             if (rayUE.transform.GetComponent<Table>() != null)
             {
                 if (previousdata != null && rayUE.transform != previousdata)
@@ -79,19 +81,21 @@ public class InputManager : Singletonref<InputManager>
             RaycastHit ray;
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out ray, 1000f))
             {
-                CustomLogs.CC_Log($"{ray.point}", "cyan");
+                //CustomLogs.CC_Log($"{ray.point}", "cyan");
                 if (ray.transform.tag == "unlocked")
                 {
-                    Interactionbtn.ResetButton("Interact");
-                    OnMovementInput(Conversions.Converions.Vector3DFloatToInt(ray.point));
+                    if (GameDataDNDL.Instance.GetPlayer().isHandsfull)
+                        GameDataDNDL.Instance.GetPlayer().InHand.AddEvent();
+                    else
+                        Interactionbtn.ResetButton("Interact");
+                    OnMovementInput(Conversions.Converions.Vector3DFloatToInt(ray.point),false);
                 }
                 if(rayUE.transform.GetComponent<Table>() != null)
                 {
                     ///CustomLogs.CC_Log($"{rayUE.transform.GetComponent<Table>().GetLookPos().position}", "cyan");
-                    Interactionbtn.AddEvent(rayUE.transform.GetComponent<Table>(), 
-                        rayUE.transform.GetComponent<Table>().GetInteractableName(), true,
-                        rayUE.transform.GetComponent<Table>().isTableEmpty());
-                    OnMovementInput(rayUE.transform.GetComponent<Table>().GetLookPos().position);
+                    if(rayUE.transform.GetComponent<Table>().IsInteractionSatisfied())
+                    InteractionButtonClick(rayUE.transform.GetComponent<Table>());
+                    OnMovementInput(rayUE.transform.GetComponent<Table>().GetLookPos().position,true);
                 }
             }
         }
@@ -153,7 +157,11 @@ public class InputManager : Singletonref<InputManager>
         Interactionbtn.AddEvent(table,
                         table.GetInteractableName(), true,
                         table.isTableEmpty());
-        OnMovementInput(table.GetLookPos().position);
+        OnMovementInput(table.GetLookPos().position,true);
     }
-
+    public void InteractionButtonAddEvent(string btnName,Action onClick)
+    {
+        Interactionbtn.ResetButton("Interact");
+        Interactionbtn.AddEvent(btnName, onClick);
+    }
 }

@@ -16,10 +16,14 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
     private KitchenState m_KitchenState;
     private GameState m_GameState;
 
+    [SerializeField]
+    private Player m_player;
+
     private UserDataLocal m_UserDataLocal;
 
     public List<Table> TableObjects;
     public SO_EquipmentDataList ItemList;
+
     private void Awake()
     {
         base.Awake();
@@ -94,5 +98,14 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
         //    TableData[i].TableID = i;
         //    TableData[i].gameObject.name = $"Table {i}";
         //}
+    }
+
+    public void SetPlayer(Player player)
+    {
+        m_player=player;
+    }
+    public Player GetPlayer()
+    {
+        return m_player;
     }
 }

@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ac5b592bebdcf349bd4b79da2803df3, type: 3}
   m_Name: TableEquipmentData
   m_EditorClassIdentifier: 
-  DisplayFuntionName: 'Chopping '
+  DisplayFuntionName: Upgrade
+  HandFullDisplayFuntionName: 'Chopping '
   Type: 2
   Functionatily: {fileID: 2854303918285116923, guid: 30edc5c25f903bf41890d483e1b21940, type: 3}

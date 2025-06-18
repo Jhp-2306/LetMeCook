@@ -32,21 +32,52 @@ namespace Constants
         Grater,
         Pizza_cutter,
         Grill_pan,
+        Refrigerator,
         none
     }
 
     [System.Serializable]
     public enum IngredientType
     {
-        type01,
-        type02,
-        type03,
-        type04,
-        type05,
-        type06,
+        Carrot,
+        Onion,
+        Potato,
+        Tomato,
+        Spinach,
+        Lettuce,
+        Cabbage,
+        Mushroom,
+        Apple,
+        Banana,
+        Strawberry,
+        Lemon,
+        Orange,
+        Pineapple,
+        Mango,
+        Cherry,
+        Blueberry,
+        Grapes,
+        Watermelon,
+        Peach,
+        Bread,
+        Rice,
+        Pasta,
+        BurgerBun,
+        Chicken,
+        Beef,
+        Pork,
+        Bacon,
+        FishSalmon,
+        FishTuna,
+        Shrimp,
+        Egg,
+        Meatballs,
+        Milk,
+        Cheese,
+        Butter,
         count
     }
-
+    [System.Serializable]
     public enum processIngredient
     {
         None=0,

@@ -24,10 +24,15 @@ public class InteractionBTN : MonoBehaviour
     public int VisibleItem=7;
     public List<GameObject> Debuffer;
     float[] m_itemAngle;
+    [Header("Shop")]
     [SerializeField]GameObject ShopParent;
     [SerializeField]GameObject ShopUIParent;
     bool isShopOpen;
     [SerializeField]Slider ShopScroller;
+    [Header("Inventory")]
+    [SerializeField] GameObject InventoryUIObj;
+    [SerializeField] InventoryUI inventoryUI;
+    bool isInventoryOpen;
    
     private void Awake()
     {
@@ -62,7 +67,14 @@ public class InteractionBTN : MonoBehaviour
         Interactionbtn.onClick.AddListener(delegate { table.OnClick(); });
         }
     }
-    public void ResetButton(string btnname)
+    public void AddEvent(string btnname,Action OnClick)
+    {
+        Interactionbtn.gameObject.SetActive(true);
+        ButtonText.text = btnname;
+        Interactionbtn.onClick.RemoveAllListeners();
+        Interactionbtn.onClick.AddListener(delegate { OnClick(); });
+    }
+    public void ResetButton(string btnname="Interact")
     {
         Interactionbtn.gameObject.SetActive(false);
         ButtonText.text = btnname;
@@ -140,14 +152,14 @@ public class InteractionBTN : MonoBehaviour
         m_maxItem = templist.Count-1;
         var degree = 360 / (VisibleItem);
         var currentpos = this.gameObject.GetComponent<RectTransform>().transform.position;
-        CustomLogs.CC_Log($"{(m_maxItem) * degree}","cyan");
+        //CustomLogs.CC_Log($"{(m_maxItem) * degree}","cyan");
         currentAngle += val;
         currentAngle = Mathf.Clamp(currentAngle, 0, (m_maxItem-1)*degree);
         for (int i = 0; i < VisibleItem; i++)
         {
             var vec = GetpositionFortheCircle(currentpos, currentAngle + (degree * i));
             ItemHolder[i].transform.position = vec;
-            Debug.Log($"Cehcek {templist[i].GetPrefab() == null}");
+            //Debug.Log($"Cehcek {templist[i].GetPrefab() == null}");
             ItemHolder[i].GetComponent<ShopItemHolderUI>().Setup(templist[i].GetName(), templist[i].GetPrice(), templist[i].GetPrefab(), templist[i].GetEquipmentType());
         }
     }
@@ -171,4 +183,57 @@ public class InteractionBTN : MonoBehaviour
         ButtonText.gameObject.SetActive(!isShopOpen);
     }
     #endregion
+
+    #region Inventory System
+
+    public void OpenInventory(BasicStorageSystem<IStorageItem> items)
+    {
+        if(isInventoryOpen) return;
+        isInventoryOpen = true;
+        InventoryUIObj.SetActive(true);
+        inventoryUI.Set(items);
+    }
+    public void CloseInventory()
+    {
+        if (!isInventoryOpen) return;
+        isInventoryOpen = false;
+        InventoryUIObj.SetActive(false);
+    }
+
+    #endregion
+
+    #region ProgressBarr
+    [Header("Progess Bar Details")]
+    [SerializeField] Image Fill;
+    [SerializeField] TextMeshProUGUI ProgressValueTXT;
+    [SerializeField] GameObject ProgressParent;
+
+
+    public void SetProgressBar(float progress)
+    {
+        Fill.fillAmount = progress;
+        ProgressValueTXT.text=(progress*100).ToString("f1");
+        ProgressParent.SetActive(true);
+    }
+
+    public void OnProgressDone()
+    {
+        ProgressParent.SetActive(false);
+    }
+
+    public IEnumerator TimerProgressBar(float maxTimer, Action Callback)
+    {
+        var timer = 0f;
+        while (timer <= maxTimer)
+        {
+            yield return null;
+            timer += Time.deltaTime;
+            SetProgressBar(timer / maxTimer);
+            if (timer > maxTimer)
+                OnProgressDone();
+        }
+        Callback();
+    }
+
+    #endregion 
 }

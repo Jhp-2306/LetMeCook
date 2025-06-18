@@ -28,7 +28,7 @@ namespace ASPathFinding
         }
 
         public int Fcost { get=>Gcost+Hcost;  }
-        public bool IsWalkable { get=>m_IsWalkable; }
+        public bool IsWalkable { get => m_IsWalkable; set { m_IsWalkable = value; } }
         public Vector3 worldPosition { get=>m_worldPosition;  }
         public int HeapIndex { get => heapIndex; set { heapIndex = value; } }
 

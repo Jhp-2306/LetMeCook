@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace ASPathFinding
 {
@@ -19,6 +20,8 @@ namespace ASPathFinding
         private const string file_name = "Nav_mesh";
 
         float nodeDiameter;
+        [SerializeField]
+        private float gridOffset=0.5f;
         int gridSizeX, gridSizeY;
         bool isGridCreated;
         private void Start()
@@ -28,7 +31,7 @@ namespace ASPathFinding
             gridSizeY = Mathf.RoundToInt(m_GridSize.y / nodeDiameter);
             if(SerializationManager.Load(file_name)==null)
             {
-            createGrid();
+            CreateGrid();
             }
             else
             {
@@ -37,10 +40,11 @@ namespace ASPathFinding
                 isGridCreated = true;
             }
         }
+        
         /// <summary>
         /// Create the Grid in Reference to gridSizeX and gridSizeY
         /// </summary>
-        void createGrid()
+        public void CreateGrid()
         {
             grid = new ASPFNode[gridSizeX, gridSizeY];
             Vector3 worldBottomLeft=transform.position-Vector3.right*m_GridSize.x/2-Vector3.forward*m_GridSize.y/2;
@@ -57,6 +61,16 @@ namespace ASPathFinding
             //Save the Node Data
            saveGridData();
             isGridCreated = true;
+        }
+        public void UpdateGrid()
+        {
+            foreach (ASPFNode temp in grid)
+            {
+                var node = temp;
+                node.IsWalkable = !(Physics.CheckBox(node.worldPosition, Vector3.one * m_PlayerRadius / 2, Quaternion.identity, notWalkable));
+                grid[node.gridX,node.gridY] = node;
+            }
+            saveGridData() ;
         }
         void saveGridData()
         {
@@ -85,7 +99,7 @@ namespace ASPathFinding
                 {
                     if (x == 0 && y == 0||Mathf.Abs(x)+ Mathf.Abs(y) != 1)
                     {
-                        Debug.Log("check here and jump");
+                        //Debug.Log("check here and jump");
                             continue;
                     }
                     

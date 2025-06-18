@@ -7,16 +7,20 @@ using UnityEngine.WSA;
 using NPC;
 using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 using System;
+using ASPathFinding;
 
 public class InGameConsole : MonoBehaviour
 {
 
     public static class IGCCommands
     {
-        public const string Fsave = "Fsave";
+        public const string help = "help";
+        public const string Fsave = "f_save";
         public const string NewGame = "NG";
-        public const string GetCustomer = "Gcust";
-        public const string KickCustomer = "Kcust";
+        public const string GetCustomer = "get_cust";
+        public const string KickCustomer = "kick_cust";
+        public const string UpdateASPFGrid = "u_aspf_grid";
+        public const string CreateASPFGrid = "c_aspf_grid";
     }
 
 
@@ -52,7 +56,7 @@ public class InGameConsole : MonoBehaviour
         SendMsg("Welcome world");
     }
 
-    public void ExecuteCommand()
+    public void ProcessCommand()
     {
         if (input_Field.text != null)
         {
@@ -62,61 +66,41 @@ public class InGameConsole : MonoBehaviour
             switch (commandKey)
             {
                 case IGCCommands.Fsave:
-                    SendMsg($"Executing Force Save");
-                    try
-                    {
-                        GameSaveDNDL.Instance.ForceSave();
-                        SendMsg($"Executed Force Save");
-                    }
-                    catch
-                    {
-                        SendMsg("Failed to execute Force Save");
-                    }
-
+                    ExecuteCommand("Force Save", () => { GameSaveDNDL.Instance.ForceSave(); });
                     break;
                 case IGCCommands.NewGame:
-                    SendMsg($"Executing New Game");
-                    try
-                    {
-                        GameSaveDNDL.Instance.NewGame();
-                        SendMsg($"Executed New Game");
-                    }
-                    catch
-                    {
-                        SendMsg("Failed to execute New Game");
-                    }
-
+                    ExecuteCommand( "New Game", () => { GameSaveDNDL.Instance.NewGame(); });
                     break;
                 case IGCCommands.GetCustomer:
-                    SendMsg($"Executing {IGCCommands.GetCustomer}");
-                    try
-                    {
-                        NPCManager.Instance.Get_NPC_Customer();
-                        SendMsg($"Executed {IGCCommands.GetCustomer}");
-                    }
-                    catch
-                    {
-                        SendMsg($"Failed to execute {IGCCommands.GetCustomer}");
-                    }
-
+                    ExecuteCommand(IGCCommands.GetCustomer, () => { NPCManager.Instance.Get_NPC_Customer(); });
                     break;
                 case IGCCommands.KickCustomer:
-                    SendMsg($"Executing {IGCCommands.KickCustomer}");
-                    try
-                    {
-                        NPCManager.Instance.NPC_Back_Roaming(int.Parse(Processedtext[1]));
-                        SendMsg($"Executed {IGCCommands.KickCustomer}");
-                    }
-                    catch
-                    {
-                        SendMsg($"Failed to execute {IGCCommands.KickCustomer}");
-                    }
-
+                    ExecuteCommand(IGCCommands.KickCustomer, () => { NPCManager.Instance.NPC_Back_Roaming(int.Parse(Processedtext[1])); });
+                    break;
+                case IGCCommands.UpdateASPFGrid:
+                    ExecuteCommand(IGCCommands.UpdateASPFGrid, () => { ASPF.updateGrid(); });
+                    break;
+                case IGCCommands.CreateASPFGrid:
+                    ExecuteCommand(IGCCommands.CreateASPFGrid, () => { ASPF.CreateGrid(); });
                     break;
                 default:
                     SendMsg($"Failed to execute: Wrong command {input_Field.text}");
                     break;
             }
+        }
+    }
+
+    void ExecuteCommand(string commandname,Action method)
+    {
+        SendMsg($"Executing {commandname}");
+        try
+        {
+            method();
+            SendMsg($"Executed {commandname}");
+        }
+        catch
+        {
+            SendMsg($"Failed to execute {commandname}");
         }
     }
     

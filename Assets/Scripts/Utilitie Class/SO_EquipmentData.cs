@@ -3,10 +3,11 @@ using UnityEngine;
 using Constants;
 using System;
 
-[CreateAssetMenu(fileName ="TableEquipmentData",menuName ="EquipmentData")]
+[CreateAssetMenu(fileName ="TableEquipmentData",menuName = "ScriptableObject/EquipmentData")]
 public class SO_EquipmentData : ScriptableObject
 {
     public string DisplayFuntionName;
+    public string HandFullDisplayFuntionName;
     public EquipmentType Type;
     public GameObject Functionatily;
 

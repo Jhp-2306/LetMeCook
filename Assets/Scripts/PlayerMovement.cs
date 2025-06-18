@@ -5,124 +5,108 @@ using UnityEngine;
 using UnityEngine.AI;
 
 
-public enum playerState
-{
-    idle,
-    Interacting,
-    waiting,
-
-
-}
-
-
-public class InPlayerHandItems
-{
-
-}
-//[RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(NavMeshAgent))]
 public class PlayerMovement : MonoBehaviour
 {
-    //int movementSpeed;
     Rigidbody rb;
-    bool isplayermoving;
-    InPlayerHandItems inHand;
 
-    public float speed = 20;
-    public float turnSpeed;
-    public float turnDst ;
-    public float stoppingDst ;
-    public ASPathFinding.Path path;
-    int crnt_targetIndex;
-
+    public float speed = 20f;
+    public float turnSpeed = 5f;
+    public float turnDst = 2f;
+    public float stoppingDst = 3f;
+    bool isInputActive;
+    Path path;
     Vector3 target;
+    Coroutine followPathCoroutine;
+
     const float pathUpdateMoveThreshold = 0.5f;
     const float minPathUpdateTime = 0.2f;
-    public bool isPlayerHandEmpty => inHand == null;
+
     private void Awake()
     {
-        InputManager.OnMovementInput -= GoToPositions;
-        InputManager.OnMovementInput += GoToPositions;
+        InputManager.OnMovementInput -= GoToPosition;
+        InputManager.OnMovementInput += GoToPosition;
     }
+
     private void OnDestroy()
     {
-        InputManager.OnMovementInput -= GoToPositions;
-
+        InputManager.OnMovementInput -= GoToPosition;
     }
+
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
+        //target = new Vector3(15, 1.5f, 19);
         StartCoroutine(UpdatePath());
     }
-    private void Update()
+
+    public void GoToPosition(Vector3 pos,bool istable)
     {
-        isplayermoving = gameObject.GetComponent<NavMeshAgent>().velocity != Vector3.zero;
-    }
-    void onInputRecived()
-    {
-        RaycastHit ray;
-        Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out ray, 1000f);
-        Debug.Log($"<color=cyan>{ray.point}</color>");
-        GoToPositions(ray.point);
-    }
-    public void GoToPositions(Vector3 _pos)
-    {
-        Debug.Log($"<color=cyan>{_pos}</color>");
-        //rb.MovePosition(_pos);
-        Vector3 newint = new Vector3((int)_pos.x, transform.position.y, (int)_pos.z);
-        //Debug.Log($"<color=cyan>{newint}</color>");
-        //gameObject.GetComponent<NavMeshAgent>().SetDestination(newint);
-        target = newint;
+        isInputActive = true;
+        if (target == pos) return;
+        Vector3 snappedPos = new Vector3(pos.x, transform.position.y, pos.z);
+        target = snappedPos;
+        Debug.Log($"<color=cyan>Target set to: {snappedPos}</color>");
     }
 
-    #region A*Code
-    Coroutine followpath;
+    #region A* Pathfinding
+
     public void OnPathFound(Vector3[] waypoints, bool pathSuccessful)
     {
-        if (pathSuccessful)
+        if (pathSuccessful && waypoints.Length > 0)
         {
-            path = new ASPathFinding.Path(waypoints, transform.position, turnDst,stoppingDst);
-            if (followpath != null)
+            path = new Path(waypoints, transform.position, turnDst, stoppingDst);
+
+            if (followPathCoroutine != null)
             {
-                StopCoroutine(followpath);
-                followpath = null;
+                StopCoroutine(followPathCoroutine);
             }
-            if (followpath == null)
-                followpath = StartCoroutine(FollowPath());
+
+            followPathCoroutine = StartCoroutine(FollowPath());
         }
     }
 
+    bool IsInputActive() => isInputActive;
     IEnumerator UpdatePath()
     {
-        if (Time.timeSinceLevelLoad < .3f)
-        {
-            yield return new WaitForSeconds(.3f);
-        }
+        yield return new WaitUntil(IsInputActive);
+        yield return new WaitForSeconds(0.3f);
+
         PathManager.RequestPath(transform.position, target, OnPathFound);
+
         float sqrMoveThreshold = pathUpdateMoveThreshold * pathUpdateMoveThreshold;
-        Vector3 targetPosOld = target;
+        Vector3 lastTargetPos = target;
+
         while (true)
         {
             yield return new WaitForSeconds(minPathUpdateTime);
-            if ((target - targetPosOld).sqrMagnitude > sqrMoveThreshold)
+
+            if ((target - lastTargetPos).sqrMagnitude > sqrMoveThreshold)
             {
                 PathManager.RequestPath(transform.position, target, OnPathFound);
-                targetPosOld = target;
+                lastTargetPos = target;
             }
         }
     }
+
     IEnumerator FollowPath()
     {
-        bool followingPath = true;
-        int pathIndex = 0;
-        //transform.LookAt(path.lookPoints[0]);
+        if (path == null || path.lookPoints == null || path.lookPoints.Length == 0)
+        {
+            yield break;
+        }
 
-        float speedPercent = 1;
+        int pathIndex = 0;
+        float speedPercent = 1f;
+        bool followingPath = true;
 
         while (followingPath)
         {
             Vector2 pos2D = new Vector2(transform.position.x, transform.position.z);
-            while (path.turnBoundaries[pathIndex].HasCrossedLine(pos2D))
+
+            
+            while (path != null && path.turnBoundaries != null &&
+                pathIndex < path.turnBoundaries.Length &&
+                   path.turnBoundaries[pathIndex].HasCrossedLine(pos2D))
             {
                 if (pathIndex == path.finishLineIndex)
                 {
@@ -131,33 +115,76 @@ public class PlayerMovement : MonoBehaviour
                 }
                 else
                 {
+                    transform.position = GetHeightAdjusted(path.lookPoints[pathIndex]);
                     pathIndex++;
                 }
+                if (pathIndex >= path.turnBoundaries.Length)
+                {
+                    Debug.LogWarning("pathIndex exceeded turnBoundaries length. Breaking out.");
+                    yield break;
+                }
             }
-
+           // Debug.Log($"path{path.lookPoints[pathIndex]}, distance {Vector2.Distance(new Vector2(transform.position.x,transform.position.z), new Vector2(path.lookPoints[pathIndex].x, path.lookPoints[pathIndex].z))}");
+            // Fallback: if we're near the next point but haven't crossed, force progress
+            if (pathIndex < path.lookPoints.Length &&
+                /*Vector3.Distance(transform.position, path.lookPoints[pathIndex])*/
+                Vector2.Distance(new Vector2(transform.position.x, transform.position.z), 
+                new Vector2(path.lookPoints[pathIndex].x, path.lookPoints[pathIndex].z)) < 0.2f)
+            {
+                transform.position = GetHeightAdjusted( path.lookPoints[pathIndex]);
+                pathIndex++;
+                if (pathIndex == path.finishLineIndex)
+                {
+                    followingPath = false;
+                    break;
+                }
+            }
             if (followingPath)
             {
+                if (pathIndex <= path.finishLineIndex)
+                {
 
-                //if (pathIndex >= path.slowDownIndex && stoppingDst > 0)
-                //{
-                //    speedPercent = Mathf.Clamp01(path.turnBoundaries[path.finishLineIndex].DistanceFromPoint(pos2D) / stoppingDst);
-                //    if (speedPercent < 0.01f)
-                //    {
-                //        followingPath = false;
-                //    }
-                //}
-
-                Quaternion targetRotation = Quaternion.LookRotation(path.lookPoints[pathIndex] - transform.position);
+                Vector3 targetPoint = GetHeightAdjusted(path.lookPoints[pathIndex]);
+                Quaternion targetRotation = Quaternion.LookRotation(targetPoint - transform.position);
                 transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * turnSpeed);
-                transform.Translate(Vector3.forward * Time.deltaTime * speed  /*speedPercent*/, Space.Self);
+                transform.Translate(Vector3.forward * Time.deltaTime * speed * speedPercent, Space.Self);
+
+                if (pathIndex >= path.slowDownIndex && stoppingDst > 0 && path.turnBoundaries.Length > 1)
+                {
+                    float distanceToEnd = path.turnBoundaries[path.finishLineIndex].DistanceFromPoint(pos2D);
+                    speedPercent = Mathf.Clamp01(distanceToEnd / stoppingDst);
+
+                    if (speedPercent < 0.05f)
+                    {
+                        followingPath = false;
+                        transform.position = GetHeightAdjusted(path.lookPoints[pathIndex]);
+                        break;
+                    }
+                }
+                }
+
+
             }
 
-            yield return null;
 
+            yield return null;
+        }
+
+        // Snap to final point if very close
+        if (Vector3.Distance(transform.position, path.lookPoints[^1]) < 0.3f)
+        {
+            Debug.Log($"pathccheck{path.lookPoints[^1]}");
+            transform.position = path.lookPoints[^1];
         }
     }
 
+    Vector3 GetHeightAdjusted(Vector3 point)
+    {
+        return new Vector3(point.x, transform.position.y, point.z);
+    }
+
     #endregion
+
     private void OnDrawGizmos()
     {
         if (path != null)
@@ -166,3 +193,18 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 }
+public enum playerState
+{
+    idle,
+    Interacting,
+    waiting,
+
+
+}
+[System.Serializable]
+public enum typeofhandheld
+{
+    veg, meal, box
+}
+
+

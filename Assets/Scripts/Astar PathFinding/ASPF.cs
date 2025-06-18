@@ -11,15 +11,24 @@ namespace ASPathFinding
     {
         
         PathManager _requestManager;
-        ASPFGrid grid;
+        static ASPFGrid grid;
         private void Awake()
         {
             grid = GetComponent<ASPFGrid>();
             _requestManager = GetComponent<PathManager>();
         }
       
+        public static void updateGrid()
+        {
+            grid.UpdateGrid();
+        }
+        public static void CreateGrid()
+        {
+            grid.CreateGrid();
+        }
         public void StartFindPath(Vector3 _startpt,Vector3 _endpt)
         {
+            Debug.Log("Move");
             StartCoroutine(FindPath(_startpt, _endpt));
         }
         IEnumerator FindPath(Vector3 startPos, Vector3 targetPos)

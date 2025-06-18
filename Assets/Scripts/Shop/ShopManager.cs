@@ -58,7 +58,7 @@ public class ShopManager : Singletonref<ShopManager>
 
     public void CloseShop()
     {
-        interactionBTN.ShopClose();
+        HUDManagerDNDL.Instance.CloseShop();
     }
 
     

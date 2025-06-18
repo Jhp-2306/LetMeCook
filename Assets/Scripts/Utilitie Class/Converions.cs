@@ -7,7 +7,7 @@ namespace Conversions
 {
 public class Converions : MonoBehaviour
 {
-   public static Vector3Int Vector3DFloatToInt(Vector3 val)
+    public static Vector3Int Vector3DFloatToInt(Vector3 val)
     {
         return new Vector3Int((int)val.x, (int)val.y, (int)val.z);
     }
