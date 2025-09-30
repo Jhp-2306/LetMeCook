@@ -1,8 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using UnityEngine.UIElements;
+
 
 namespace ASPathFinding
 {
@@ -17,11 +16,11 @@ namespace ASPathFinding
         private Vector2 m_GridSize;
         ASPFNode[,] grid;
 
-        private const string file_name = "Nav_mesh";
+        public string file_name = "Nav_mesh";
 
         float nodeDiameter;
         [SerializeField]
-        private float gridOffset=0.5f;
+        private Vector3 gridOffset=Vector3.zero;
         int gridSizeX, gridSizeY;
         bool isGridCreated;
         private void Start()
@@ -47,12 +46,14 @@ namespace ASPathFinding
         public void CreateGrid()
         {
             grid = new ASPFNode[gridSizeX, gridSizeY];
-            Vector3 worldBottomLeft=transform.position-Vector3.right*m_GridSize.x/2-Vector3.forward*m_GridSize.y/2;
+            Vector3 worldBottomLeft=(transform.position+gridOffset)-((Vector3.right*m_GridSize.x)/2)-((Vector3.forward*m_GridSize.y)/2);
+            Debug.Log(CustomLogs.CC_TagLog($"<color=cyan>{gameObject.name}</color>", $"{transform.position},{transform.position + gridOffset},"));
             for (int x = 0; x < gridSizeX; x++)
             {
                 for(int y = 0; y < gridSizeY; y++)
                 {
-                    Vector3 worldPoint = worldBottomLeft + Vector3.right * (x * nodeDiameter + m_PlayerRadius) + Vector3.forward * (y * nodeDiameter + m_PlayerRadius);
+                    //Vector3 worldPoint = worldBottomLeft + Vector3.right * ((x * nodeDiameter) + m_PlayerRadius) + Vector3.forward * ((y * nodeDiameter) + m_PlayerRadius);
+                    Vector3 worldPoint = worldBottomLeft + new Vector3((x * 2) + 1, 0,(y * 2) + 1);
                     //bool Walkable=!(Physics.CheckSphere(worldPoint, m_PlayerRadius, notWalkable));
                     bool Walkable=!(Physics.CheckBox(worldPoint, Vector3.one* m_PlayerRadius/2, Quaternion.identity, notWalkable));
                     grid[x,y]=new ASPFNode(Walkable, worldPoint,x,y);
@@ -70,6 +71,11 @@ namespace ASPathFinding
                 node.IsWalkable = !(Physics.CheckBox(node.worldPosition, Vector3.one * m_PlayerRadius / 2, Quaternion.identity, notWalkable));
                 grid[node.gridX,node.gridY] = node;
             }
+            saveGridData() ;
+        }
+        public void UpdateIsWalkableSpecificCell(int x,int y,bool iswalkable)
+        {
+            grid[x, y].IsWalkable = iswalkable;
             saveGridData() ;
         }
         void saveGridData()
@@ -115,19 +121,32 @@ namespace ASPathFinding
 
         public ASPFNode GetNodeFromWorldPosition(Vector3 worldPosition)
         {
-            float PercentX = (worldPosition.x /*+ m_GridSize.x / 2*/) / m_GridSize.x;
-            float PercentY = (worldPosition.z /*+ m_GridSize.y / 2*/) / m_GridSize.y;
-            PercentX = Mathf.Clamp01(PercentX);
-            PercentY = Mathf.Clamp01(PercentY);
-            int x=Mathf.RoundToInt((gridSizeX-1)* PercentX); 
-            int y=Mathf.RoundToInt((gridSizeY-1)* PercentY); 
-            return grid[x,y];
+            //float PercentX = (worldPosition.x /*+ m_GridSize.x / 2*/) / m_GridSize.x;
+            //float PercentY = (worldPosition.z /*+ m_GridSize.y / 2*/) / m_GridSize.y;
+            //PercentX = Mathf.Clamp01(PercentX);
+            //PercentY = Mathf.Clamp01(PercentY);
+            //int x=Mathf.RoundToInt((gridSizeX-1)* PercentX); 
+            //int y=Mathf.RoundToInt((gridSizeY-1)* PercentY);
+            Vector3 worldBottomLeft = (transform.position + gridOffset) - ((Vector3.right * m_GridSize.x) / 2) - ((Vector3.forward * m_GridSize.y) / 2);
+            var _worldposition=worldPosition-worldBottomLeft;
+            var t = new Vector3(Mathf.RoundToInt((_worldposition.x - 1) / 2), 0,Mathf.RoundToInt((_worldposition.z - 1) / 2));
+            Debug.Log(CustomLogs.CC_TagLog($"{gameObject.name}",$"{t}"));
+            return grid[(int)t.x,(int)t.z];
         }
-       
+       public void ResetAllCost()
+        {
+            foreach (ASPFNode node in grid)
+            {
+                node.Gcost = 0;
+                node.Hcost = 0;
+                node.parent = null;
+            }
+
+        }
         private void OnDrawGizmos()
         {
             if (!ShowGizmos) return;
-            Gizmos.DrawWireCube(transform.position, new(m_GridSize.x,1,m_GridSize.y));
+            Gizmos.DrawWireCube((transform.position+gridOffset), new(m_GridSize.x,1,m_GridSize.y));
             if (grid != null)
             {
                 foreach (ASPFNode n in grid)

@@ -60,7 +60,9 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 25
+  m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
@@ -203,8 +205,6 @@ GameObject:
   - component: {fileID: 7396916493901985370}
   - component: {fileID: 7396916493901985371}
   - component: {fileID: 7396916493901985368}
-  - component: {fileID: 7396916493901985369}
-  - component: {fileID: 7396916493901985366}
   - component: {fileID: 7396916493901985367}
   m_Layer: 0
   m_Name: NPC
@@ -279,42 +279,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &7396916493901985369
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7396916493901985364}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!195 &7396916493901985366
-NavMeshAgent:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7396916493901985364}
-  m_Enabled: 1
-  m_AgentTypeID: 0
-  m_Radius: 0.5
-  m_Speed: 10
-  m_Acceleration: 5
-  avoidancePriority: 50
-  m_AngularSpeed: 180
-  m_StoppingDistance: 1
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
-  m_AutoRepath: 1
-  m_Height: 2
-  m_BaseOffset: 1
-  m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
 --- !u!114 &7396916493901985367
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -329,6 +293,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   namedis: {fileID: 8942379118360501882}
   iddis: {fileID: 3105991061983776563}
+  CurrentPlatform: {fileID: 0}
+  speed: 20
+  turnSpeed: 5
+  turnDst: 2
+  stoppingDst: 0.5
 --- !u!1 &7916307722122598662
 GameObject:
   m_ObjectHideFlags: 0

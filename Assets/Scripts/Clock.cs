@@ -5,8 +5,24 @@ using UnityEngine;
 public class Clock : MonoBehaviour
 {
     public TMPro.TextMeshProUGUI DigiClock;
+    public GameObject HrsHand, MinHand;
+    [SerializeField] float animationtimer = 1.3f;
+    [SerializeField] GameObject HUD;
+    //Coroutine expandCoroutine;
+   // public Vector3 InitPosition, FinalPosition;
     void Update()
     {
         DigiClock.text = TimeManagementDNDL.Instance.GetTime(false);
+        var hrshandRotation = (TimeManagementDNDL.Instance.GetHrs() / 12) * 360;
+        HrsHand.transform.eulerAngles = new Vector3(0, 0, -hrshandRotation);
+        var minshandRotation = (TimeManagementDNDL.Instance.GetMins() / 60) * 360;
+        MinHand.transform.eulerAngles = new Vector3(0, 0, -minshandRotation);
     }
+    public void OnClick()
+    {
+        //if (expandCoroutine != null) StopCoroutine(expandCoroutine);
+    }
+     
+    
+
 }

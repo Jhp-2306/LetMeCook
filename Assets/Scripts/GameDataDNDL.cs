@@ -1,8 +1,8 @@
+using ASPathFinding;
+using Constants;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Constants;
 using Util;
 
 public class GameDataDNDL : Singletonref<GameDataDNDL>
@@ -18,26 +18,28 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
 
     [SerializeField]
     private Player m_player;
-
+    [SerializeField]
+    private GameObject m_FreeCamRig;
+    [SerializeField]
+    private GridMaker grid;
     private UserDataLocal m_UserDataLocal;
 
-    public List<Table> TableObjects;
+    public List<InteractiveBlock> TableObjects;
     public SO_EquipmentDataList ItemList;
-
+    public ASPFGrid Navmesh;
+    public RecipeBook book;
     private void Awake()
     {
         base.Awake();
-        GameSaveDNDL.DataUpdateBeforeSave -= SaveTableData;
-        GameSaveDNDL.DataUpdateBeforeSave += SaveTableData;
     }
     private void OnApplicationQuit()
     {
-        GameSaveDNDL.DataUpdateBeforeSave -= SaveTableData;
+        
     }
 
     private void OnDestroy()
     {
-        GameSaveDNDL.DataUpdateBeforeSave -= SaveTableData;
+       
     }
     private void Start()
     {
@@ -46,58 +48,28 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
         SaveData.Instance.LoadInstance();
         m_UserDataLocal = new UserDataLocal();
         m_UserDataLocal = SaveData.Instance.LocalData;
-        Debug.Log($"check {SaveData.Instance.LocalData == null}");
-        UpdateTableData(); 
-    }
-
-    void UpdateTableData()
-    {
-        List<TableData> temp = new List<TableData>();
-        temp = m_UserDataLocal.tableData;
-        if (temp != null)
-            for (int i = 0; i < temp.Count; i++)
+        //Debug.Log($"check {SaveData.Instance.LocalData == null}");
+        foreach(var t in SaveData.Instance.saveDataType.GetAllTheData())
+        {
+            Debug.Log($"Save Template {t.id}{t.Type}");
+            //here spawn the Tools
+            foreach(var temp in ItemList.equipmentDataList)
             {
-                //TableData[i].TableName = temp[i].;
-                var t = GetShopItemDetailsFromString(temp[i].TableTop);
-                if(t != null)
+                if(t.Type == temp.Type)
                 {
-                    TableObjects[i].SetOnTable(t.Prefab,t.name,t.Type);
+                    var go = Instantiate(temp.Prefab);
+                    if (go.GetComponent<InteractiveBlock>() != null)
+                    { go.GetComponent<InteractiveBlock>().ReadFromSave(t); }
                 }
             }
+        }
+
+        //Calling inits
+        book.init();
     }
 
-    void SaveTableData()
-    {
-        int idx = 0;
-        List<TableData> datas = new List<TableData>();
-        foreach( var t in TableObjects)
-        {
-            var table=new TableData(t.TableID,t.equipmentType.ToString(),t.isTableEmpty(),null,null);
-            SaveData.Instance.LocalData.tableData.Add(table);
-        }
-        Debug.Log($"check {SaveData.Instance.LocalData.tableData.Count}");
-        //SaveData.Instance.LocalData.SetTableData(datas);
-    }
-
-    equipmentData GetShopItemDetailsFromString(string equipmentType)
-    {
-        foreach (var t in ItemList.equipmentDataList)
-        {
-            if (t.Type.ToString() == equipmentType)
-            {
-                return t;
-            }
-        }
-        return null;
-    }
-    //ShopManager.ShopItems GetShopItemFromEquipmenttype
     private void OnDrawGizmos()
     {
-        //for (int i = 0; i < TableData.Count; i++)
-        //{
-        //    TableData[i].TableID = i;
-        //    TableData[i].gameObject.name = $"Table {i}";
-        //}
     }
 
     public void SetPlayer(Player player)
@@ -107,5 +79,27 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
     public Player GetPlayer()
     {
         return m_player;
+    }
+    public void SetFreeCamRig(GameObject player)
+    {
+        m_FreeCamRig = player;
+    }
+    public GameObject GetFreeCamRig()
+    {
+        return m_FreeCamRig;
+    }
+    public GridMaker GetGrid() => grid;
+    public void UpdateNavMesh(int x,int y,bool value)
+    {
+        Navmesh.UpdateIsWalkableSpecificCell(x, y, value);
+    }
+
+    public Dishes GetDish(List<ProcedureStep> procedureSteps)
+    {
+        return book.GetDishes(procedureSteps);
+    }
+    public int GetCookingTime(Dishes dish)
+    {
+        return book.GetDishCookTime(dish);
     }
 }

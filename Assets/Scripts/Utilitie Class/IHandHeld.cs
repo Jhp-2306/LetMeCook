@@ -4,6 +4,7 @@ using UnityEngine;
 
 public interface IHandHeld 
 {
+    public GameObject GetGameObject();
     public typeofhandheld IGetType();
 
     public void AddEvent();

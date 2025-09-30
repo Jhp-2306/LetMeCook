@@ -7,7 +7,7 @@ public interface IInteractable
 {
     public bool IsInteractable();
     EquipmentType GetEquipmentType();
-    void OnClick(bool ishandfull=false);
+    void OnClick();
     SO_EquipmentData GetEquipmentData();
    
 }

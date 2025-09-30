@@ -9,10 +9,12 @@ namespace ASPathFinding
 public class PathManager : MonoBehaviour
 {
         Queue<PathRequest> requestQueue = new Queue<PathRequest>();
-
         PathRequest currentRequest;
         static PathManager instance;
 
+        Queue<PathRequest> AIrequestQueue = new Queue<PathRequest>();
+        PathRequest AIcurrentRequest;
+        bool AIisProcessingPath;
         ASPF aspf;
         bool isProcessingPath;
         private void Awake()
@@ -41,6 +43,28 @@ public class PathManager : MonoBehaviour
             currentRequest.callback(path, success);
             isProcessingPath=false;
             tryProcessNext();
+        }
+        public static void NPCRequestPath(Vector3 _pathStart, Vector3 _pathEnd, Action<Vector3[], bool> _callback)
+        {
+            PathRequest newRequest = new PathRequest(_pathStart, _pathEnd, _callback);
+            instance.AIrequestQueue.Enqueue(newRequest);
+            instance.NPCtryProcessNext();
+        }
+        void NPCtryProcessNext()
+        {
+            if (!isProcessingPath && AIrequestQueue.Count > 0)
+            {
+                AIcurrentRequest = AIrequestQueue.Dequeue();
+                AIisProcessingPath = true;
+                aspf.StartForAIFindPath(AIcurrentRequest.pathStart, AIcurrentRequest.pathEnd);
+            }
+        }
+
+        public void NPCFinishProcessingPath(Vector3[] path, bool success)
+        {
+            AIcurrentRequest.callback(path, success);
+            AIisProcessingPath = false;
+            NPCtryProcessNext();
         }
 
         struct PathRequest

@@ -54,8 +54,10 @@ public class SerializationManager
         
         SurrogateSelector selector = new SurrogateSelector();
         Vector3SerializationSurrogate vector3SerializationSurrogate = new Vector3SerializationSurrogate();
+        QuaternionSerializationSurrogate quaternionSerializationSurrogate = new QuaternionSerializationSurrogate();
 
         selector.AddSurrogate(typeof(Vector3),new StreamingContext(StreamingContextStates.All),vector3SerializationSurrogate);
+        selector.AddSurrogate(typeof(Quaternion),new StreamingContext(StreamingContextStates.All),quaternionSerializationSurrogate);
         _formatter.SurrogateSelector = selector;
 
         return _formatter;
@@ -79,6 +81,29 @@ public class Vector3SerializationSurrogate : ISerializationSurrogate
         vector.y = (float)info.GetValue("y", typeof(float));
         vector.z= (float)info.GetValue("z",typeof(float));
         obj = vector;
+        return obj;
+    }
+}
+
+public class QuaternionSerializationSurrogate : ISerializationSurrogate
+{
+    public void GetObjectData(object obj, SerializationInfo info, StreamingContext context)
+    {
+        Quaternion vector = (Quaternion)obj;
+        info.AddValue("x", vector.x);
+        info.AddValue("y", vector.y);
+        info.AddValue("z", vector.z);
+        info.AddValue("w", vector.w);
+    }
+
+    public object SetObjectData(object obj, SerializationInfo info, StreamingContext context, ISurrogateSelector selector)
+    {
+        Quaternion quaternion = (Quaternion)obj;
+        quaternion.x = (float)info.GetValue("x", typeof(float));
+        quaternion.y = (float)info.GetValue("y", typeof(float));
+        quaternion.z = (float)info.GetValue("z", typeof(float));
+        quaternion.w = (float)info.GetValue("w", typeof(float));
+        obj = quaternion;
         return obj;
     }
 }

@@ -43,7 +43,6 @@ GameObject:
   - component: {fileID: 539064225690766431}
   - component: {fileID: 539064225690766430}
   - component: {fileID: 539064225690766417}
-  - component: {fileID: 539064225690766428}
   m_Layer: 0
   m_Name: slab St
   m_TagString: Untagged
@@ -130,18 +129,3 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &539064225690766428
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 539064225690766419}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7ad51a633f88af94c8608aa09118c44c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  LookAtMe: {fileID: 539064225350242874}
-  myMaterial: {fileID: 0}
-  Data: {fileID: 0}

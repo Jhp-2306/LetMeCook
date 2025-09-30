@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using UnityEngine.WSA;
 using NPC;
 using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 using System;
@@ -21,6 +20,10 @@ public class InGameConsole : MonoBehaviour
         public const string KickCustomer = "kick_cust";
         public const string UpdateASPFGrid = "u_aspf_grid";
         public const string CreateASPFGrid = "c_aspf_grid";
+        public const string Npc_Roaming = "npc_roaming";
+
+        public static readonly List<string> CommandsList = new List<string> { "help", "f_save", "NG" , "get_cust", "kick_cust" , "u_aspf_grid", "c_aspf_grid", "npc_roaming" };
+
     }
 
 
@@ -35,6 +38,7 @@ public class InGameConsole : MonoBehaviour
     public Image openCloseBTn;
     bool isopen = false;
     Stack<string> Logs = new Stack<string>();
+    public List<string> t =new List<string>{ "help"};
     public void SendMsg(string msg)
     {
         Logs.Push(msg);
@@ -72,10 +76,13 @@ public class InGameConsole : MonoBehaviour
                     ExecuteCommand( "New Game", () => { GameSaveDNDL.Instance.NewGame(); });
                     break;
                 case IGCCommands.GetCustomer:
-                    ExecuteCommand(IGCCommands.GetCustomer, () => { NPCManager.Instance.Get_NPC_Customer(); });
+                    ExecuteCommand(IGCCommands.GetCustomer, () => { NPCManager.Instance.IGC_Get_NPC_Customer(); });
                     break;
                 case IGCCommands.KickCustomer:
-                    ExecuteCommand(IGCCommands.KickCustomer, () => { NPCManager.Instance.NPC_Back_Roaming(int.Parse(Processedtext[1])); });
+                    ExecuteCommand(IGCCommands.KickCustomer, () => { NPCManager.Instance.IGC_NPC_Back_Roaming(int.Parse(Processedtext[1])); });
+                    break;
+                case IGCCommands.Npc_Roaming:
+                    ExecuteCommand(IGCCommands.Npc_Roaming, () => { NPCManager.Instance.IGC_NPC_ROAMING(); });
                     break;
                 case IGCCommands.UpdateASPFGrid:
                     ExecuteCommand(IGCCommands.UpdateASPFGrid, () => { ASPF.updateGrid(); });
@@ -83,10 +90,14 @@ public class InGameConsole : MonoBehaviour
                 case IGCCommands.CreateASPFGrid:
                     ExecuteCommand(IGCCommands.CreateASPFGrid, () => { ASPF.CreateGrid(); });
                     break;
+                case IGCCommands.help:
+                    ExecuteCommand(IGCCommands.help, () => { foreach (var t in IGCCommands.CommandsList) SendMsg(t); });
+                    break;
                 default:
                     SendMsg($"Failed to execute: Wrong command {input_Field.text}");
                     break;
             }
+            
         }
     }
 

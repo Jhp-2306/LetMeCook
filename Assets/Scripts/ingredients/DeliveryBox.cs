@@ -16,8 +16,8 @@ namespace HandHeld
                 storageSystem = new BasicStorageSystem<IStorageItem>(4);
             }
             AddBoxItem(new RefrigeratorItems(IngredientType.Tomato, 20));
-            AddBoxItem(new RefrigeratorItems(IngredientType.Apple, 2));
-            AddBoxItem(new RefrigeratorItems(IngredientType.Mango, 7));
+            AddBoxItem(new RefrigeratorItems(IngredientType.Chicken, 2));
+            AddBoxItem(new RefrigeratorItems(IngredientType.Carrot, 7));
         }
 
         public void AddBoxItem(RefrigeratorItems boxItem)
@@ -42,7 +42,7 @@ namespace HandHeld
 
         public typeofhandheld IGetType() => typeofhandheld.box;
 
-        public void OnClick(bool ishandfull = false)
+        public void OnClick()
         {
             //open the box
             Debug.Log("Open Deliver Box");
@@ -89,6 +89,11 @@ namespace HandHeld
         object IHandHeld.CustomEventReturner()
         {
             return CustomEventReturner();
+        }
+
+        public GameObject GetGameObject()
+        {
+            return this.gameObject;
         }
     }
 }

@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 namespace ASPathFinding
@@ -11,7 +10,8 @@ namespace ASPathFinding
     {
         
         PathManager _requestManager;
-        static ASPFGrid grid;
+        public static ASPFGrid grid;
+        public ASPFGrid AIGrid;
         private void Awake()
         {
             grid = GetComponent<ASPFGrid>();
@@ -28,23 +28,32 @@ namespace ASPathFinding
         }
         public void StartFindPath(Vector3 _startpt,Vector3 _endpt)
         {
-            Debug.Log("Move");
-            StartCoroutine(FindPath(_startpt, _endpt));
+            Debug.Log(CustomLogs.CC_TagLog("Astar Path Finding(ASPF class)","Player Moving"));
+            StartCoroutine(FindPath(_startpt, _endpt,grid, false));
         }
-        IEnumerator FindPath(Vector3 startPos, Vector3 targetPos)
+        public void StartForAIFindPath(Vector3 _startpt, Vector3 _endpt)
         {
+            Debug.Log(CustomLogs.CC_TagLog("Astar Path Finding(ASPF class)", "AI Moving"));
+            StartCoroutine(FindPath(_startpt, _endpt, AIGrid,true));
+        }
+        IEnumerator FindPath(Vector3 startPos, Vector3 targetPos, ASPFGrid _grid,bool isAI)
+        {
+            var _Grid = _grid;
+            _Grid.ResetAllCost();
             Vector3[] wayPt=new Vector3[0];
             bool pahtSucces = false;
-            ASPFNode startNode = grid.GetNodeFromWorldPosition(startPos);
-            ASPFNode targetNode = grid.GetNodeFromWorldPosition(targetPos);
-
+            ASPFNode startNode = _Grid.GetNodeFromWorldPosition(startPos);
+            ASPFNode targetNode = _Grid.GetNodeFromWorldPosition(targetPos);
+            //Debug.Log($"Start Position{startNode.worldPosition},EndPosition{targetNode.worldPosition}");
+                   // Debug.Log(CustomLogs.CC_TagLog($"<color=cyan> ASPF</color>", $"current node Wpos{targetNode.worldPosition}"));
             if(startNode.IsWalkable&&targetNode.IsWalkable) { 
-            Heap<ASPFNode> openSet = new Heap<ASPFNode>(grid.MaxSize);
+            Heap<ASPFNode> openSet = new Heap<ASPFNode>(_Grid.MaxSize);
             HashSet<ASPFNode> closedSet = new HashSet<ASPFNode>();
             openSet.Add(startNode);
-            while (openSet.Count > 0)
-            {
-                ASPFNode currentNode = openSet.RemoveAtFirst();
+                while (openSet.Count > 0)
+                {
+                    ASPFNode currentNode = openSet.RemoveAtFirst();
+                    //Debug.Log(CustomLogs.CC_TagLog($"<color=cyan> ASPF</color>", $"current node Wpos{currentNode.worldPosition}"));
                 closedSet.Add(currentNode);
                 if (currentNode == targetNode)
                 {
@@ -52,7 +61,7 @@ namespace ASPathFinding
                     pahtSucces=true;
                     break;
                 }
-                foreach (ASPFNode neighbour in grid.GetNearNodes(currentNode))
+                foreach (ASPFNode neighbour in _Grid.GetNearNodes(currentNode))
                 {
                     if (!neighbour.IsWalkable || closedSet.Contains(neighbour)) continue;
 
@@ -77,7 +86,10 @@ namespace ASPathFinding
             {
                 wayPt = RetracePath(startNode, targetNode);
             }
-            _requestManager.FinishProcessingPath(wayPt, pahtSucces);
+            if (isAI)
+                _requestManager.NPCFinishProcessingPath(wayPt, pahtSucces);
+            else
+                _requestManager.FinishProcessingPath(wayPt, pahtSucces);
         }
 
         Vector3[] RetracePath(ASPFNode startnode, ASPFNode targetNode)
@@ -87,13 +99,14 @@ namespace ASPathFinding
             List<Vector3> vec = new List<Vector3>();
             while (currentNode != startnode)
             {
+            //Debug.Log(CustomLogs.CC_TagLog($"<color=cyan> ASPF</color>", $"current node Wpos{currentNode.worldPosition},{startnode.worldPosition},{startnode==currentNode}"));
                 path.Add(currentNode);
                 vec.Add(currentNode.worldPosition);
                 currentNode = currentNode.parent;
             }
             vec.Reverse();
-            //Vector3[] waypt=SimplifyPath(path);
-            //Array.Reverse(waypt);
+            Vector3[] waypt=SimplifyPath(path);
+            Array.Reverse(waypt);
             return vec.ToArray();
            
         }
@@ -116,12 +129,13 @@ namespace ASPathFinding
         {
             int distx = Mathf.Abs(startnode.gridX - targetNode.gridX);
             int disty = Mathf.Abs(startnode.gridY - targetNode.gridY);
-
-            if (distx > disty)
-            {
-                return 14 * disty + 10 * (distx - disty);
-            }
-            return 14 * distx + 10 * (disty - distx);
+            int remaining=Mathf.Abs(distx-disty);
+            //if (distx > disty)
+            //{
+            //    return 14 * disty + 10 * (distx - disty);
+            //}
+            return 14 * Mathf.Min(distx,disty) + 10 * remaining;
+            //return 10 * (distx + disty);
         }
     }
 }

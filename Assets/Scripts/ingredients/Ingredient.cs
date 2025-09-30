@@ -6,40 +6,26 @@ using UnityEngine;
 
 public class Ingredient : MonoBehaviour, IHandHeld
 {
-    [Serializable]
-    public struct Str_Ingredient_Data
-    {
-    public IngredientType ingredientType;
-    public typeofhandheld type;
-    public processIngredient processes;
-    public Mesh _mesh;
-
-    }
-    public Str_Ingredient_Data ingrendient;
+    public ProcedureStep ingrendient;
+    private typeofhandheld type;
+    public Mesh mesh;
     public MeshRenderer Renderer;
     public MeshFilter Filter;
 
-
-    public void Setup(Str_Ingredient_Data copy)
-    {
-        ingrendient.ingredientType = copy.ingredientType;
-        ingrendient.type = copy.type;
-        ingrendient.processes = copy.processes;
-        ingrendient._mesh=copy._mesh;
-    }
-
     public void AddEvent()
     {
+        InputManager.Instance.Interactionbtn.ResetButton("Interact");
         return;
     }
 
-    public void Setup(Mesh mesh,IngredientType _type, typeofhandheld handtype)
+    public void Setup(Mesh _mesh,IngredientType _type, typeofhandheld handtype,Material mat, processIngredient process=processIngredient.None)
     {
-        ingrendient.ingredientType = _type;
-        ingrendient.type = handtype;
-        ingrendient._mesh = mesh;
-        Filter.sharedMesh = ingrendient._mesh;
-        
+        ingrendient.Ingredient = _type;
+        ingrendient.processed = process;
+        type = handtype;
+        this.mesh = _mesh;
+        Filter.sharedMesh = this.mesh;
+        Renderer.sharedMaterial = mat;
     }
    
 
@@ -51,8 +37,13 @@ public class Ingredient : MonoBehaviour, IHandHeld
     public void DestroyMe()
     {
         Destroy(this.gameObject);
+        //Object pooling here
     }
 
-    public typeofhandheld IGetType() => ingrendient.type;
-    
+    public typeofhandheld IGetType() => type;
+
+    public GameObject GetGameObject()
+    {
+        return this.gameObject;
+    }
 }

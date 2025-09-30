@@ -16,3 +16,4 @@ MonoBehaviour:
   handheldtype: 0
   icon: {fileID: 1618556269, guid: 7490161f73e872649aa2fb9b4886176b, type: 3}
   mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+  material: {fileID: -1724080987372072942, guid: 914c50a88cf882a4ba1c63405f80ed3f, type: 3}

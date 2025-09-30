@@ -17,22 +17,22 @@ MonoBehaviour:
     Type: 0
     name: Stove
     price: 200
-    Prefab: {fileID: 2854303918285116923, guid: 8d949e15a2e25ff4b87e144145028dba, type: 3}
+    Prefab: {fileID: 8744672167464481487, guid: fe934b109404be543b16e8da10a6b17e, type: 3}
   - DisplayFuntionName: Bake
     Type: 1
     name: Oven
     price: 400
-    Prefab: {fileID: 2854303918285116923, guid: 8d949e15a2e25ff4b87e144145028dba, type: 3}
+    Prefab: {fileID: 2173545356869502115, guid: 6c81a61a607b99b45a17eee93526dbae, type: 3}
   - DisplayFuntionName: Chopping
     Type: 2
     name: Cutting Board
     price: 50
-    Prefab: {fileID: 2854303918285116923, guid: 30edc5c25f903bf41890d483e1b21940, type: 3}
+    Prefab: {fileID: 5067152102909906005, guid: 30edc5c25f903bf41890d483e1b21940, type: 3}
   - DisplayFuntionName: Mix
     Type: 3
     name: Mixing bowl
     price: 100
-    Prefab: {fileID: 2854303918285116923, guid: 3cadba21cc6875f4a86b2dc5bb2d1ef4, type: 3}
+    Prefab: {fileID: 4000351099170960806, guid: 1d3ec9d852d799e46913f4c861d3cdae, type: 3}
   - DisplayFuntionName: Whisk
     Type: 4
     name: Whisker
@@ -42,4 +42,4 @@ MonoBehaviour:
     Type: 10
     name: Refrigerator
     price: 1000
-    Prefab: {fileID: 2854303918285116923, guid: 8200ad283cf411245a2ab7b4dfcb403e, type: 3}
+    Prefab: {fileID: 4821355761719611568, guid: 4abab0b619587de4399e138ce3468ef6, type: 3}

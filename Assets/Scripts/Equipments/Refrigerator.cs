@@ -3,31 +3,78 @@ using HandHeld;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting.ReorderableList;
-using UnityEngine;
-using static UnityEditor.Progress;
 
-public class Refrigerator : Table, IInteractable
+using UnityEngine;
+
+
+public class Refrigerator : InteractiveBlock
 {
+    #region Data Saving
+    SaveDataTemplate savedata;
+    public override void ReadFromSave(SaveDataTemplate _data)
+    {
+        savedata=new SaveDataTemplate();
+        savedata= _data;
+        transform.position = _data.Position;
+        transform.rotation = _data.Rotation;
+        var data= BasicStorageSystem<IStorageItem>.LoadDataFromString(_data.Data.ToString());
+        Slots =BasicStorageSystem<IStorageItem>.LoadSizeFromString(_data.Data.ToString());
+        storageSystem=new BasicStorageSystem<IStorageItem>(Slots);
+        Debug.Log(data.Count);
+        foreach (var slot in data)
+        {
+            Debug.Log(slot);
+            RefrigeratorItems loadedItem = new RefrigeratorItems(slot);
+            storageSystem.AddItems(loadedItem);
+        }
+        Data = this.GetEquipmentData();
+        equipmentType = EquipmentType.Refrigerator;
+        //BeforeSaving();
+        GameSaveDNDL.DataUpdateBeforeSave -= BeforeSaving;
+        GameSaveDNDL.DataUpdateBeforeSave += BeforeSaving;
+    }
+    
+    #endregion
+
     BasicStorageSystem<IStorageItem> storageSystem;
+    int Slots=4;
 
     private void Awake()
     {
         base.Awake();
-        Init();
+        //Init();
+        
     }
-    void Init()
+    private void OnDisable()
     {
+        GameSaveDNDL.DataUpdateBeforeSave -= BeforeSaving;
+    }
+    public void OnDestroy()
+    {
+        GameSaveDNDL.DataUpdateBeforeSave -= BeforeSaving;
+    }
+    public override void Init()
+    {
+        savedata= new SaveDataTemplate();
+        savedata.id = GameSaveDNDL.GenerateId(EquipmentType.Refrigerator.ToString());
+        savedata.Position = transform.position;
+        savedata.Rotation = transform.rotation;
+        savedata.Type = EquipmentType.Refrigerator;
         if (storageSystem == null)
         {
-            storageSystem = new BasicStorageSystem<IStorageItem>(4);
+            storageSystem = new BasicStorageSystem<IStorageItem>(Slots);
         }
-        //storageSystem.AddItems(new RefrigeratorItems(IngredientType.Tomato, 10));
-        //storageSystem.AddItems(new RefrigeratorItems(IngredientType.Apple, 2));
-        //storageSystem.AddItems(new RefrigeratorItems(IngredientType.Mango, 7));
+        savedata.Data = storageSystem.GetAllDataInString();
         Data = this.GetEquipmentData();
         equipmentType = EquipmentType.Refrigerator;
-        //CustomLogs.CC_Log($"Setting Refrigerator {Data.DisplayFuntionName},{Data.name}", "red");
+        BeforeSaving();
+        GameSaveDNDL.DataUpdateBeforeSave -= BeforeSaving;
+        GameSaveDNDL.DataUpdateBeforeSave += BeforeSaving;
+    }
+    void BeforeSaving()
+    {
+        savedata.Data = storageSystem.GetAllDataInString();
+        GameSaveDNDL.Instance.AddSaveData(savedata);
     }
     public SO_EquipmentData GetEquipmentData()
     {
@@ -44,13 +91,14 @@ public class Refrigerator : Table, IInteractable
         return EquipmentType.none;
     }
 
-    public void OnClick(bool ishandfull = false)
+    public override void OnClick()
     {
-
-        if (ishandfull && GameDataDNDL.Instance.GetPlayer().InHand.IGetType() == typeofhandheld.box)
+        
+        var _player = GameDataDNDL.Instance.GetPlayer();
+        if (_player.InHand!=null && _player.InHand.IGetType() == typeofhandheld.box)
         {
             CustomLogs.CC_Log("Starting Adding items Box -> inventory", "red");
-            //ToDo: Stop Player input have 1-3s time for thing to get added into the refrigerator
+            //Stop Player input have 1-3s time for thing to get added into the refrigerator
             //Coroutine time = StartCoroutine(TimerProgressBar
             HUDManagerDNDL.Instance.SetProgressBar(3,
                 () =>
@@ -135,6 +183,7 @@ public class Refrigerator : Table, IInteractable
                {
                    CustomLogs.CC_Log("null", "red");
                }
+               savedata.Data = storageSystem.GetAllDataInString();
                CustomLogs.CC_Log("Done Adding items Box -> inventory", "red");
            });
 
@@ -147,73 +196,71 @@ public class Refrigerator : Table, IInteractable
 
 
     }
-    //IEnumerator TimerProgressBar(int maxTimer, Action Callback)
-    //{
-    //    var timer = 0f;
-    //    while (timer <= maxTimer)
-    //    {
-    //        yield return null;
-    //        timer += Time.deltaTime;
-    //        HUDManagerDNDL.Instance.SetProgressBar(timer / maxTimer);
-    //        if (timer > maxTimer)
-    //            HUDManagerDNDL.Instance.ProgressBarDone();
-    //    }
-    //    Callback();
-    //}
-
-    public bool IsInteractable()
+    
+    public override bool IsInteractionSatisfied()
     {
-        //if (!GameDataDNDL.Instance.GetPlayer().isPlayerHandEmpty)
-        //{
-        //    //if ((GameDataDNDL.Instance.GetPlayer().InHand.IGetType() != typeofhandheld.box || !GameDataDNDL.Instance.GetPlayer().isHandsfull))
-        //    return true;
-        //}
-        //else
         return true;
-        //return false;
     }
+   
 }
 public class RefrigeratorItems : IStorageItem
 {
-    IngredientType type;
-    int count;
-    int slotCapcity = 20;
+    struct RefrigeratorSlotsData
+    {
+        public IngredientType type;
+        public int count;
+    }
+    private RefrigeratorSlotsData _data;
+    private const int slotCapcity = 20;
 
     public RefrigeratorItems(IngredientType _type, int _count)
     {
-        this.type = _type;
-        this.count = _count;
+        this._data.type = _type;
+        this._data.count = _count;
         //this.slotCapcity = _slotCapcity;
     }
-
-    public IngredientType Type => type;
+    public RefrigeratorItems(string data)
+    {
+        var tempValue = JsonUtility.FromJson<RefrigeratorSlotsData>(data);
+        _data.type = tempValue.type;
+        _data.count = tempValue.count;
+    }
+    public IngredientType Type => _data.type;
 
     public void AddQuanitity(int quanitity, out int remaining)
     {
-        if (count + quanitity <= slotCapcity)
+        if (_data.count + quanitity <= slotCapcity)
         {
-            count += quanitity;
+            _data.count += quanitity;
             remaining = 0;
         }
         else
         {
-            remaining = (count + quanitity) - slotCapcity;
-            count = slotCapcity;
+            remaining = (_data.count + quanitity) - slotCapcity;
+            _data.count = slotCapcity;
         }
     }
 
-    public int GetQuanitity() => count;
+    public int GetQuanitity() => _data.count;
 
 
-    public bool isMaxed() => count == slotCapcity;
+    public bool isMaxed() => _data.count == slotCapcity;
 
 
     public void RemoveQuanitity()
     {
-        if (count > 0)
+        if (_data.count > 0)
         {
-            count--;
+            _data.count--;
         }
 
     }
+    public string GetData()
+    {
+        string data= JsonUtility.ToJson(_data); 
+        return data;
+
+    }
+   
+
 }

@@ -9,7 +9,7 @@ public class ShopItemHolderUI : MonoBehaviour
 {
     public TextMeshProUGUI Name; 
     public TextMeshProUGUI Cost;
-    //public Image Icon;
+    public Image Icon;
     public Button Btn;
     public GameObject Prefab;
     //public GameObject Table;
@@ -26,10 +26,12 @@ public class ShopItemHolderUI : MonoBehaviour
     public void BuyThisProduct()
     {
         //TODO:Buy Currency check 
-        ShopManager.Instance.CurrentSelectTable.SetOnTable(Prefab, Name.text,type);
-        var currentSelectTable= ShopManager.Instance.CurrentSelectTable;
+       
+        //close the shop
         ShopManager.Instance.CloseShop();
-        InputManager.Instance.InteractionButtonClick(currentSelectTable);
+        //go into building mode
+        ShopManager.Instance.BuildModeActivate(Prefab);
+        
         
     }
 }

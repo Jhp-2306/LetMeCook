@@ -4,6 +4,9 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/Astar PG.unity
+    guid: 451def3f04eea7c4982c88dc5dfb1ff7
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 5df993df788021d40b6e208faf4b4cee, type: 2}

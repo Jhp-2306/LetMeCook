@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using Util;
+using Constants;
 
 public class GameSaveDNDL : Singletonref<GameSaveDNDL>
 {
@@ -40,4 +41,13 @@ public class GameSaveDNDL : Singletonref<GameSaveDNDL>
     {
         SaveData.Instance.NewGameSaveData();
     }
+    public void AddSaveData(SaveDataTemplate template)
+    {
+        SaveData.Instance.saveDataType.AddOrUpdate(template);
+    }
+    public static string GenerateId(string filler="")
+    {
+        return DateTime.Now.ToLongDateString()+"-"+DateTime.Now.ToLongTimeString()+"-"+filler+"{"+UnityEngine.Random.Range(0,int.MaxValue)+"}";
+    }
 }
+

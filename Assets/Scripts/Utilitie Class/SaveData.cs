@@ -31,14 +31,18 @@ public class SaveData
     }
 
     public UserDataLocal LocalData;
+    public SaveDataType<SaveDataTemplate> saveDataType;
     public void Init()
     {
         LocalData = new UserDataLocal();
+        saveDataType = new SaveDataType<SaveDataTemplate>();
+        
         Debug.Log("Init on SaveData");
     }
     public void NewGameSaveData()
     {
         LocalData = new UserDataLocal();
+        saveDataType= new SaveDataType<SaveDataTemplate>();
         SaveInstance();
     }
     public bool SaveInstance()
@@ -48,9 +52,12 @@ public class SaveData
     public void LoadInstance()
     {
         var t = (SaveData)SerializationManager.Load(file_name);
-        Debug.Log($"check {t.LocalData == null},{LocalData == null}");
+        Debug.Log($"check {t.LocalData == null},{LocalData == null}{t.saveDataType.GetAllTheData().Count}");
         LocalData = t.LocalData;
+        saveDataType=t.saveDataType;
     }
+
+    
 
 }
 [System.Serializable]
@@ -58,7 +65,7 @@ public class UserDataLocal
 {
     public string Playername;
     public int PlayerLevel;
-    public int Currency;
+    public int CurrencyAmount;
     public int Day;
     public int Time;
 
@@ -66,10 +73,18 @@ public class UserDataLocal
     public string GameCloseTime;
     public string CurrentTime;
 
-    public List<TableData> tableData;
-    public UserDataLocal() {
-        tableData = new List<TableData>();
+    public UserDataLocal() {}
 
+    public UserDataLocal(UserDataLocal copydata)
+    {
+        Playername = copydata.Playername;
+        PlayerLevel = copydata.PlayerLevel;
+        CurrencyAmount = copydata.CurrencyAmount;
+        Day = copydata.Day;
+        Time = copydata.Time;
+        StartTime = copydata.StartTime;
+        GameCloseTime = copydata.GameCloseTime;
+        CurrentTime = copydata.CurrentTime;
     }
 }
 
@@ -95,23 +110,5 @@ public class InventoryDataLocal
     public int GetIngredientData(int _id)
     {
         return IngredientData[(IngredientType)_id];
-    }
-}
-[System.Serializable]
-public class TableData
-{
-    public int Id;
-    public string TableTop;
-    public bool isTableEmpty;
-    public string StartTime;
-    public string EndTime;
-
-    public TableData(int id, string tableTop, bool isTableEmpty, string startTime, string endTime)
-    {
-        Id = id;
-        TableTop = tableTop;
-        this.isTableEmpty = isTableEmpty;
-        StartTime = startTime;
-        EndTime = endTime;
     }
 }
