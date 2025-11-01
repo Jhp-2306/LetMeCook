@@ -29,8 +29,7 @@ public class ChoppingBoard : InteractiveBlock
             HUDManagerDNDL.Instance.MiniGame.OnMiniGameOver -= OnMiniGameDone;
             HUDManagerDNDL.Instance.MiniGame.OnMiniGameOver += OnMiniGameDone;
             return;
-        }
-        
+        }      
 
     }
     public void OnMiniGameDone(int result)

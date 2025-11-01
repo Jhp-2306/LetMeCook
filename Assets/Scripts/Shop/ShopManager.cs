@@ -43,6 +43,7 @@ public class ShopManager : Singletonref<ShopManager>
     public List<ShopItems> GetItems() => Items;
     public PlacementHUD buildingHud;
     GameObject CurrentPurchaseObject;
+    bool isBuildMode;
     public GameObject GetCurrentPurchaseObject { get => CurrentPurchaseObject; }
     private void Start()
     {
@@ -86,6 +87,8 @@ public class ShopManager : Singletonref<ShopManager>
             //Enter Building mode
             InputManager.Instance.ChangeMode(CameraTargetMode.BuildingMode, go);
             InputManager.Instance.EnterBuildingMode();
+            isBuildMode = true;
+            StartCoroutine(CheckConfirmBTN());
         }
     }
 
@@ -101,6 +104,7 @@ public class ShopManager : Singletonref<ShopManager>
             //Exit Building mode
             InputManager.Instance.ChangeMode(CameraTargetMode.PlayerCam, GameDataDNDL.Instance.GetPlayer().gameObject);
             InputManager.Instance.ExitBuildingMode();
+            isBuildMode= false;
         }
 
     }
@@ -140,11 +144,22 @@ public class ShopManager : Singletonref<ShopManager>
         if (CurrentPurchaseObject.GetComponent<InteractiveBlock>() != null)
         {CurrentPurchaseObject.GetComponent<InteractiveBlock>().Init();}
         //Confirm the build location
-        InputManager.Instance.UpdateGridPositions(CurrentPurchaseObject.transform.position);
+        InputManager.Instance.UpdateGridPositions(CurrentPurchaseObject.transform.position, 
+            CurrentPurchaseObject.GetComponent<InteractiveBlock>().GetLookPos().position);
         CurrentPurchaseObject = null;
         //Exit Building mode
         InputManager.Instance.ChangeMode(CameraTargetMode.PlayerCam, GameDataDNDL.Instance.GetPlayer().gameObject);
         InputManager.Instance.ExitBuildingMode();
+        isBuildMode = false;
     }
     
+    IEnumerator CheckConfirmBTN()
+    {
+        while (isBuildMode) { 
+        var t = CurrentPurchaseObject.GetComponent<InteractiveBlock>();
+        yield return null;
+            if(t!=null)
+            buildingHud.ConfirmButton.interactable= InputManager.Instance.CanPlaceHere(t.transform.position,t.GetLookPos().position);
+        }
+    }
 }

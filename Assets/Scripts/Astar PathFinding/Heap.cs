@@ -21,17 +21,18 @@ public class Heap<T> where T : IHeapItem<T>
     }
     void SortUp(T item)
     {
-        int parentIndex = ( item.HeapIndex - 1 )/ 2;
         while (true)
         {
+        int parentIndex = ( item.HeapIndex - 1 )/ 2;
+            if (parentIndex < 0) break;
             T parentItem = items[parentIndex];
             if (item.CompareTo(parentItem) > 0)
             {
                 Swap(item, parentItem);
             }
-            else break;
+            else { break; }
 
-            parentIndex=(item.HeapIndex - 1 )/ 2;
+            //parentIndex=(item.HeapIndex - 1 )/ 2;
            
         }
     }
@@ -60,7 +61,7 @@ public class Heap<T> where T : IHeapItem<T>
         while (true)
         {
             int Left=item.HeapIndex*2+1;
-            int Right=item.HeapIndex*2+1;
+            int Right=item.HeapIndex*2+2;
             int swapIdx = 0;
             if (Left < currentItemCount)
             {

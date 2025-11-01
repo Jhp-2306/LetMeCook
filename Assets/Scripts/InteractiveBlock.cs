@@ -10,12 +10,13 @@ public class InteractiveBlock : MonoBehaviour,IInteractable
     //public int TableID;
     //public string TableName;
     public EquipmentType equipmentType;
-    public Transform LookAtMe;
+    [SerializeField] private Transform LookAtMe;
     //public Material myMaterial;
 
     public SO_EquipmentData Data;
     //[SerializeField] GameObject ItemParent;
     protected bool m_isTableEmpty;
+    protected SaveDataTemplate savedata;
     public Transform GetLookPos()
     {
         return LookAtMe;
@@ -36,11 +37,19 @@ public class InteractiveBlock : MonoBehaviour,IInteractable
         Data.HandFullDisplayFuntionName : Data.DisplayFuntionName:"none";
     public virtual void Init()
     {
-
+        savedata = new SaveDataTemplate();
+        //savedata.id = GameSaveDNDL.GenerateId(EquipmentType.Refrigerator.ToString());
+        savedata.Position = transform.position;
+        savedata.Rotation = transform.rotation;
     }
     public virtual void ReadFromSave(SaveDataTemplate _data)
     {
-
+        savedata = new SaveDataTemplate();
+        savedata = _data;
+        transform.position = _data.Position;
+        transform.rotation = _data.Rotation;
+        //update the Grid
+        InputManager.Instance.UpdateGridPositions(transform.position, LookAtMe.position);
     }
     public virtual void OnClick()
     {

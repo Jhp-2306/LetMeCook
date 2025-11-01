@@ -1,4 +1,5 @@
 using ASPathFinding;
+using Constants;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,7 +7,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : MonoBehaviour, ITriggerDoor
 {
     Rigidbody rb;
 
@@ -47,7 +48,7 @@ public class PlayerMovement : MonoBehaviour
         if (target == pos) return;
         Vector3 snappedPos = new Vector3(pos.x, transform.position.y, pos.z);
         target = snappedPos;
-        OnReachCallback=callback;
+        OnReachCallback = callback;
         //Debug.Log($"<color=cyan>Target set to: {snappedPos}</color>");
     }
 
@@ -82,7 +83,7 @@ public class PlayerMovement : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(minPathUpdateTime);
-            Debug.Log($"target move conditions{Vector3.SqrMagnitude(target - lastTargetPos) > sqrMoveThreshold},{target},{lastTargetPos}{Vector3.SqrMagnitude(target - lastTargetPos)}");
+            //Debug.Log($"target move conditions{Vector3.SqrMagnitude(target - lastTargetPos) > sqrMoveThreshold},{target},{lastTargetPos}{Vector3.SqrMagnitude(target - lastTargetPos)}");
             if (Vector3.SqrMagnitude(target - lastTargetPos) > sqrMoveThreshold ||
                 (this.gameObject.transform.position != target && target == lastTargetPos && !isPlayerMoving/*&& Vector3.SqrMagnitude(target - lastTargetPos) < sqrMoveThreshold*/))
             {
@@ -143,7 +144,7 @@ public class PlayerMovement : MonoBehaviour
                 if (pathIndex == path.finishLineIndex)
                 {
                     followingPath = false;
-                     Debug.Log($"Player Comments We Are At Stop");
+                    Debug.Log($"Player Comments We Are At Stop");
                     isPlayerMoving = false;
                     break;
                 }
@@ -173,7 +174,7 @@ public class PlayerMovement : MonoBehaviour
                         }
                     }
                 }
-               
+
             }
             if (transform.position == target)//PlayerStoped in Location
             {
@@ -182,7 +183,7 @@ public class PlayerMovement : MonoBehaviour
                 isPlayerMoving = false;
                 OnReachCallback?.Invoke();
             }
-            
+
             yield return null;
         }
 
@@ -202,6 +203,21 @@ public class PlayerMovement : MonoBehaviour
             path.DrawWithGizmos();
         }
     }
+
+    public void onDoorTrigger(GameObject moveToPoint, PlayableAreas toArea, Action Callback)
+    {
+        // stop Player Input from Touching any other place
+        InputManager.Instance.SetClick(true);
+        // Move To the Location 
+        GoToPosition(moveToPoint.transform.position, false, () =>
+        {
+            Callback?.Invoke();
+            // Change the Touch area 
+            GameDataDNDL.Instance.SwitchArea(toArea);
+            // pass the call back to turn on the player input
+            InputManager.Instance.SetClick(false);
+        });
+    }
 }
 public enum playerState
 {
@@ -214,7 +230,7 @@ public enum playerState
 [System.Serializable]
 public enum typeofhandheld
 {
-    veg, meal, box
+    ingredients, plate, box
 }
 
 

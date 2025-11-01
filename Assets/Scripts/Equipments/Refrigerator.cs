@@ -10,13 +10,10 @@ using UnityEngine;
 public class Refrigerator : InteractiveBlock
 {
     #region Data Saving
-    SaveDataTemplate savedata;
+    
     public override void ReadFromSave(SaveDataTemplate _data)
     {
-        savedata=new SaveDataTemplate();
-        savedata= _data;
-        transform.position = _data.Position;
-        transform.rotation = _data.Rotation;
+       base.ReadFromSave(_data);
         var data= BasicStorageSystem<IStorageItem>.LoadDataFromString(_data.Data.ToString());
         Slots =BasicStorageSystem<IStorageItem>.LoadSizeFromString(_data.Data.ToString());
         storageSystem=new BasicStorageSystem<IStorageItem>(Slots);
@@ -55,10 +52,8 @@ public class Refrigerator : InteractiveBlock
     }
     public override void Init()
     {
-        savedata= new SaveDataTemplate();
+        base.Init();
         savedata.id = GameSaveDNDL.GenerateId(EquipmentType.Refrigerator.ToString());
-        savedata.Position = transform.position;
-        savedata.Rotation = transform.rotation;
         savedata.Type = EquipmentType.Refrigerator;
         if (storageSystem == null)
         {

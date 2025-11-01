@@ -28,15 +28,38 @@ public class Stove : InteractiveBlock
     Coroutine CookingCoroutine;
     private void Start()//testing purpose
     {
-        Init();
+        //Init();
     }
-    public override void Init()
+    public override void ReadFromSave(SaveDataTemplate _data)
     {
+        base.ReadFromSave(_data);
         Slots = new List<ProcedureStep>();
         HUD.SetActive(false);
         isPicked = true;
         isCooking = false;
         isInteractable = true;
+        //BeforeSaving();
+        GameSaveDNDL.DataUpdateBeforeSave -= BeforeSaving;
+        GameSaveDNDL.DataUpdateBeforeSave += BeforeSaving;
+    }
+
+    public override void Init()
+    {
+        base.Init();
+        savedata.id = GameSaveDNDL.GenerateId(EquipmentType.Stove.ToString());
+        savedata.Type = EquipmentType.Stove;
+        Slots = new List<ProcedureStep>();
+        HUD.SetActive(false);
+        isPicked = true;
+        isCooking = false;
+        isInteractable = true;
+        BeforeSaving();
+        GameSaveDNDL.DataUpdateBeforeSave += BeforeSaving;
+    }
+    void BeforeSaving()
+    {
+        //savedata.Data = storageSystem.GetAllDataInString();
+        GameSaveDNDL.Instance.AddSaveData(savedata);
     }
     public void AddIngredient(Ingredient ingredient)
     {
@@ -46,14 +69,14 @@ public class Stove : InteractiveBlock
             Slots.Add(ingredient.ingrendient);
             //After Adding Ingredient inHandItem Removeds
             GameDataDNDL.Instance.GetPlayer().RemoveFromHand();
-            SlotsUpgrade();
+            SlotsUpdate();
         }
         else
         {
             Debug.Log(CustomLogs.CC_TagLog("Stove", "Failed To Add Ingredient-- Max Slots Filled"));
         }
     }
-    public void SlotsUpgrade()
+    public void SlotsUpdate()
     {
         HUD.SetActive(true);
         SlotsHUD.SetActive(true);
@@ -86,7 +109,7 @@ public class Stove : InteractiveBlock
             Debug.Log(CustomLogs.CC_TagLog("Stove", $"Done Cooking Dish-- status{dishStatus}"));
         }
         var player = GameDataDNDL.Instance.GetPlayer();       
-        if (player.isHandsfull&& player.InHand.IGetType()==typeofhandheld.veg&&isPicked) { 
+        if (player.isHandsfull&& player.InHand.IGetType()==typeofhandheld.ingredients&&isPicked) { 
         AddIngredient(player.InHand.GetGameObject().GetComponent<Ingredient>());
         }
         else

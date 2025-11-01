@@ -18,26 +18,26 @@ namespace NPC
 
         public Vector3Int roam_AnchorMin, roam_AnchorMax;
         public List<Vector3> LeftSide, RightSide;
+        public Transform DoorEntryPosition, DoorExitPosition;
         private void Start()
         {
             CreatIDs();
-            //NpcRoaming();
-            //npc[0].SetNPC(GetRandomCoods(), true);
             roaming_npc = new Queue<NPC>();
             foreach (var t in npc)
             {
                 roaming_npc.Enqueue(t);
             }
             DestPadsQueue = new Queue<GameObject>();
-            foreach(var t in DestPads)
+            foreach (var t in DestPads)
             {
                 DestPadsQueue.Enqueue(t);
             }
             StartCoroutine(NPC_RoamingTimer());
+
         }
         void CreatIDs()
         {
-            for (int i = 0;i<npc.Count;i++)
+            for (int i = 0; i < npc.Count; i++)
             {
                 npc[i].SetNPC($"name{i}]", i);
             }
@@ -51,22 +51,47 @@ namespace NPC
 
         IEnumerator NPC_RoamingTimer()
         {
-            while (roaming_npc.Count>0)
+            while (roaming_npc.Count > 0)
             {
-                yield return new WaitForSeconds(3f);
-                NpcRoaming();
+                yield return new WaitForSeconds(coolDownTimeInSec);
+                if (TimeManagementDNDL.Instance.isRoaminghrs)
+                {
+                    if (TimeManagementDNDL.Instance.CurrentDayPhase == TimeManagementDNDL.DayPhase.KitchenOpen && DestPadsQueue.Count != 0)
+                    {
+                        //Send NPC inside the shop
+                        NPCMovingInsideTheShop();
+                    }
+                    else
+                    {
+                        NpcRoaming();
+                    }
+                }
             }
         }
         public void NPCMovingInsideTheShop()
         {
-            if (DestPadsQueue.Count > 0) { 
-             var temp=roaming_npc.Dequeue();
-                var finalLocationGO= DestPadsQueue.Dequeue();
-                temp.transform.position=GetNPCRandomCood();
-                temp.SetNPC(finalLocationGO.transform.position, false, finalLocationGO);
+            if (DestPadsQueue.Count > 0)
+            {
+                //var temp=roaming_npc.Dequeue();
+                var finalLocationGO = DestPadsQueue.Dequeue();
+                //return finalLocationGO;
+            var temp = roaming_npc.Dequeue();
+            temp.transform.position = GetNPCRandomCood();
+            temp.SetNPC(DoorEntryPosition.position, false,finalLocationGO);
             }
         }
-        public void NPCMovingOutsideTheShop(NPC npc,GameObject location)
+        //public GameObject GetAShopLoacation()
+        //{
+        //    if (DestPadsQueue.Count > 0)
+        //    {
+        //        //var temp=roaming_npc.Dequeue();
+        //        var finalLocationGO = DestPadsQueue.Dequeue();
+        //        return finalLocationGO;
+        //    }
+        //    return null;
+        //}
+
+        public void NPCMovingOutsideTheShop(NPC npc, GameObject location)
         {
             DestPadsQueue.Enqueue(location);
             npc.SetNPC(GetNPCRandomCood(), true);
@@ -81,7 +106,7 @@ namespace NPC
         }
         public void IGC_Get_NPC_Customer()
         {
-           NPCMovingInsideTheShop();
+            NPCMovingInsideTheShop();
         }
         public void IGC_NPC_ROAMING()
         {
@@ -93,9 +118,10 @@ namespace NPC
         {
             //Set a Spawn Side and move him from one connor to another
             bool isLeftToRight = UnityEngine.Random.value <= 0.5f;
-            if (isLeftToRight) {
+            if (isLeftToRight)
+            {
                 //Spawn from Left and end in Right
-                var temp=roaming_npc.Dequeue();
+                var temp = roaming_npc.Dequeue();
                 temp.gameObject.transform.position = LeftSide[UnityEngine.Random.RandomRange(0, LeftSide.Count)];
                 temp.SetNPC(RightSide[UnityEngine.Random.RandomRange(0, RightSide.Count)], true);
             }
@@ -113,7 +139,7 @@ namespace NPC
         }
         Vector3 GetRandomCoods()
         {
-            return UnityEngine.Random.value < 0.5 ? LeftSide[UnityEngine.Random.RandomRange(0,LeftSide.Count)]: RightSide[UnityEngine.Random.RandomRange(0, RightSide.Count)];
+            return UnityEngine.Random.value < 0.5 ? LeftSide[UnityEngine.Random.RandomRange(0, LeftSide.Count)] : RightSide[UnityEngine.Random.RandomRange(0, RightSide.Count)];
         }
         #endregion
     }

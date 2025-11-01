@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 public class GridMaker : MonoBehaviour
 {   
@@ -30,7 +31,7 @@ public class GridMaker : MonoBehaviour
         {
             for (int z = 0; z < GridWxH; z++)
             {
-                GridCell _tempcell = new GridCell(new Vector2(x, z), new Vector2((x* GridSize) + 1, (z* GridSize) + 1), false);
+                GridCell _tempcell = new GridCell(new Vector2(x, z), new Vector2((x* GridSize) + 1, (z* GridSize) + 1), CellStatus.None);
                 Layout.EditIndex(x, z, _tempcell);
             }
         }
@@ -43,24 +44,26 @@ public class GridMaker : MonoBehaviour
         var templist = Layout.GetAllCellsInList();
         foreach (var _tempcell in templist)
         {
-            _tempcell.IsOccupied = (Physics.CheckBox(_tempcell.GetCoordinates3D(), Vector3.one * 0.1f, Quaternion.identity, notWalkable));
+            _tempcell.IsOccupied = (Physics.CheckBox(_tempcell.GetCoordinates3D(), Vector3.one * 0.1f, Quaternion.identity, notWalkable)?CellStatus.Occupied:CellStatus.None);
             Layout.EditIndex((int)_tempcell.GetIndex().x, (int)_tempcell.GetIndex().y, _tempcell);
         }
     }
-    public bool ProcessCoordsList(List<Vector3> coordsList)
-    {
-        foreach (var pos in coordsList)
-        {
-            if (!processCoords(pos)) return false;
-        }
-        return true;
-    }
+    //public bool ProcessCoordsList(List<Vector3> coordsList)
+    //{
+    //    foreach (var pos in coordsList)
+    //    {
+    //        if (!processCoords(pos)) return false;
+    //    }
+    //    return true;
+    //}
     public bool processCoords(Vector3 pos)
     {
         var cell = GetGridFromPos(pos);
+        //var fwdcell = GetGridFromPos(ForwardPos);
         if (cell == null) return false;
+        //if (fwdcell == null) return false;
         Debug.Log($"Process coords{pos}{cell.GetCoordinates3D()}");
-        if (cell.GetCoordinates2D() == new Vector2(pos.x,pos.z) && !cell.IsOccupied) return true;
+        if (cell.GetCoordinates2D() == new Vector2(pos.x,pos.z) && cell.IsOccupied==CellStatus.None) return true;
         return false;
     }
     public GridCell GetGridFromPos(Vector3 pos)
@@ -72,20 +75,22 @@ public class GridMaker : MonoBehaviour
         return null;
     }
 
-    public void UpdateCellOccupied(Vector3 pos, bool isOcc)
+    public void UpdateCellOccupied(Vector3 pos, CellStatus isOcc,Vector3 fwdpos)
     {
         var t = GetGridFromPos(pos);
         t.IsOccupied = isOcc;
         Layout.EditIndex((int)t.GetIndex().x, (int)t.GetIndex().y, t);
+        t= GetGridFromPos(fwdpos);
+        t.IsOccupied=CellStatus.ParticalOccupied;
     }
     
-    public void UpdateCellOccupied(List<Vector3> Coords, bool isOcc)
-    {
-        foreach (var pos in Coords)
-        {
-            UpdateCellOccupied(pos, isOcc);
-        }
-    }
+    //public void UpdateCellOccupied(List<Vector3> Coords, CellStatus isOcc)
+    //{
+    //    foreach (var pos in Coords)
+    //    {
+    //        UpdateCellOccupied(pos, isOcc);
+    //    }
+    //}
     public Vector3 GetRoundAnchorPositionFromWorldPosiion(Vector3 pos)
     {
         var temppos= GetIndexFromAnchorPosition(new Vector2(pos.x,pos.z));
@@ -153,16 +158,32 @@ public class GridMaker : MonoBehaviour
         return Layout.GetAtIndex((int)pos.x, (int)pos.y);
     }
     
-    public List<Vector3> GetAvailableNeighbourPosition(Vector3 worldpos)
+    public List<Vector3> GetAvailableNeighbourPosition(Vector3 worldpositions)
     {
-        var idx= GetIndexFromAnchorPosition(/*GetGridFromPos(worldpos).GetIndex()*/new Vector2(worldpos.x,worldpos.z));
-        List<Vector3> availableposition= new List<Vector3>();  
-        if(!GetCell(idx+Vector2.up).IsOccupied)availableposition.Add(GetCell(idx+Vector2.up).GetCoordinates3D());
-        if(!GetCell(idx+Vector2.left).IsOccupied)availableposition.Add(GetCell(idx+Vector2.left).GetCoordinates3D());
-        if(!GetCell(idx+Vector2.right).IsOccupied)availableposition.Add(GetCell(idx+Vector2.right).GetCoordinates3D());
-        if(!GetCell(idx+Vector2.down).IsOccupied)availableposition.Add(GetCell(idx+Vector2.down).GetCoordinates3D());
+        var idx= GetIndexFromAnchorPosition(/*GetGridFromPos(worldpos).GetIndex()*/new Vector2(worldpositions.x,worldpositions.z));
+        List<Vector2> dir= new List<Vector2>() { Vector2.up,Vector2.left,Vector2.right,Vector2.down};
+        List<Vector3> availableposition= new List<Vector3>();
+        foreach (Vector2 pos in dir) {
+            if (GetCell(idx + pos).IsOccupied == CellStatus.None)
+                availableposition.Add(GetCell(idx + pos).GetCoordinates3D());
+        }
         return availableposition;
     }
+
+    public bool CanPlaceHere(Vector3 pos,Vector3 fwdpos)
+    {
+        var cell = GetGridFromPos(pos);
+        var fwdcell = GetGridFromPos(fwdpos);
+        if (cell == null) return false;
+        if (fwdcell == null) return false;
+        Debug.Log($"Can Place Here {pos}{cell.GetCoordinates3D()}");
+        if (/*cell.GetCoordinates2D() == new Vector2(pos.x, pos.z) && NEED TO CHECK WHY I PUT THIS CONDITION*/ 
+            cell.IsOccupied == CellStatus.None) { 
+            if(fwdcell.IsOccupied==CellStatus.Occupied) return false;
+            return true; }
+        return false;
+    }
+
     public class CustomGrid<T>
     {
         int _width;
@@ -194,15 +215,21 @@ public class GridMaker : MonoBehaviour
 
     }
 
-   
+    public enum CellStatus
+    {
+        None=0,
+        ParticalOccupied=1,
+        Occupied
 
+    }
     public class GridCell
     {
         Vector2 Index;
         Vector2 AnchorCoordinates;
-        bool isOccupied;
-        public bool IsOccupied { get { return isOccupied; } set { isOccupied = value; } }
-        public GridCell(Vector2 index, Vector2 coordinates, bool isOccupied)
+        //bool isOccupied;//TODO: Update this variable with CellStatus
+        CellStatus isOccupied;
+        public CellStatus IsOccupied { get { return isOccupied; } set { isOccupied = value; } }
+        public GridCell(Vector2 index, Vector2 coordinates, CellStatus isOccupied)
         {
             Index = index;
             AnchorCoordinates = coordinates;

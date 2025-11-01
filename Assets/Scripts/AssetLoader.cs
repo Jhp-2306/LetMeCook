@@ -13,6 +13,7 @@ public class AssetLoader : Singletonref<AssetLoader>
     public Sprite iconMissing;
 
     public GameObject itemPrefab;
+    public GameObject PlatesPrefab;
     public Sprite GetSpriteFromList(int index) => sprites[index];
     public SO_IngredientData GetIngredientSO(IngredientType type, processIngredient process=processIngredient.None)
     {

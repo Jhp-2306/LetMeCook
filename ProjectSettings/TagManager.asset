@@ -7,8 +7,8 @@ TagManager:
   - Backwall
   - Leftwall
   - Rightwall
-  - locked
-  - unlocked
+  - Kitchen
+  - Room
   layers:
   - Default
   - TransparentFX

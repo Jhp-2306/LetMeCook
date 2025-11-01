@@ -19,12 +19,17 @@ namespace ASPathFinding
         public int Hcost;
         int heapIndex;
         public ASPFNode parent;
+        ////Editor Only
+        //public GridUI MyUI;
         public ASPFNode(bool isWalkable, Vector3 worldPosition, int gridX, int gridY)
         {
             m_IsWalkable = isWalkable;
             m_worldPosition = worldPosition;
             this.gridX = gridX;
             this.gridY = gridY;
+            //Editor Only
+            //MyUI = myUI;
+            //PrintDetails(Color.white);
         }
 
         public int Fcost { get=>Gcost+Hcost;  }
@@ -34,14 +39,18 @@ namespace ASPathFinding
 
         public int CompareTo(ASPFNode other)
         {
+            //Debug.();
            int compare=Fcost.CompareTo(other.Fcost);
+            //Debug.Log("FCost Compare:"+compare);
             if (compare == 0)
             {
                 compare=Hcost.CompareTo(other.Hcost);
+            //Debug.Log("GCost Compare:"+compare);
             }
             return -compare;
             
         }
+       
     }
 
     public struct Line

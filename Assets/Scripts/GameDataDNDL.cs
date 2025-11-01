@@ -27,10 +27,24 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
     public List<InteractiveBlock> TableObjects;
     public SO_EquipmentDataList ItemList;
     public ASPFGrid Navmesh;
+    public ASPFGrid AINavmesh;
     public RecipeBook book;
+
+    public List< GameObject > KitchenArea,RoomArea;
+    public PlayableAreas CurrentArea;
     private void Awake()
     {
         base.Awake();
+        //Variable init
+        m_KitchenState = 0;
+        m_GameState = GameState.PlayGame;
+        m_UserDataLocal = new UserDataLocal();
+        m_UserDataLocal = SaveData.Instance.LocalData;
+        CurrentArea = PlayableAreas.Kitchen;
+        //script inits
+        Navmesh.Init();
+        AINavmesh.Init();
+        book.init();
     }
     private void OnApplicationQuit()
     {
@@ -43,13 +57,10 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
     }
     private void Start()
     {
-        m_KitchenState = 0;
-        m_GameState = GameState.PlayGame;
-        SaveData.Instance.LoadInstance();
-        m_UserDataLocal = new UserDataLocal();
-        m_UserDataLocal = SaveData.Instance.LocalData;
+       
+        SaveData.Instance.LoadInstance();       
         //Debug.Log($"check {SaveData.Instance.LocalData == null}");
-        foreach(var t in SaveData.Instance.saveDataType.GetAllTheData())
+        foreach (var t in SaveData.Instance.saveDataType.GetAllTheData())
         {
             Debug.Log($"Save Template {t.id}{t.Type}");
             //here spawn the Tools
@@ -63,14 +74,11 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
                 }
             }
         }
-
-        //Calling inits
-        book.init();
+       
+       
     }
 
-    private void OnDrawGizmos()
-    {
-    }
+  
 
     public void SetPlayer(Player player)
     {
@@ -94,6 +102,14 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
         Navmesh.UpdateIsWalkableSpecificCell(x, y, value);
     }
 
+    public void UpdateNavMesh(Vector3 worldpos, bool value)
+    {
+        Navmesh.UpdateIsWalkableSpecificCell(worldpos, value);
+    }
+    public void UpdateAINavMesh(Vector3 worldpos, bool value)
+    {
+        AINavmesh.UpdateIsWalkableSpecificCell(worldpos, value);
+    }
     public Dishes GetDish(List<ProcedureStep> procedureSteps)
     {
         return book.GetDishes(procedureSteps);
@@ -101,5 +117,10 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
     public int GetCookingTime(Dishes dish)
     {
         return book.GetDishCookTime(dish);
+    }
+
+    public void SwitchArea(PlayableAreas area)
+    {
+        CurrentArea= area;
     }
 }

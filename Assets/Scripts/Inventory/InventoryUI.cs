@@ -36,7 +36,10 @@ public class InventoryUI : MonoBehaviour
             {
                 Items[i].SetActive(true);
                 var item = items.GetItemAtIndex(i);
-                Items[i].GetComponent<InventoryItemHolder>().Set(AssetLoader.Instance.GetIngredientSO(item.Type), item.GetQuanitity().ToString(),item.Type.ToString(),()=> { item.RemoveQuanitity(); });
+                Items[i].GetComponent<InventoryItemHolder>().Set(AssetLoader.Instance.GetIngredientSO(item.Type), 
+                    item.GetQuanitity().ToString(),item.Type.ToString(),()=> { item.RemoveQuanitity();
+                    Close();
+                });
             }
             else
             {

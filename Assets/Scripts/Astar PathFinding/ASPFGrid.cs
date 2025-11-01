@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using UnityEngine;
+using static GridMaker;
 
 
 namespace ASPathFinding
@@ -23,7 +25,10 @@ namespace ASPathFinding
         private Vector3 gridOffset=Vector3.zero;
         int gridSizeX, gridSizeY;
         bool isGridCreated;
-        private void Start()
+        //public GameObject GuiPrefab;
+        //public GameObject PrefabGridUIParent;
+        
+        public void Init()
         {
             nodeDiameter = m_PlayerRadius * 2;
             gridSizeX = Mathf.RoundToInt(m_GridSize.x / nodeDiameter);
@@ -56,6 +61,7 @@ namespace ASPathFinding
                     Vector3 worldPoint = worldBottomLeft + new Vector3((x * 2) + 1, 0,(y * 2) + 1);
                     //bool Walkable=!(Physics.CheckSphere(worldPoint, m_PlayerRadius, notWalkable));
                     bool Walkable=!(Physics.CheckBox(worldPoint, Vector3.one* m_PlayerRadius/2, Quaternion.identity, notWalkable));
+                    
                     grid[x,y]=new ASPFNode(Walkable, worldPoint,x,y);
                 }
             }
@@ -78,8 +84,15 @@ namespace ASPathFinding
             grid[x, y].IsWalkable = iswalkable;
             saveGridData() ;
         }
+        public void UpdateIsWalkableSpecificCell(Vector3 worldposition, bool iswalkable)
+        {
+            var node=GetNodeFromWorldPosition(worldposition);
+            grid[node.gridX, node.gridY].IsWalkable = iswalkable;
+            saveGridData();
+        }
         void saveGridData()
         {
+            return;//Testing Only
             SerializationManager.Save(file_name, grid);
         }
         /// <summary>
@@ -140,6 +153,7 @@ namespace ASPathFinding
                 node.Gcost = 0;
                 node.Hcost = 0;
                 node.parent = null;
+                //node.PrintDetails(Color.white);
             }
 
         }

@@ -12,7 +12,8 @@ using static UnityEngine.Rendering.DebugUI;
 
 public class InputManager : Singletonref<InputManager>
 {
-
+    //public static readonly string TAG_Locked = "locked";
+    //public static readonly string TAG_UnLocked = "unlocked";
     public static Action<Vector3, bool, Action> OnMovementInput = delegate { };
     public static Action OnHoldingCancel = delegate { };
     Transform previousdata;
@@ -40,6 +41,8 @@ public class InputManager : Singletonref<InputManager>
     CameraTargetMode _currenttargetmode;
     GameObject _currenttarget { get => ShopManager.Instance.GetCurrentPurchaseObject; }
     GridMaker _grid { get => GameDataDNDL.Instance.GetGrid(); }
+    bool disableClick;
+
     private void Start()
     {
         //Basic Mode
@@ -60,13 +63,14 @@ public class InputManager : Singletonref<InputManager>
         if (_currenttargetmode == CameraTargetMode.PlayerCam)
         {
             // On Clicked
+            if (disableClick) return;
             if (EventSystem.current.IsPointerOverGameObject())
                 return;
             RaycastHit ray;
             if (Physics.Raycast(Camera.main.ScreenPointToRay(ClickPosition), out ray, 1000f))
             {
                 //CustomLogs.CC_Log($"{ray.point}", "cyan");
-                if (ray.transform.tag == "unlocked")
+                if (ray.transform.tag == GameDataDNDL.Instance.CurrentArea.ToString()) 
                 {
 
                     if (GameDataDNDL.Instance.GetPlayer().isHandsfull)
@@ -238,23 +242,11 @@ public class InputManager : Singletonref<InputManager>
     //    Debug.Log("stop Holding call the callbacks");
     //    _callback?.Invoke();
     //}
-    public void UpdateGridPositions(Vector3 pos)
+    public void UpdateGridPositions(Vector3 pos,Vector3 fwdpos)
     {
-        _grid.UpdateCellOccupied(pos, true);
+        _grid.UpdateCellOccupied(pos, GridMaker.CellStatus.Occupied,fwdpos);
         var t = GridMaker.GetIndexFromAnchorPosition(new Vector2(pos.x, pos.z));
         GameDataDNDL.Instance.UpdateNavMesh((int)t.x, (int)t.y, false);
-    }
-    public void InteractionButtonClick(InteractiveBlock table)
-    {
-        Interactionbtn.AddEvent(table,
-                        table.GetInteractableName(), true,
-                        table.isTableEmpty());
-        //OnMovementInput(table.GetLookPos().position, true);
-    }
-    public void InteractionButtonAddEvent(string btnName, Action onClick)
-    {
-        Interactionbtn.ResetButton("Interact");
-        Interactionbtn.AddEvent(btnName, onClick);
     }
     public void ChangeMode(CameraTargetMode _mode, GameObject _target)
     {
@@ -292,5 +284,26 @@ public class InputManager : Singletonref<InputManager>
     public void ExitBuildingMode()
     {
         _cameraControle.CameraSmoothValue = 5f;
+    }
+
+    public void InteractionButtonClick(InteractiveBlock table)
+    {
+        Interactionbtn.AddEvent(table,
+                        table.GetInteractableName(), true,
+                        table.isTableEmpty());
+        //OnMovementInput(table.GetLookPos().position, true);
+    }
+    public void InteractionButtonAddEvent(string btnName, Action onClick)
+    {
+        Interactionbtn.ResetButton("Interact");
+        Interactionbtn.AddEvent(btnName, onClick);
+    }
+    public bool CanPlaceHere(Vector3 pos,Vector3 fwdpos) {
+    return _grid.CanPlaceHere(pos, fwdpos);
+    }
+
+    public void SetClick(bool Disable)
+    {
+        disableClick = Disable;
     }
 }

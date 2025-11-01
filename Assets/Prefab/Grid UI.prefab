@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7943116355417153984}
   - component: {fileID: 7943116355417153999}
   - component: {fileID: 7943116355417153998}
-  m_Layer: 5
+  m_Layer: 2
   m_Name: Text (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -35,8 +35,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.4806}
-  m_SizeDelta: {x: 2, y: 0.9612}
+  m_AnchoredPosition: {x: 0, y: -0.9979}
+  m_SizeDelta: {x: 2, y: 1.9958}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7943116355417153999
 CanvasRenderer:
@@ -146,7 +146,7 @@ GameObject:
   - component: {fileID: 7943116355447602571}
   - component: {fileID: 7943116355447602573}
   - component: {fileID: 7943116355447602572}
-  m_Layer: 5
+  m_Layer: 2
   m_Name: Text (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -281,7 +281,7 @@ GameObject:
   - component: {fileID: 7943116355985537637}
   - component: {fileID: 7943116355985537638}
   - component: {fileID: 7943116355985537639}
-  m_Layer: 5
+  m_Layer: 2
   m_Name: Bg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -359,7 +359,7 @@ GameObject:
   - component: {fileID: 7943116356316605989}
   - component: {fileID: 7943116356316605988}
   - component: {fileID: 7943116356316605990}
-  m_Layer: 5
+  m_Layer: 2
   m_Name: Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -482,7 +482,7 @@ GameObject:
   - component: {fileID: 7943116356876361636}
   - component: {fileID: 7943116356876361635}
   - component: {fileID: 7943116356876361634}
-  m_Layer: 5
+  m_Layer: 2
   m_Name: Grid UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -504,7 +504,7 @@ RectTransform:
   - {fileID: 7943116355417153984}
   - {fileID: 7943116355985537637}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -528,7 +528,9 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 25
+  m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0

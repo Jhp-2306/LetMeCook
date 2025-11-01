@@ -1,4 +1,6 @@
 using ASPathFinding;
+using Constants;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,7 +11,7 @@ namespace NPC
 {
 
     //[RequireComponent(typeof(NavMeshAgent))]
-    public class NPC : MonoBehaviour
+    public class NPC : MonoBehaviour, ITriggerDoor
     {
         int id;
         string npcName;
@@ -18,7 +20,7 @@ namespace NPC
         bool isRoaming;
         Coroutine myCor;
 
-        public TMPro.TextMeshProUGUI namedis,iddis;
+        public TMPro.TextMeshProUGUI namedis, iddis;
 
         public GameObject CurrentPlatform;
 
@@ -33,23 +35,24 @@ namespace NPC
         bool isPlayerMoving;
         const float pathUpdateMoveThreshold = 0.5f;
         const float minPathUpdateTime = 0.2f;
+        Action OnReachCallback = delegate { };
         public void Start()
         {
             //Agent = GetComponent<NavMeshAgent>();
             //gameObject.SetActive(false);
             StartCoroutine(UpdatePath());
         }
-        public void SetNPC(string _npcname,int _id)
+        public void SetNPC(string _npcname, int _id)
         {
-            npcName=_npcname;
+            npcName = _npcname;
             id = _id;
             namedis.text = npcName;
-            iddis.text= id.ToString();
+            iddis.text = id.ToString();
         }
-        public void SetNPC(Vector3 pos, bool isroaming,GameObject myplatform=null)
+        public void SetNPC(Vector3 pos, bool isroaming, GameObject myplatform = null, Action callback = null)
         {
             this.gameObject.SetActive(true);
-            if(myCor != null)
+            if (myCor != null)
             {
                 StopCoroutine(myCor);
             }
@@ -58,7 +61,23 @@ namespace NPC
             CurrentPlatform = myplatform;
             Vector3 snappedPos = new Vector3(pos.x, transform.position.y, pos.z);
             target = snappedPos;
-            myCor=StartCoroutine(UpdatePath());
+            //if()
+            OnReachCallback = callback;
+            myCor = StartCoroutine(UpdatePath());
+        }
+
+        IEnumerator WaitingForTheOrder(float waitTimer)
+        {
+            var timer = 0f;
+            while (timer < waitTimer)
+            {
+                yield return null;
+                timer += Time.deltaTime;
+                //update the waiting progress bar
+            }
+            //once timer runs out leave;
+            SetNPC(NPCManager.Instance.DoorExitPosition.position, true);
+
         }
 
         //IEnumerator GoToPositions(Vector3 _pos)
@@ -131,7 +150,7 @@ namespace NPC
 
             while (followingPath)
             {
-                       //Debug.Log($"Player Comments We Are At Stop");
+                //Debug.Log($"Player Comments We Are At Stop");
                 Vector2 pos2D = new Vector2(transform.position.x, transform.position.z);
 
                 while (path != null && path.turnBoundaries != null &&
@@ -155,9 +174,9 @@ namespace NPC
                         yield break;
                     }
                 }
-                
+
                 if (pathIndex < path.lookPoints.Length &&
-                    
+
                     Vector2.Distance(new Vector2(transform.position.x, transform.position.z),
                     new Vector2(path.lookPoints[pathIndex].x, path.lookPoints[pathIndex].z)) < 0.2f)
                 {
@@ -203,9 +222,9 @@ namespace NPC
                     Debug.Log($"AI Reached At the Stop");
                     followingPath = false;
                     isPlayerMoving = false;
-                    //OnReachCallback?.Invoke();
+                    OnReachCallback?.Invoke();
                     //if it not roaming then call the disable function
-                    if (isRoaming)
+                    if (isRoaming&&target!=NPCManager.Instance.DoorExitPosition.position)
                     {
                         DisableMe();
                     }
@@ -230,6 +249,38 @@ namespace NPC
                 StopCoroutine(myCor);
             }
             NPCManager.Instance.DisableNPC(this);
+        }
+
+        public void onDoorTrigger(GameObject moveToPoint, PlayableAreas toArea, Action Callback)
+        {
+            SetNPC(moveToPoint.transform.position, isRoaming, CurrentPlatform, () =>
+            {
+                if (!isRoaming)
+                {
+                    //request a Destination pad inside the shop
+                    //var go = NPCManager.Instance.GetAShopLoacation();
+                    if (CurrentPlatform != null)
+                    {
+                        SetNPC(CurrentPlatform.transform.position, false, CurrentPlatform, () => {
+                            StartCoroutine(WaitingForTheOrder(UnityEngine.Random.RandomRange(5, 10))); 
+                        });//Callback should trigger ording and waiting phase
+                        Callback?.Invoke();
+                    }
+                    else
+                    {
+                        DisableMe();
+                        Callback?.Invoke();
+
+                    }
+                }
+                else
+                {
+                    //request a End Roaming Point
+                    NPCManager.Instance.NPCMovingOutsideTheShop(this,CurrentPlatform);
+                    Callback?.Invoke();
+                    CurrentPlatform = null;
+                }
+            });
         }
     }
 }

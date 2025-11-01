@@ -210,5 +210,10 @@ namespace Constants
         }
     }
 
-
+    public enum PlayableAreas
+    {
+        None,
+        Kitchen,
+        Room,
+    }
 }
