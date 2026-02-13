@@ -11,16 +11,16 @@ public class ShopItemHolderUI : MonoBehaviour
     public TextMeshProUGUI Cost;
     public Image Icon;
     public Button Btn;
-    public GameObject Prefab;
+    public string PrefabID;
     //public GameObject Table;
     EquipmentType type;
 
-    public void Setup(string name,int cost/*,Sprite icon = null*/,GameObject _prefab,EquipmentType _type)
+    public void Setup(string name,int cost, string _prefab,EquipmentType _type, Sprite icon = null)
     {
         Name.text = name;
         Cost.text = cost.ToString();
-        //Icon.sprite = icon;
-        Prefab = _prefab;
+        Icon.sprite = icon;
+        PrefabID = _prefab;
         type = _type;
     }
     public void BuyThisProduct()
@@ -30,7 +30,7 @@ public class ShopItemHolderUI : MonoBehaviour
         //close the shop
         ShopManager.Instance.CloseShop();
         //go into building mode
-        ShopManager.Instance.BuildModeActivate(Prefab);
+        ShopManager.Instance.BuildModeActivate(PrefabID);
         
         
     }

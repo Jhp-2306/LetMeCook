@@ -2,13 +2,14 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!78 &1
 TagManager:
-  serializedVersion: 2
+  serializedVersion: 3
   tags:
   - Backwall
   - Leftwall
   - Rightwall
   - Kitchen
   - Room
+  - locked
   layers:
   - Default
   - TransparentFX
@@ -18,7 +19,7 @@ TagManager:
   - UI
   - ASPFNotWalkable
   - Floor
-  - 
+  - Icon
   - 
   - 
   - 
@@ -49,3 +50,5 @@ TagManager:
   - name: UI
     uniqueID: 3971166491
     locked: 0
+  m_RenderingLayers:
+  - Default

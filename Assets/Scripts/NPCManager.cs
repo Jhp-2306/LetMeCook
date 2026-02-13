@@ -9,13 +9,13 @@ namespace NPC
     public class NPCManager : Singletonref<NPCManager>
     {
         public List<GameObject> DestPads;
-        private Queue<GameObject> DestPadsQueue;
+        private Queue<Counter> DestPadsQueue;
 
         public List<NPC> npc;
         Queue<NPC> roaming_npc;
 
         public int coolDownTimeInSec = 3;
-
+        public float insideTrafficTimer = 10f;
         public Vector3Int roam_AnchorMin, roam_AnchorMax;
         public List<Vector3> LeftSide, RightSide;
         public Transform DoorEntryPosition, DoorExitPosition;
@@ -27,10 +27,10 @@ namespace NPC
             {
                 roaming_npc.Enqueue(t);
             }
-            DestPadsQueue = new Queue<GameObject>();
+            DestPadsQueue = new Queue<Counter>();
             foreach (var t in DestPads)
             {
-                DestPadsQueue.Enqueue(t);
+                DestPadsQueue.Enqueue(t.GetComponent<Counter>());
             }
             StartCoroutine(NPC_RoamingTimer());
 
@@ -51,13 +51,16 @@ namespace NPC
 
         IEnumerator NPC_RoamingTimer()
         {
+            float TrafficTimer=0f;
             while (roaming_npc.Count > 0)
             {
                 yield return new WaitForSeconds(coolDownTimeInSec);
+                TrafficTimer += coolDownTimeInSec;
                 if (TimeManagementDNDL.Instance.isRoaminghrs)
                 {
-                    if (TimeManagementDNDL.Instance.CurrentDayPhase == TimeManagementDNDL.DayPhase.KitchenOpen && DestPadsQueue.Count != 0)
+                    if (TimeManagementDNDL.Instance.CurrentDayPhase == TimeManagementDNDL.DayPhase.KitchenOpen && DestPadsQueue.Count != 0&&TrafficTimer>insideTrafficTimer)
                     {
+                        TrafficTimer = 0;
                         //Send NPC inside the shop
                         NPCMovingInsideTheShop();
                     }
@@ -75,31 +78,23 @@ namespace NPC
                 //var temp=roaming_npc.Dequeue();
                 var finalLocationGO = DestPadsQueue.Dequeue();
                 //return finalLocationGO;
-            var temp = roaming_npc.Dequeue();
-            temp.transform.position = GetNPCRandomCood();
-            temp.SetNPC(DoorEntryPosition.position, false,finalLocationGO);
+                var temp = roaming_npc.Dequeue();
+                Debug.Log(CustomLogs.CC_TagLog("NPC-Manager", $"removing count{DestPadsQueue.Count},{temp.npcName},{finalLocationGO == null}"));
+                temp.transform.position = GetNPCRandomCood();
+                temp.SetNPC(DoorEntryPosition.position, false, finalLocationGO);
             }
         }
-        //public GameObject GetAShopLoacation()
-        //{
-        //    if (DestPadsQueue.Count > 0)
-        //    {
-        //        //var temp=roaming_npc.Dequeue();
-        //        var finalLocationGO = DestPadsQueue.Dequeue();
-        //        return finalLocationGO;
-        //    }
-        //    return null;
-        //}
-
-        public void NPCMovingOutsideTheShop(NPC npc, GameObject location)
+        
+        public void NPCMovingOutsideTheShop(NPC npc, Counter location)
         {
             DestPadsQueue.Enqueue(location);
-            npc.SetNPC(GetNPCRandomCood(), true);
+            Debug.Log(CustomLogs.CC_TagLog("NPC-Manager", $"adding back count{DestPadsQueue.Count},{location == null}"));
+            //npc.SetNPC(GetNPCRandomCood(), true);
         }
         #region IGC Functions
         public void IGC_NPC_Back_Roaming(int id)
         {
-            DestPadsQueue.Enqueue(npc[id].CurrentPlatform);
+            //DestPadsQueue.Enqueue(npc[id].CurrentPlatform);
             npc[id].SetNPC(GetRandomCoods(), true);
             roaming_npc.Enqueue(npc[id]);
 

@@ -27,6 +27,15 @@ public class Player : MonoBehaviour
         inHand = null;
         isHandsfull = false;
     }
+    public IHandHeld MovetheHandheld(Transform position)
+    {
+        var go =InHand.GetGameObject();
+        go.transform.SetParent(position);
+        go.transform.localPosition = Vector3.zero;
+        inHand = null;
+        isHandsfull=false;
+        return go.GetComponent<IHandHeld>();
+    }
     private void Start()
     {
         SetPlayerToGameData();

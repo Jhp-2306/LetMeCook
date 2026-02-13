@@ -1,0 +1,77 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Default Local Group
+  m_EditorClassIdentifier: 
+  m_GroupName: Default Local Group
+  m_GUID: 0234677e0be8bdd47a87894fc87887fa
+  m_SerializeEntries:
+  - m_GUID: 0f1fc4582f3454944966826a8c36a62d
+    m_Address: Mixing_Bowl_Icon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Icons
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 39f5e4171f45b37429af64f3a2d99872
+    m_Address: Empty_Tabel_Icon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Icons
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 41fd89f89ed367240904de6d8104836f
+    m_Address: Stove_Icon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Icons
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 44707321f7ca2514b91a5450934de398
+    m_Address: Oven_Icon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Icons
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7319d3d7ff1355a4182280b9b7647d8d
+    m_Address: Bin_Icon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Icons
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9df855989f194cd40b3d63f6cd7a7177
+    m_Address: Platetray_Icon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Icons
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9f7d5b50d70c58f4e960d036b0806d14
+    m_Address: Fryer_Icon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Icons
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a4a0c0ff7799b3547ad7fc94b7b22d03
+    m_Address: Chopping_Board_Icon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Icons
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: df738a66af761874bbbf0a2c101ae589
+    m_Address: Refrigerator_Icon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Icons
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: a836759115da1c24590b8610924c161a, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: fc5aacfa8604cce44a03c55763b631f7, type: 2}
+    - {fileID: 11400000, guid: 7bd7c0fdfc86c64469e1410f3b1485c7, type: 2}

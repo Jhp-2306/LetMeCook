@@ -1,12 +1,13 @@
+using ASPathFinding;
+using NPC;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
-using NPC;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
-using System;
-using ASPathFinding;
 
 public class InGameConsole : MonoBehaviour
 {
@@ -73,7 +74,9 @@ public class InGameConsole : MonoBehaviour
                     ExecuteCommand("Force Save", () => { GameSaveDNDL.Instance.ForceSave(); });
                     break;
                 case IGCCommands.NewGame:
-                    ExecuteCommand( "New Game", () => { GameSaveDNDL.Instance.NewGame(); });
+                    ExecuteCommand( "New Game", () => { GameSaveDNDL.Instance.NewGame();
+                        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                    });
                     break;
                 case IGCCommands.GetCustomer:
                     ExecuteCommand(IGCCommands.GetCustomer, () => { NPCManager.Instance.IGC_Get_NPC_Customer(); });

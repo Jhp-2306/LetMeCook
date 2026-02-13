@@ -11,7 +11,7 @@ namespace Constants
     }
     public enum KitchenState
     {
-        idleKitchen = 0,
+        //idleKitchen = 0,
         OpenKitchen = 1,
         CloseKitchen = 2
     }
@@ -35,6 +35,10 @@ namespace Constants
         Pizza_cutter,
         Grill_pan,
         Refrigerator,
+        Table,
+        TrashBin,
+        PlateTray,
+        Furnitures,
         none
     }
 
@@ -45,77 +49,75 @@ namespace Constants
         Onion,
         Potato,
         Tomato,
-        Spinach,
         Lettuce,
-        Cabbage,
         Mushroom,
-        Apple,
-        Banana,
-        Strawberry,
-        Lemon,
-        Orange,
-        Pineapple,
-        Mango,
-        Cherry,
-        Blueberry,
-        Grapes,
-        Watermelon,
-        Peach,
         Bread,
         Rice,
-        Pasta,
         BurgerBun,
         Chicken,
-        Beef,
-        Pork,
-        Bacon,
-        FishSalmon,
-        FishTuna,
-        Shrimp,
+        Staeak,
+        Pepperoni,
         Egg,
-        Meatballs,
         Milk,
         Cheese,
-        Butter,
+        Burgerpatty,
         count
+        //Spinach,
+        //Cabbage,
+        //Pasta,
+        //Beef,
+        //Pork,
+        //Bacon,
+        //FishSalmon,
+        //FishTuna,
+        //Shrimp,
+        //Meatballs,
+        //Butter,
+        //Apple,
+        //Banana,
+        //Strawberry,
+        //Lemon,
+        //Orange,
+        //Pineapple,
+        //Mango,
+        //Cherry,
+        //Blueberry,
+        //Grapes,
+        //Watermelon,
+        //Peach,
     }
     [System.Serializable]
-    public enum processIngredient
+    public enum ProcessStatus
     {
         None = 0,
         Chopped = 1,
         FineChopped = 2,
         Boiled = 3,
-        Fryed = 4,
-        cooked = 5,
-        Burned = 6,
+        HalfBoiled = 4,
+        Fryed = 5,
+        UnderCooked = 6,
+        Cooked = 7,
+        OverCooked = 8,
+        Burned = 9,
     }
 
     public enum Dishes
     {
-        dish01,
-        dish02,
-        dish03,
-        dish04,
-        dish05,
+        ChickenCurry,
+        VegetableCurry,
+        Burger,
+        TomatoSoup,
         trash,
         count,
     }
 
-    public enum DishCoookingStatus
-    {
-        None = 0,
-        UnderCooked=1,
-        Cooked=2,
-        OverCooked=3,
-        Burned=4,
-    }
+
     [System.Serializable]
     public struct ProcedureStep
     {
         public IngredientType Ingredient;
-        public processIngredient processed;
-        public string Descriptions;
+        public ProcessStatus processed;
+        public string Descriptions;// Testing purpose only
 
     }
     [System.Serializable]
@@ -124,26 +126,40 @@ namespace Constants
         public List<ProcedureStep> items;
         public Dishes OutputDish;
         public int CookingTime;
+        public float price;
         public bool IsthisDish(List<ProcedureStep> _items)
         {
-            //foreach (ProcedureStep item in _items) { 
-            //if(!items.Contains(item)) return false;
-            //}
-            //return true;
+            if(items.Count!=_items.Count) return false;
+            var templist = GetthisDishIngreident();
             foreach (var item in _items)
             {
-                if (!GetthisDishIngreident().Contains(item.Ingredient))
+                if (!templist.Contains(item.Ingredient))
                 {
                     return false;
                 }
-                if(!isIngreidentProcessedcorrectly(item))return false;
+                else
+                {
+                    templist.Remove(item.Ingredient);
+                }
             }
             return true;
         }
-        public int GetCookTimeData(Dishes dish)
+        public bool CanBeThisDish(List<ProcedureStep> _items)
         {
-            if(dish==OutputDish) return CookingTime;
-            else return -1;
+            if (items.Count < _items.Count) return false;
+            var templist = GetthisDishIngreident();// for duplicate check
+            foreach (var item in _items)
+            {
+                if (!templist.Contains(item.Ingredient))
+                {
+                    return false;
+                }
+                else
+                {
+                    templist.Remove(item.Ingredient);
+                }
+            }
+            return true;
         }
         List<IngredientType> GetthisDishIngreident()
         {
@@ -154,20 +170,51 @@ namespace Constants
             }
             return _ret;
         }
-        bool isIngreidentProcessedcorrectly(ProcedureStep _step)
+        public float CalculatePriceBonus(List<ProcedureStep> _items)
+        {
+            float multi = 0;
+            foreach (var item in _items)
+            {
+                multi += isIngreidentProcessedcorrectly(item);
+            }
+            return multi;
+        }
+        //Quality Check here
+        float isIngreidentProcessedcorrectly(ProcedureStep _step)
         {
             foreach (var item in items)
             {
                 if (item.Ingredient.Equals(_step.Ingredient))
                 {
                     //Finechopping and chopping are same thing but a different Result 
-                    if (item.processed == processIngredient.Chopped && (_step.processed == processIngredient.Chopped || _step.processed == processIngredient.FineChopped))
-                        return true;
-                    if (item.processed == _step.processed) return true;
+                    if (item.processed == ProcessStatus.Chopped)
+                    {
+                        if (_step.processed == ProcessStatus.Chopped)// normal bonus
+                            return 1f;
+                        if (_step.processed == ProcessStatus.FineChopped)// perfect bonus
+                            return 1.5f;
+                    }
+                    if (item.processed == ProcessStatus.Boiled)
+                    {
+                        if (_step.processed == ProcessStatus.HalfBoiled)// normal bonus
+                            return 1f;
+                        if (_step.processed == ProcessStatus.Boiled)// perfect bonus
+                            return 1.5f;
+                    }
+                    if (item.processed == ProcessStatus.Cooked)
+                    {
+                        if (_step.processed == ProcessStatus.OverCooked)// normal bonus
+                            return 1f;
+                        if (_step.processed == ProcessStatus.Cooked)// perfect bonus
+                            return 1.5f;
+                        if (_step.processed == ProcessStatus.UnderCooked)// worst bonus
+                            return 0.75f;
+                    }
+                    if (item.processed == _step.processed) return 1.5f;
 
                 }
             }
-            return false;
+            return 0;
         }
     }
     [System.Serializable]
@@ -204,6 +251,7 @@ namespace Constants
         public object Data;
         public EquipmentType Type;
 
+        public string PrefabString;
         public string GetId()
         {
             return id;

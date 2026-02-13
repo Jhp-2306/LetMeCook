@@ -9,7 +9,7 @@ public class SO_IngredientData : ScriptableObject
 {
     public IngredientType type;
     public typeofhandheld handheldtype;
-    public processIngredient process;
+    public ProcessStatus process;
     public Sprite icon;
     public Mesh mesh;
     public Material material;

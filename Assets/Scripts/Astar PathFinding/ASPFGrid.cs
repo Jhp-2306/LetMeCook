@@ -143,7 +143,7 @@ namespace ASPathFinding
             Vector3 worldBottomLeft = (transform.position + gridOffset) - ((Vector3.right * m_GridSize.x) / 2) - ((Vector3.forward * m_GridSize.y) / 2);
             var _worldposition=worldPosition-worldBottomLeft;
             var t = new Vector3(Mathf.RoundToInt((_worldposition.x - 1) / 2), 0,Mathf.RoundToInt((_worldposition.z - 1) / 2));
-            Debug.Log(CustomLogs.CC_TagLog($"{gameObject.name}",$"{t}"));
+            //Debug.Log(CustomLogs.CC_TagLog($"{gameObject.name}",$"{t}"));
             return grid[(int)t.x,(int)t.z];
         }
        public void ResetAllCost()

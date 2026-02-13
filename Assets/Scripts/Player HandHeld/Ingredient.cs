@@ -18,7 +18,7 @@ public class Ingredient : MonoBehaviour, IHandHeld
         return;
     }
 
-    public void Setup(Mesh _mesh,IngredientType _type, typeofhandheld handtype,Material mat, processIngredient process=processIngredient.None)
+    public void Setup(Mesh _mesh,IngredientType _type, typeofhandheld handtype,Material mat, ProcessStatus process=ProcessStatus.None)
     {
         ingrendient.Ingredient = _type;
         ingrendient.processed = process;

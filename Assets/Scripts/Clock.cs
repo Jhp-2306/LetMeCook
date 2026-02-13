@@ -7,9 +7,9 @@ public class Clock : MonoBehaviour
     public TMPro.TextMeshProUGUI DigiClock;
     public GameObject HrsHand, MinHand;
     [SerializeField] float animationtimer = 1.3f;
-    [SerializeField] GameObject HUD;
-    //Coroutine expandCoroutine;
-   // public Vector3 InitPosition, FinalPosition;
+    [SerializeField] GameObject parentObj;
+    bool isexpand;
+    public Vector3 InitPosition, FinalPosition;
     void Update()
     {
         DigiClock.text = TimeManagementDNDL.Instance.GetTime(false);
@@ -21,6 +21,9 @@ public class Clock : MonoBehaviour
     public void OnClick()
     {
         //if (expandCoroutine != null) StopCoroutine(expandCoroutine);
+        parentObj.GetComponent<RectTransform>().localPosition = isexpand? FinalPosition:InitPosition;
+        //Debug.Log(parentObj.GetComponent<RectTransform>().localPosition);
+        isexpand = !isexpand;
     }
      
     

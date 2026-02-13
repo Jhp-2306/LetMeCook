@@ -57,14 +57,52 @@ public class FillUpMiniGame : MonoBehaviour
         //InputManager.OnHoldingCancel -= OnEnd;
     }
 
-    #region NOTE:- Can Move this Block into DNDL{
+    public void FTUT(float minRange01, float Width)
+    {
+        fillUpProgress = 0f;
+        fillUpProgressMin = minRange01;
+        fillUpProgressWitdh = Width;
+        isMiniStart = true;
+        HUDParent.SetActive(true);
+        var width = ParentSafeArea.rect.width * fillUpProgressWitdh;
+        var pos = (ParentSafeArea.rect.width * fillUpProgressMin) - width / 2;
+        CustomLogs.CC_Log($"Setting Mini Game{width},pos{pos},parent width{ParentSafeArea.rect.width},{SafeArea.localPosition}", "cyan");
+        SafeArea.sizeDelta = new Vector2(width, SafeArea.rect.height);
+        SafeArea.anchoredPosition = new Vector3(pos, SafeArea.localPosition.y, SafeArea.localPosition.z);
+
+        HUDManagerDNDL.Instance.SetTutorialHUD("this is a quick time event where if you stop the meter at point will give you a perfect chop which results in more money", () =>
+        {
+            //Debug.Log("Open from here");
+            OnHoldUI(1.5f, UpdateFillUpMiniGame, OnEnd);
+            StartCoroutine(FTUT_CheckCondition());
+        }, true);
+
+    }
+    IEnumerator FTUT_CheckCondition()
+    {
+        while (!(fillUpProgress > fillUpProgressMin - fillUpProgressWitdh && fillUpProgress < fillUpProgressMin + fillUpProgressWitdh))
+        {
+            yield return null;
+        }
+        StopCoroutine(_pressNholdingcoroutine);
+        HUDManagerDNDL.Instance.SetTutorialHUD("Now Click to stop", () =>
+        {
+            HUDManagerDNDL.Instance.SetTutorialHUD(InputManager.Instance.Interactionbtn.transform, () =>
+        {
+            OnEnd();
+            GameDataDNDL.Instance.FTUT_Phase2();
+        }, false, true);
+        }, false);
+    }
+    #region NOTE:- Can Move this Block into DNDL
 
     private Coroutine _pressNholdingcoroutine;
     public void OnHoldUI(float _holdThreshold, Action<float> _update, Action _callback)
     {
         //UIInHold = true;
         _pressNholdingcoroutine = StartCoroutine(OnHold(_holdThreshold, _update,
-            () => {
+            () =>
+            {
                 _callback?.Invoke();
                 //UIInHold = false;
             }));

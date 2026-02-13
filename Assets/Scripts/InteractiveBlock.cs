@@ -5,40 +5,54 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using UnityEngine;
 
-public class InteractiveBlock : MonoBehaviour,IInteractable
+public class InteractiveBlock : MonoBehaviour, IInteractable
 {
     //public int TableID;
     //public string TableName;
+    //
+    // can remove this variable not in use
+
+    public enum PlacementTags
+    {
+        Kitchen,
+        Room
+    }
     public EquipmentType equipmentType;
     [SerializeField] private Transform LookAtMe;
-    //public Material myMaterial;
-
+    public List<Vector3> ActiveGridPositions;
+    public PlacementTags Tag;
     public SO_EquipmentData Data;
-    //[SerializeField] GameObject ItemParent;
     protected bool m_isTableEmpty;
     protected SaveDataTemplate savedata;
+    public int CellSize = 2;
+    public bool isGizmos;
+    public bool PreSpawn;
     public Transform GetLookPos()
     {
         return LookAtMe;
     }
-    public void Awake()
+   
+    public virtual bool IsInteractionSatisfied()
     {
-    }
-    public void TableDataRefresh()
-    {
-       
-    }
-    public virtual bool IsInteractionSatisfied(){
-            return false;
+        return false;
     }
     public bool isTableEmpty() => Data == null;
-    public string GetInteractableName() => Data!=null?
-        GameDataDNDL.Instance.GetPlayer().isHandsfull?
-        Data.HandFullDisplayFuntionName : Data.DisplayFuntionName:"none";
-    public virtual void Init()
+
+    ///this need clean up
+    public string GetInteractableName() => Data != null ?
+        GameDataDNDL.Instance.GetPlayer().isHandsfull ?
+        Data.HandFullDisplayFuntionName : Data.DisplayFuntionName : "none";
+    public string GetHoldInteractableName() => Data != null ?
+        !Data.HoldFuntionName.Equals("-")? Data.HoldFuntionName : "none": "none";
+    public virtual void Init(EquipmentType _equip = EquipmentType.none, string _prefabID = "")
     {
         savedata = new SaveDataTemplate();
-        //savedata.id = GameSaveDNDL.GenerateId(EquipmentType.Refrigerator.ToString());
+        if (_equip == EquipmentType.Furnitures)
+            savedata.id = GameSaveDNDL.GenerateId(_prefabID);
+        else
+            savedata.id = GameSaveDNDL.GenerateId(_equip.ToString());
+        savedata.Type = _equip;
+        savedata.PrefabString = _prefabID;
         savedata.Position = transform.position;
         savedata.Rotation = transform.rotation;
     }
@@ -53,7 +67,7 @@ public class InteractiveBlock : MonoBehaviour,IInteractable
     }
     public virtual void OnClick()
     {
-        
+
     }
     public virtual void OnHold()
     {
@@ -64,7 +78,7 @@ public class InteractiveBlock : MonoBehaviour,IInteractable
     {
         return null;
     }
-    
+
     public bool IsInteractable()
     {
         throw new System.NotImplementedException();
@@ -82,9 +96,16 @@ public class InteractiveBlock : MonoBehaviour,IInteractable
 
     public void MoveTheObject(Vector3 pos)
     {
-        //transform.position = new Vector3(SafeAreaMin.position.x <= Mathf.Abs(pos.x) && SafeAreaMax.position.x >= Mathf.Abs(pos.x) ? pos.x : transform.position.x, pos.y,
-        //  SafeAreaMin.position.z <= Mathf.Abs(pos.z) && SafeAreaMax.position.z >= Mathf.Abs(pos.z) ? pos.z : transform.position.z);
-        transform.position = pos; 
+        transform.position = pos;
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (!isGizmos) return;
+        foreach (var pos in ActiveGridPositions)
+        {
+            Gizmos.DrawCube(transform.TransformPoint(pos), Vector3.one * 2);
+        }
     }
 }
 

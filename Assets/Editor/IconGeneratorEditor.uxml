@@ -1,0 +1,17 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="project://database/Assets/Editor/IconGeneratorEditor.uss?fileID=7433441132597879392&amp;guid=34112dc9b85a0c34982620aeb6d528c4&amp;type=3#IconGeneratorEditor" />
+    <ui:VisualElement name="container" style="flex-grow: 1; flex-direction: row;">
+        <ui:ListView name="list" style="width: 197px; background-color: rgb(42, 42, 42);" />
+        <ui:VisualElement name="content" data-source-type="IconGeneratorEditor, Assembly-CSharp-Editor" style="flex-grow: 1; background-color: rgb(56, 56, 56);">
+            <ui:VisualElement name="output" style="flex-grow: 1; height: 256px; width: 256px; flex-direction: column-reverse; justify-content: flex-end; align-self: center; align-content: center; position: absolute; align-items: auto;">
+                <Bindings>
+                    <ui:DataBinding property="style.backgroundImage" data-source-path="m_PreviewTexture" binding-mode="ToTarget" />
+                </Bindings>
+            </ui:VisualElement>
+            <ui:Label text="Properties" name="Prop" style="padding-top: 256px;" />
+            <uie:ObjectField label="Camera" name="Cam" />
+            <uie:ObjectField label="Parent" name="parentGO" />
+            <ui:Button text="Save As PNG" name="saveas" selectable="true" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

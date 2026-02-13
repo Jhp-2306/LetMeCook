@@ -70,7 +70,7 @@ public class InputManager : Singletonref<InputManager>
             if (Physics.Raycast(Camera.main.ScreenPointToRay(ClickPosition), out ray, 1000f))
             {
                 //CustomLogs.CC_Log($"{ray.point}", "cyan");
-                if (ray.transform.tag == GameDataDNDL.Instance.CurrentArea.ToString()) 
+                if (ray.transform.tag == GameDataDNDL.Instance.CurrentArea.ToString())
                 {
 
                     if (GameDataDNDL.Instance.GetPlayer().isHandsfull)
@@ -86,13 +86,22 @@ public class InputManager : Singletonref<InputManager>
                     //if (ray.transform.GetComponent<InteractiveBlock>().IsInteractionSatisfied())
                     //    InteractionButtonClick(ray.transform.GetComponent<InteractiveBlock>());
                     ///TODO: Hold to Move Equipment
-                    
+
                     OnMovementInput(ray.transform.GetComponent<InteractiveBlock>().GetLookPos().position, true, () =>
                     {
-                        if (ray.transform.GetComponent<InteractiveBlock>().IsInteractionSatisfied())
-                            InteractionButtonClick(ray.transform.GetComponent<InteractiveBlock>());
+                        if (ray.transform.GetComponent<Counter>() == null)
+                        {
+                            if (ray.transform.GetComponent<InteractiveBlock>().IsInteractionSatisfied())
+                                InteractionButtonClick(ray.transform.GetComponent<InteractiveBlock>());
+                        }
+                        else
+                        {
+                            ray.transform.GetComponent<Counter>().OnPlayerReached();
+                        }
+                        //give 
                     });
-                    if (Vector3.Distance(new Vector3(GameDataDNDL.Instance.GetPlayer().transform.position.x, ray.transform.GetComponent<InteractiveBlock>().GetLookPos().position.y, GameDataDNDL.Instance.GetPlayer().transform.position.z), ray.transform.GetComponent<InteractiveBlock>().GetLookPos().position) < 0.5f)
+                    if (Vector3.Distance(new Vector3(GameDataDNDL.Instance.GetPlayer().transform.position.x, ray.transform.GetComponent<InteractiveBlock>().GetLookPos().position.y, GameDataDNDL.Instance.GetPlayer().transform.position.z),
+                        ray.transform.GetComponent<InteractiveBlock>().GetLookPos().position) < 0.5f)
                         if (ray.transform.GetComponent<InteractiveBlock>().IsInteractionSatisfied())
                             InteractionButtonClick(ray.transform.GetComponent<InteractiveBlock>());
                 }
@@ -186,7 +195,7 @@ public class InputManager : Singletonref<InputManager>
     }
 
 
-    Vector3 FinalPosition;
+    Vector3 FinalPosition;// this Variable is for snaping;
     IEnumerator OnBuildObjectMove()
     {
         //GameObject SelectedObject = null;
@@ -198,15 +207,17 @@ public class InputManager : Singletonref<InputManager>
             //RaycastHit ray;
             RaycastHit rayFloor;
             if (Physics.Raycast(Camera.main.ScreenPointToRay(tempos), out rayFloor, 1000f))
+            {
                 //Debug.Log("is occp"+_grid.processCoords(_grid.GetRoundAnchorPositionFromWorldPosiion(new Vector3(rayFloor.point.x, 1.69f, rayFloor.point.z))));
-                if (_grid.processCoords(_grid.GetRoundAnchorPositionFromWorldPosiion(new Vector3(rayFloor.point.x, 1.69f, rayFloor.point.z))))
+                var gridpos = _grid.GetRoundAnchorPositionFromWorldPosiion(new Vector3(rayFloor.point.x, 1.69f, rayFloor.point.z));
+                if (_grid.processCoords(gridpos,
+                    SelectedObject.GetComponent<InteractiveBlock>().Tag.ToString())&& GameDataDNDL.Instance.GetPlayer().transform.position!=gridpos)
                 {
-                    Debug.Log("Check update here");
-                    var pos = _grid.GetRoundAnchorPositionFromWorldPosiion(new Vector3(rayFloor.point.x, 1.69f, rayFloor.point.z));
-                    FinalPosition = pos;
-                    //SelectedObject.transform.position = pos;
-                    SelectedObject.transform.position = Vector3.Lerp(SelectedObject.transform.position, pos, Time.deltaTime * 10f);
+                    //Debug.Log("Check update here");
+                    FinalPosition = gridpos;
+                    SelectedObject.transform.position = Vector3.Lerp(SelectedObject.transform.position, gridpos, Time.deltaTime * 10f);
                 }
+            }
         }
     }
     void OnBuildModeDisable()
@@ -242,9 +253,9 @@ public class InputManager : Singletonref<InputManager>
     //    Debug.Log("stop Holding call the callbacks");
     //    _callback?.Invoke();
     //}
-    public void UpdateGridPositions(Vector3 pos,Vector3 fwdpos)
+    public void UpdateGridPositions(Vector3 pos, Vector3 fwdpos)
     {
-        _grid.UpdateCellOccupied(pos, GridMaker.CellStatus.Occupied,fwdpos);
+        _grid.UpdateCellOccupied(pos, GridMaker.CellStatus.Occupied, fwdpos);
         var t = GridMaker.GetIndexFromAnchorPosition(new Vector2(pos.x, pos.z));
         GameDataDNDL.Instance.UpdateNavMesh((int)t.x, (int)t.y, false);
     }
@@ -286,11 +297,28 @@ public class InputManager : Singletonref<InputManager>
         _cameraControle.CameraSmoothValue = 5f;
     }
 
+    public void FTUT_MovePlayer(InteractiveBlock block,Action callback)
+    {
+        OnMovementInput(block.GetLookPos().position, true, () =>
+        {
+            if (block.transform.GetComponent<Counter>() == null)
+            {
+                if (block.IsInteractionSatisfied())
+                    InteractionButtonClick(block);
+            }
+            else
+            {
+                block.transform.GetComponent<Counter>().OnPlayerReached();
+            }
+            callback?.Invoke();
+            //give 
+        });
+    }
     public void InteractionButtonClick(InteractiveBlock table)
     {
         Interactionbtn.AddEvent(table,
-                        table.GetInteractableName(), true,
-                        table.isTableEmpty());
+                        table.GetInteractableName(), true
+                        );
         //OnMovementInput(table.GetLookPos().position, true);
     }
     public void InteractionButtonAddEvent(string btnName, Action onClick)
@@ -298,8 +326,9 @@ public class InputManager : Singletonref<InputManager>
         Interactionbtn.ResetButton("Interact");
         Interactionbtn.AddEvent(btnName, onClick);
     }
-    public bool CanPlaceHere(Vector3 pos,Vector3 fwdpos) {
-    return _grid.CanPlaceHere(pos, fwdpos);
+    public bool CanPlaceHere(Vector3 pos, Vector3 fwdpos)
+    {
+        return _grid.CanPlaceHere(pos, fwdpos);
     }
 
     public void SetClick(bool Disable)

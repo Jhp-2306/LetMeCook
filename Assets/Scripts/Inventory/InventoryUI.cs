@@ -48,6 +48,10 @@ public class InventoryUI : MonoBehaviour
         }
     }
 
+    public Transform GetItemSlots()
+    {
+        return Items[0].transform;
+    }
     public void Close()
     {
         HUDManagerDNDL.Instance.CloseInventory();

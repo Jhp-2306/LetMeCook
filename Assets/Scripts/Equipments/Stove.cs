@@ -2,6 +2,7 @@ using Constants;
 using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,13 +20,17 @@ public class Stove : InteractiveBlock
     public Image RedZone;
     public Image GreenZone;
     public Image BlueZone;
+    public Image TickMark;
     public List<Image> SlotsIcon;
-    public GameObject HUD, ProgressbarHUD, SlotsHUD;
-    DishCoookingStatus dishStatus;
+    public GameObject HUD, ProgressbarHUD, SlotsHUD, DoneHUD;
+    ProcessStatus dishStatus;
     bool isCooking;
     bool isPicked;
     private bool isInteractable;
     Coroutine CookingCoroutine;
+    Dishes Currentcookingdish;
+    float CurrentcookingdishPrice;
+    float CurrentcookingdishPriceMulti;
     private void Start()//testing purpose
     {
         //Init();
@@ -43,11 +48,9 @@ public class Stove : InteractiveBlock
         GameSaveDNDL.DataUpdateBeforeSave += BeforeSaving;
     }
 
-    public override void Init()
+    public override void Init(EquipmentType _equip = EquipmentType.none, string item = "")
     {
-        base.Init();
-        savedata.id = GameSaveDNDL.GenerateId(EquipmentType.Stove.ToString());
-        savedata.Type = EquipmentType.Stove;
+        base.Init(EquipmentType.Stove, item);
         Slots = new List<ProcedureStep>();
         HUD.SetActive(false);
         isPicked = true;
@@ -58,14 +61,12 @@ public class Stove : InteractiveBlock
     }
     void BeforeSaving()
     {
-        //savedata.Data = storageSystem.GetAllDataInString();
         GameSaveDNDL.Instance.AddSaveData(savedata);
     }
     public void AddIngredient(Ingredient ingredient)
     {
         if (Slots.Count < MaxSlots)
         {
-            
             Slots.Add(ingredient.ingrendient);
             //After Adding Ingredient inHandItem Removeds
             GameDataDNDL.Instance.GetPlayer().RemoveFromHand();
@@ -81,9 +82,11 @@ public class Stove : InteractiveBlock
         HUD.SetActive(true);
         SlotsHUD.SetActive(true);
         ProgressbarHUD.SetActive(false);
+        DoneHUD.SetActive(false);
         int idx = 0;
-        foreach (var t in Slots) {
-            SlotsIcon[idx].sprite=AssetLoader.Instance.GetIngredientIcon(t.Ingredient,t.processed);
+        foreach (var t in Slots)
+        {
+            SlotsIcon[idx].sprite = AssetLoader.Instance.GetIngredientIcon(t.Ingredient, t.processed);
             idx++;
         }
     }
@@ -93,24 +96,41 @@ public class Stove : InteractiveBlock
     }
     public override void OnClick()
     {
-        if (isCooking&&!isPicked)
+        if (isCooking && !isPicked)
         {
-            //Stop the coroutine there and pick the dish
-            isPicked = true;
             isCooking = false;
             StopCoroutine(CookingCoroutine);
-            PickupDish();
+            ProgressbarHUD.SetActive(false);
+            DoneHUD.SetActive(true);
+            switch (dishStatus)
+            {
+                case ProcessStatus.UnderCooked:
+                    TickMark.color = BlueZone.color;
+                    break;
+                case ProcessStatus.OverCooked: TickMark.color = RedZone.color; break;
+                case ProcessStatus.Cooked: TickMark.color = GreenZone.color; break;
+            }
+            isPicked = tryPickupDish();
             Debug.Log(CustomLogs.CC_TagLog("Stove", $"Done Cooking Dish-- status{dishStatus}"));
         }
-        if (!isCooking && !isPicked) {
-            isPicked = true;
+        if (!isCooking && !isPicked)
+        {
             StopCoroutine(CookingCoroutine);
-            PickupDish();
+            isPicked = tryPickupDish();
             Debug.Log(CustomLogs.CC_TagLog("Stove", $"Done Cooking Dish-- status{dishStatus}"));
         }
-        var player = GameDataDNDL.Instance.GetPlayer();       
-        if (player.isHandsfull&& player.InHand.IGetType()==typeofhandheld.ingredients&&isPicked) { 
-        AddIngredient(player.InHand.GetGameObject().GetComponent<Ingredient>());
+        var player = GameDataDNDL.Instance.GetPlayer();
+        if (player.isHandsfull && player.InHand.IGetType() == typeofhandheld.ingredients && isPicked)
+        {
+            AddIngredient(player.InHand.GetGameObject().GetComponent<Ingredient>());
+
+            if (isFTUT)
+            {
+                
+                //We Call the Cooking FTUT
+                FTUT_Cooking();
+               
+            }
         }
         else
         {
@@ -122,60 +142,102 @@ public class Stove : InteractiveBlock
     public override void OnHold()
     {
         //base.OnHold();
-        if(isCooking||!isPicked) return;
+        if (isCooking || !isPicked) return;
         if (Slots.Count > 1)
         {
             //Start Cooking
             //Check for the Output
-            var dish=GameDataDNDL.Instance.GetDish(Slots);
-            var cooktimer=GameDataDNDL.Instance.GetCookingTime(dish);
-            Debug.Log(CustomLogs.CC_TagLog("Stove", $"Start Cooking{dish},{GameDataDNDL.Instance.GetCookingTime(dish)}"));
-            CookingCoroutine=StartCoroutine(StartCooking(cooktimer));
+            Currentcookingdish = GameDataDNDL.Instance.GetStoveDish(Slots);
+            CurrentcookingdishPrice = GameDataDNDL.Instance.GetStoveDishPrice(Currentcookingdish);
+            CurrentcookingdishPriceMulti = GameDataDNDL.Instance.GetStoveDishPriceMulti(Currentcookingdish, Slots);
+            var cooktimer = GameDataDNDL.Instance.GetCookingTime(Currentcookingdish);
+            Debug.Log(CustomLogs.CC_TagLog("Stove", $"Start Cooking{Currentcookingdish},{cooktimer},{CurrentcookingdishPrice}{CurrentcookingdishPriceMulti}"));
+            CookingCoroutine = StartCoroutine(StartCooking(cooktimer));
+            DoneHUD.SetActive(false);
+            if (isFTUT)
+            {
+                GameDataDNDL.Instance.FTUT_Phase3();
+
+            }
         }
         else
         {
             Debug.Log(CustomLogs.CC_TagLog("Stove", "Not Enough Ingredient Added"));
         }
     }
-    
-    void PickupDish()
-    {
 
+    bool tryPickupDish()
+    {
+        var player = GameDataDNDL.Instance.GetPlayer();
+        if (player.InHand!=null&&player.InHand.GetGameObject().GetComponent<Plate>() != null)
+        {
+            if (player.InHand.GetGameObject().GetComponent<Plate>().isPlateEmpty)
+            {
+                GetFoodcookMulti();
+                player.InHand.GetGameObject().GetComponent<Plate>().pickupDish(Currentcookingdish, CurrentcookingdishPrice, CurrentcookingdishPriceMulti);
+                return true;
+            }
+            //throw a toast here or try to merge the dish?
+            HUDManagerDNDL.Instance.ShowToastMsg("plate's not empty");
+            return false;
+        }
+        else// player without plate
+        {
+            HUDManagerDNDL.Instance.ShowToastMsg("you need a plate");
+            Debug.Log(CustomLogs.CC_TagLog("Stove", "issue with the player hands"));
+            return false;
+        }
+    }
+    void GetFoodcookMulti()
+    {
+        switch (dishStatus)
+        {
+            case ProcessStatus.None: break;
+            case ProcessStatus.UnderCooked:
+                CurrentcookingdishPriceMulti += 0.75f;break;
+            case ProcessStatus.Cooked:
+                CurrentcookingdishPriceMulti += 1.5f;break;
+            case ProcessStatus.OverCooked:
+                CurrentcookingdishPriceMulti += 1f;break;
+            case ProcessStatus.Burned:
+                CurrentcookingdishPriceMulti = 1;break;
+        }
     }
     IEnumerator StartCooking(float maxCookingTime)
     {
-        isInteractable=false;
+        isInteractable = false;
         float timer = 0;
         float overcooktimer = maxCookingTime * .1f;
         float beforeOverCookTimer = maxCookingTime * .08f;
-        float underCookTimer= maxCookingTime - (maxCookingTime *undercookPercentage);
-        var maxTimer = maxCookingTime + overcooktimer+beforeOverCookTimer;
+        float underCookTimer = maxCookingTime - (maxCookingTime * undercookPercentage);
+        var maxTimer = maxCookingTime + overcooktimer + beforeOverCookTimer;
         isCooking = true;
-        isPicked=false;
+        isPicked = false;
         //Set the timer visuals
         HUD.SetActive(true);
         SlotsHUD.SetActive(false);
+        DoneHUD.SetActive(false);
         ProgressbarHUD.SetActive(true);
         Progress.fillAmount = 0;
         RedZone.fillAmount = overcooktimer / maxTimer;
-        GreenZone.fillAmount = RedZone.fillAmount+ (beforeOverCookTimer / maxTimer);
-        BlueZone.fillAmount = GreenZone.fillAmount+(maxCookingTime * undercookPercentage) / maxTimer;
+        GreenZone.fillAmount = RedZone.fillAmount + (beforeOverCookTimer / maxTimer);
+        BlueZone.fillAmount = GreenZone.fillAmount + (maxCookingTime * undercookPercentage) / maxTimer;
         Debug.Log(CustomLogs.CC_TagLog("Stove", $"Report; " +
             $"[RedZone{RedZone.fillAmount},{overcooktimer}]" +
             $"[GreenZone{GreenZone.fillAmount},{beforeOverCookTimer}]" +
             $"[BlueZone{BlueZone.fillAmount},{(maxCookingTime * undercookPercentage)}]"));
 
-        dishStatus = DishCoookingStatus.None;
+        dishStatus = ProcessStatus.None;
         while (timer < underCookTimer)
         {
             yield return null;
             timer += Time.deltaTime;
-            Progress.fillAmount=timer/maxTimer;
+            Progress.fillAmount = timer / maxTimer;
         }
-        isInteractable=true;
+        isInteractable = true;
         Debug.Log(CustomLogs.CC_TagLog("Stove", $"underCooked{timer}"));
         //under cooked
-        dishStatus = DishCoookingStatus.UnderCooked;
+        dishStatus = ProcessStatus.UnderCooked;
         //can interact here onwards
         //Start Cooking 
         while (timer < maxCookingTime)
@@ -186,24 +248,56 @@ public class Stove : InteractiveBlock
         }
         Debug.Log(CustomLogs.CC_TagLog("Stove", $"cooked{timer}"));
         //Cooking Done
-        dishStatus = DishCoookingStatus.Cooked;
-        while (timer < maxCookingTime+beforeOverCookTimer)
+        
+        dishStatus = ProcessStatus.Cooked;
+        if (isFTUT)
+        {
+            if (GameDataDNDL.Instance.isPhase3done)
+            {
+                GameDataDNDL.Instance.FTUT_Phase4();
+            }
+            GameDataDNDL.Instance.isPhase3done = true;
+            isFTUT = false;
+            while (!isFTUT)
+            {
+                yield return null;
+            }
+        }
+        while (timer < maxCookingTime + beforeOverCookTimer)
         {
             yield return null;
             timer += Time.deltaTime;
-            Progress.fillAmount = timer / maxTimer;            
+            Progress.fillAmount = timer / maxTimer;
         }
         Debug.Log(CustomLogs.CC_TagLog("Stove", $"overcooked{timer}"));
-        dishStatus = DishCoookingStatus.OverCooked;
+        dishStatus = ProcessStatus.OverCooked;
         while (timer < maxTimer)
         {
             yield return null;
             timer += Time.deltaTime;
-            Progress.fillAmount = timer / maxTimer;            
+            Progress.fillAmount = timer / maxTimer;
         }
         Debug.Log(CustomLogs.CC_TagLog("Stove", $"burned{timer}"));
-        dishStatus = DishCoookingStatus.Burned;
+        dishStatus = ProcessStatus.Burned;
         //Burned food
-        isCooking= false;
+        isCooking = false;
+    }
+
+    bool isFTUT;
+    public void init_FTUT()
+    {
+        isFTUT = true;
+    }
+
+    public void FTUT_Cooking()
+    {
+        HUDManagerDNDL.Instance.SetTutorialHUD("Explain Stove Mechanics", () => {
+            HUDManagerDNDL.Instance.SetTutorialHUD(InputManager.Instance.Interactionbtn.transform, () =>
+                {
+                    InputManager.Instance.Interactionbtn.OnPressDown();
+                    HUDManagerDNDL.Instance.SetTutorialHUD("Wait for the Perfect indicator", () => {
+                    });
+                },true,true);
+        });
     }
 }

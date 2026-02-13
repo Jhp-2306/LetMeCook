@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 using static UnityEngine.GraphicsBuffer;
 
 namespace NPC
@@ -14,7 +15,7 @@ namespace NPC
     public class NPC : MonoBehaviour, ITriggerDoor
     {
         int id;
-        string npcName;
+        public string npcName;
         //NavMeshAgent Agent;
         bool isNPCMoving;
         bool isRoaming;
@@ -22,7 +23,7 @@ namespace NPC
 
         public TMPro.TextMeshProUGUI namedis, iddis;
 
-        public GameObject CurrentPlatform;
+        public Counter CurrentPlatform;
 
         //A* Path Finding variables
         public float speed = 20f;
@@ -32,10 +33,18 @@ namespace NPC
         Path path;
         Vector3 target;
         Coroutine followPathCoroutine;
+        Coroutine orderWaitingCoroutine;
         bool isPlayerMoving;
         const float pathUpdateMoveThreshold = 0.5f;
         const float minPathUpdateTime = 0.2f;
         Action OnReachCallback = delegate { };
+        bool ispathwayinprogress;
+
+        //AngerMeter
+        float waitingfororderTimer = 90f;
+        List<Dishes> currentOrder;
+        public Image OrderTimerProgressBar;
+        float FoodCost;
         public void Start()
         {
             //Agent = GetComponent<NavMeshAgent>();
@@ -49,8 +58,9 @@ namespace NPC
             namedis.text = npcName;
             iddis.text = id.ToString();
         }
-        public void SetNPC(Vector3 pos, bool isroaming, GameObject myplatform = null, Action callback = null)
+        public void SetNPC(Vector3 pos, bool isroaming, Counter myplatform = null, Action callback = null)
         {
+            Debug.Log(CustomLogs.CC_TagLog($"NPC{npcName}", $"isplatform{myplatform == null}"));
             this.gameObject.SetActive(true);
             if (myCor != null)
             {
@@ -65,20 +75,39 @@ namespace NPC
             OnReachCallback = callback;
             myCor = StartCoroutine(UpdatePath());
         }
-
+        public List<Dishes> GetOrderList() => currentOrder;
         IEnumerator WaitingForTheOrder(float waitTimer)
         {
+            FoodCost = 0;
             var timer = 0f;
             while (timer < waitTimer)
             {
                 yield return null;
                 timer += Time.deltaTime;
                 //update the waiting progress bar
+                var timercal = (waitTimer - timer) / waitTimer;
+                OrderTimerProgressBar.fillAmount = Mathf.Clamp01(timercal);
             }
             //once timer runs out leave;
-            SetNPC(NPCManager.Instance.DoorExitPosition.position, true);
+            SetNPC(NPCManager.Instance.DoorExitPosition.position, true, CurrentPlatform);
 
         }
+        public void OnOrderComplete(Dishes dish,float cost)
+        {
+            currentOrder.Remove(dish);
+            FoodCost += cost;
+            if (currentOrder.Count <= 0)
+            {
+                if (orderWaitingCoroutine != null)
+                    StopCoroutine(orderWaitingCoroutine);
+                SetNPC(NPCManager.Instance.DoorExitPosition.position, true, CurrentPlatform);
+                //Give Coins
+                GameDataDNDL.Instance.AddCurrency((int)cost);
+                //TODO:-coins visual here
+                Debug.Log(CustomLogs.CC_TagLog($"NPC{id}", $"Giving Coins{cost} "));
+            }
+        }
+
 
         //IEnumerator GoToPositions(Vector3 _pos)
         //{
@@ -103,17 +132,19 @@ namespace NPC
             }
             if (pathSuccessful && waypoints.Length > 0)
             {
-                Debug.Log(CustomLogs.CC_TagLog("NPC", "Path Found"));
+                //Debug.Log(CustomLogs.CC_TagLog("NPC", "Path Found"));
                 path = new Path(waypoints, transform.position, turnDst, stoppingDst);
 
 
                 followPathCoroutine = StartCoroutine(FollowPath());
             }
+            ispathwayinprogress = false;
         }
 
         //bool IsInputActive() => isInputActive;
         IEnumerator UpdatePath()
         {
+            ispathwayinprogress = true;
             //yield return new WaitUntil(IsInputActive);
             yield return new WaitForSeconds(0.3f);
 
@@ -129,12 +160,13 @@ namespace NPC
                 if (Vector3.SqrMagnitude(target - lastTargetPos) > sqrMoveThreshold ||
                     (this.gameObject.transform.position != target && target == lastTargetPos && !isPlayerMoving/*&& Vector3.SqrMagnitude(target - lastTargetPos) < sqrMoveThreshold*/))
                 {
-                    Debug.Log(CustomLogs.CC_TagLog("NPC", "trying to Get the Path"));
+                    //Debug.Log(CustomLogs.CC_TagLog("NPC", "trying to Get the Path"));
                     PathManager.NPCRequestPath(transform.position, target, OnPathFound);
                     isPlayerMoving = true;
                     lastTargetPos = target;
                 }
             }
+
         }
 
         IEnumerator FollowPath()
@@ -219,16 +251,18 @@ namespace NPC
                 }
                 if (transform.position == target)//PlayerStoped in Location
                 {
-                    Debug.Log($"AI Reached At the Stop");
+                    //Debug.Log($"AI Reached At the Stop");
                     followingPath = false;
                     isPlayerMoving = false;
                     OnReachCallback?.Invoke();
                     //if it not roaming then call the disable function
-                    if (isRoaming&&target!=NPCManager.Instance.DoorExitPosition.position)
+                    if (isRoaming && target != NPCManager.Instance.DoorExitPosition.position &&
+                        !ispathwayinprogress)
                     {
+                        Debug.Log(CustomLogs.CC_TagLog($"NPC-{npcName}", $"Exiting the Shop{target},{NPCManager.Instance.DoorExitPosition.GetComponent<DoorTrigger>().MoveToPoint.transform.position}{target != NPCManager.Instance.DoorExitPosition.GetComponent<DoorTrigger>().MoveToPoint.transform.position}"));
                         DisableMe();
                     }
-                    //else call the order function 
+
                 }
 
                 yield return null;
@@ -259,10 +293,21 @@ namespace NPC
                 {
                     //request a Destination pad inside the shop
                     //var go = NPCManager.Instance.GetAShopLoacation();
+                    Debug.Log(CustomLogs.CC_TagLog("NPC", "Entering the Shop"));
                     if (CurrentPlatform != null)
                     {
-                        SetNPC(CurrentPlatform.transform.position, false, CurrentPlatform, () => {
-                            StartCoroutine(WaitingForTheOrder(UnityEngine.Random.RandomRange(5, 10))); 
+                        SetNPC(CurrentPlatform.AILookAtMe().position, false, CurrentPlatform, () =>
+                        {
+                            CurrentPlatform.GetComponent<Counter>().SetClient(this);
+                            //Ording Here
+                            if (currentOrder == null)
+                                currentOrder = new List<Dishes>();
+                            currentOrder.Clear();
+                            //TODO:-Logic for multi Order HERE
+                            currentOrder.Add((Dishes)UnityEngine.Random.RandomRange(0, ((int)Dishes.count - 1)));
+                            var timer = GameDataDNDL.Instance.GetCookingTime(currentOrder[0]);
+                            namedis.text = currentOrder[0].ToString();
+                            orderWaitingCoroutine = StartCoroutine(WaitingForTheOrder(timer + waitingfororderTimer));
                         });//Callback should trigger ording and waiting phase
                         Callback?.Invoke();
                     }
@@ -276,8 +321,10 @@ namespace NPC
                 else
                 {
                     //request a End Roaming Point
-                    NPCManager.Instance.NPCMovingOutsideTheShop(this,CurrentPlatform);
+                    Debug.Log(CustomLogs.CC_TagLog("NPC", "Exiting the Shop"));
+                    NPCManager.Instance.NPCMovingOutsideTheShop(this, CurrentPlatform);
                     Callback?.Invoke();
+                    SetNPC(NPCManager.Instance.GetNPCRandomCood(), true);
                     CurrentPlatform = null;
                 }
             });

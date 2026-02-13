@@ -17,7 +17,8 @@ public class ShopUI : MonoBehaviour
         foreach(var t in items)
         {
             var go = Instantiate(Prefab, ShopParent.transform);
-            go.GetComponent<ShopItemHolderUI>().Setup(t.GetName(), t.GetPrice(), t.GetPrefab(), t.GetEquipmentType());
+            var sprite= AssetLoader.Instance.GetIcons(t.GetIcon());
+            go.GetComponent<ShopItemHolderUI>().Setup(t.GetName(), t.GetPrice(), t.GetPrefab(), t.GetEquipmentType(),sprite);
             _items.Add(go.GetComponent<ShopItemHolderUI>());
         }
     }

@@ -24,13 +24,32 @@ public class HUDManagerDNDL : Singletonref<HUDManagerDNDL>
     const string s_FreeCam = "Free Cam";
     public TextMeshProUGUI CameraSettingButton;
 
+    [SerializeField] private TutorialHUD tutorialhud;
     public FillUpMiniGame MiniGame;
+    [Serializable]
+    public enum PC_Application
+    {
+        None,
+        News,
+        Stats,
+        Market,
+        Upgrade,
+    }
+
+    [Header("Pc")]
+    [SerializeField] GameObject PcParent;
+    [SerializeField] GameObject NewsApplicationScreen;
+    [SerializeField] GameObject StatsApplicationScreen;
+    [SerializeField] GameObject MarketApplicatinScreen;
+    [SerializeField] GameObject MarketApplicationHomePageScreen;
+    [SerializeField] GameObject MarketApplicationCheckoutPageScreen;
+    [SerializeField] GameObject UpgradeApplicationScreen;
     public void OnCameraSettingButtonClicked()
     {
-        isplayerCam=!isplayerCam;
-        CameraSettingButton.text=isplayerCam?s_FreeCam:s_PlayerCam;
+        isplayerCam = !isplayerCam;
+        CameraSettingButton.text = isplayerCam ? s_FreeCam : s_PlayerCam;
         //Call the Camera Check Method here
-        InputManager.Instance.ChangeMode(isplayerCam?CameraTargetMode.PlayerCam:CameraTargetMode.FreeCam, 
+        InputManager.Instance.ChangeMode(isplayerCam ? CameraTargetMode.PlayerCam : CameraTargetMode.FreeCam,
             isplayerCam ? GameDataDNDL.Instance.GetPlayer().gameObject : GameDataDNDL.Instance.GetFreeCamRig());
     }
     #region Shop
@@ -49,7 +68,7 @@ public class HUDManagerDNDL : Singletonref<HUDManagerDNDL>
     }
     public void ShopDisable()
     {
-        if(isShopOpen) CloseShop();
+        if (isShopOpen) CloseShop();
         ShopButton.SetActive(false);
     }
     public void ShopEnable()
@@ -71,6 +90,7 @@ public class HUDManagerDNDL : Singletonref<HUDManagerDNDL>
         interactionBTN.CloseInventory();
     }
 
+
     #endregion
     #region ProgressBar
     public void SetProgressBar(float sec, Action callback)
@@ -81,9 +101,11 @@ public class HUDManagerDNDL : Singletonref<HUDManagerDNDL>
     }
     #endregion
     #region Toast Msg
-    public void ShowToastMsg(string msg) {
-        if (Toast == null) { 
-        Toast=StartCoroutine(ShowToast(3,msg));
+    public void ShowToastMsg(string msg)
+    {
+        if (Toast == null)
+        {
+            Toast = StartCoroutine(ShowToast(3, msg));
         }
         else
         {
@@ -106,5 +128,50 @@ public class HUDManagerDNDL : Singletonref<HUDManagerDNDL>
         ToastMsg.text = "";
 
     }
+    #endregion
+
+    #region PC Setting
+    public void PcPowerOn()
+    {
+        PcParent.SetActive(true);
+    }
+    public void PcPowerOff()
+    {
+        PcParent.SetActive(false);
+    }
+    public void SetApplicationScreen(PC_Application application, bool Activate)
+    {
+        switch (application)
+        {
+            case PC_Application.News: NewsApplicationScreen.SetActive(Activate); break;
+            case PC_Application.Stats: StatsApplicationScreen.SetActive(Activate); break;
+            case PC_Application.Market: MarketApplicatinScreen.SetActive(Activate); break;
+            case PC_Application.Upgrade: UpgradeApplicationScreen.SetActive(Activate); break;
+        }
+    }
+    public void OpenApplication(int application)
+    {
+        SetApplicationScreen((PC_Application)application, true);
+    }
+    public void CloseApplication(int application)
+    {
+        SetApplicationScreen((PC_Application)application, false);
+    }
+    #endregion
+
+    #region Tutorial HUD
+
+    public void SetTutorialHUD(string _dialog, Action _callback,bool isclose=false)
+    {
+        tutorialhud.SetTutorialHUD(_dialog, _callback,isclose);
+       
+    }
+    public void SetTutorialHUD(Transform position, Action _callback, bool isclose = false, bool isUI = false)
+    {
+        tutorialhud.SetTutorialHUD(position, _callback,isclose,isUI);
+       
+    }
+    
+
     #endregion
 }

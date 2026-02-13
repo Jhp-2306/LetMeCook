@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
+
 public class Refrigerator : InteractiveBlock
 {
     #region Data Saving
@@ -24,7 +25,7 @@ public class Refrigerator : InteractiveBlock
             RefrigeratorItems loadedItem = new RefrigeratorItems(slot);
             storageSystem.AddItems(loadedItem);
         }
-        Data = this.GetEquipmentData();
+        //Data = this.GetEquipmentData();
         equipmentType = EquipmentType.Refrigerator;
         //BeforeSaving();
         GameSaveDNDL.DataUpdateBeforeSave -= BeforeSaving;
@@ -38,8 +39,7 @@ public class Refrigerator : InteractiveBlock
 
     private void Awake()
     {
-        base.Awake();
-        //Init();
+        
         
     }
     private void OnDisable()
@@ -50,17 +50,15 @@ public class Refrigerator : InteractiveBlock
     {
         GameSaveDNDL.DataUpdateBeforeSave -= BeforeSaving;
     }
-    public override void Init()
+    public override void Init(EquipmentType _equip = EquipmentType.none, string item = "")
     {
-        base.Init();
-        savedata.id = GameSaveDNDL.GenerateId(EquipmentType.Refrigerator.ToString());
-        savedata.Type = EquipmentType.Refrigerator;
+        base.Init(EquipmentType.Refrigerator,item);
         if (storageSystem == null)
         {
             storageSystem = new BasicStorageSystem<IStorageItem>(Slots);
         }
         savedata.Data = storageSystem.GetAllDataInString();
-        Data = this.GetEquipmentData();
+        //Data = this.GetEquipmentData();
         equipmentType = EquipmentType.Refrigerator;
         BeforeSaving();
         GameSaveDNDL.DataUpdateBeforeSave -= BeforeSaving;
@@ -71,21 +69,24 @@ public class Refrigerator : InteractiveBlock
         savedata.Data = storageSystem.GetAllDataInString();
         GameSaveDNDL.Instance.AddSaveData(savedata);
     }
-    public SO_EquipmentData GetEquipmentData()
-    {
-        var t = new SO_EquipmentData();
-        t.name = "Refrigerator";
-        t.DisplayFuntionName = "Open";
-        t.HandFullDisplayFuntionName = "Add";
-        t.Functionatily = this.gameObject;
-        return t;
-    }
+    //public SO_EquipmentData GetEquipmentData()
+    //{
+    //    var t = new SO_EquipmentData();
+    //    t.name = "Refrigerator";
+    //    t.DisplayFuntionName = "Open";
+    //    t.HandFullDisplayFuntionName = "Add";
+    //    //t.Functionatily = this.gameObject;
+    //    return t;
+    //}
 
     public EquipmentType GetEquipmentType()
     {
         return EquipmentType.none;
     }
-
+    public void AddFTUTIngredient()
+    {
+        storageSystem.AddItems(new RefrigeratorItems(IngredientType.Tomato, 2));
+    }
     public override void OnClick()
     {
         
@@ -143,7 +144,7 @@ public class Refrigerator : InteractiveBlock
                            }
                            else
                            {
-                               //create a new item slot when there is know item in the storage
+                               //create a new item slot when there is no item in the storage
                                {
                                    storageSystem.AddItems(new RefrigeratorItems(item.Type, item.GetQuanitity()));
                                }
@@ -188,8 +189,6 @@ public class Refrigerator : InteractiveBlock
             CustomLogs.CC_Log("Opening inventory", "red");
             HUDManagerDNDL.Instance.OpenInventory(storageSystem);
         }
-
-
     }
     
     public override bool IsInteractionSatisfied()

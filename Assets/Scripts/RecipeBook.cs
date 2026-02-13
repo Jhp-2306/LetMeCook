@@ -24,16 +24,48 @@ public class RecipeBook
         }
         return Dishes.trash;
     }
-    public int GetDishCookTime(Dishes dish)
+    public List<Recipes> GetAllThePossibleDishes(List<ProcedureStep> steps)
+    {
+        var dish=new List<Recipes>();
+        foreach(Recipes recipe in _recipes)
+        {
+            //var t= ;
+            if(recipe.CanBeThisDish(steps)) dish.Add(recipe);
+        }
+        return dish;
+
+    }
+    public float GetPrice(Dishes dish)
+    {
+        var _recipe = GetRecipe(dish);
+        if (_recipe != null) return _recipe.price;
+        return 0;
+    }
+    public float GetPriceMultipler(Dishes dish, List<ProcedureStep> steps)
+    {
+        var _recipe = GetRecipe(dish);
+        if (_recipe != null)return _recipe.CalculatePriceBonus(steps);
+        return 0;
+    }
+    public Recipes GetRecipe(Dishes dish)
     {
         foreach (var recipe in _recipes)
         {
-            if (recipe.GetCookTimeData(dish) != -1)
+            if (recipe.OutputDish == dish)
             {
-                return recipe.GetCookTimeData(dish);
+                return recipe;
             }
         }
+        return null;
+    }
+    public int GetDishCookTime(Dishes dish)
+    {
+        var _recipe=GetRecipe(dish);
+        if( _recipe!=null )return _recipe.CookingTime;
         return -1;
     }
+
+    public List<Recipes> GetRecipes() => _recipes;
 }
+
 

@@ -8,8 +8,10 @@ public class FryingPan : InteractiveBlock
 {
     //4 Slots of ingredient
     //start to cook for timer
-    public List<ProcedureStep> Slots;
-    private const int MaxSlots = 0;
+    public ProcedureStep Slots;
+    private bool isSlotFilled;
+    //private const int MaxSlots = 0;
+    private float defaultCookingTime = 30f;
     private float OverCookaddOnTimer = 20f;
     private float OverCookBeforeAddOn = 30f;
     private float undercookPercentage = 0.08f;
@@ -18,34 +20,56 @@ public class FryingPan : InteractiveBlock
     public Image RedZone;
     public Image GreenZone;
     public Image BlueZone;
-    public List<Image> SlotsIcon;
+    public Image SlotsIcon;
     public GameObject HUD, ProgressbarHUD, SlotsHUD;
-    DishCoookingStatus dishStatus;
+    ProcessStatus dishStatus;
     bool isCooking;
     bool isPicked;
     private bool isInteractable;
     Coroutine CookingCoroutine;
-    private void Start()//testing purpose
+    //private void Start()//testing purpose
+    //{
+    //    Init();
+    //}
+    #region Save Mechanics
+    public override void ReadFromSave(SaveDataTemplate _data)
     {
-        Init();
+        base.ReadFromSave(_data);
+        ///Any additional init/data distribution code here
+
+        ///in-between here
+        GameSaveDNDL.DataUpdateBeforeSave -= BeforeSaving;
+        GameSaveDNDL.DataUpdateBeforeSave += BeforeSaving;
     }
-    public override void Init()
+    void BeforeSaving()
     {
-        Slots = new List<ProcedureStep>();
+        GameSaveDNDL.Instance.AddSaveData(savedata);
+    }
+    #endregion
+    public override void Init(EquipmentType _equip = EquipmentType.none, string item = "")
+    {
+        base.Init(EquipmentType.Frying_pan,item);
+        ///Any additional init/data distribution code here
+        Slots = new ProcedureStep();
+        isSlotFilled = false;
         HUD.SetActive(false);
         isPicked = true;
         isCooking = false;
         isInteractable = true;
+        ///in-between here
+        BeforeSaving();
+        GameSaveDNDL.DataUpdateBeforeSave += BeforeSaving;
     }
     public void AddIngredient(Ingredient ingredient)
     {
-        if (Slots.Count < MaxSlots)
+        if (!isSlotFilled)
         {
-
-            Slots.Add(ingredient.ingrendient);
+            //Slots.Add(ingredient.ingrendient);
+            Slots = ingredient.ingrendient;
             //After Adding Ingredient inHandItem Removeds
             GameDataDNDL.Instance.GetPlayer().RemoveFromHand();
             SlotsUpdate();
+            isSlotFilled=true;
         }
         else
         {
@@ -58,9 +82,9 @@ public class FryingPan : InteractiveBlock
         SlotsHUD.SetActive(true);
         ProgressbarHUD.SetActive(false);
         int idx = 0;
-        foreach (var t in Slots)
+        if (isSlotFilled)
         {
-            SlotsIcon[idx].sprite = AssetLoader.Instance.GetIngredientIcon(t.Ingredient, t.processed);
+            SlotsIcon.sprite = AssetLoader.Instance.GetIngredientIcon(Slots.Ingredient, Slots.processed);
             idx++;
         }
     }
@@ -70,6 +94,7 @@ public class FryingPan : InteractiveBlock
     }
     public override void OnClick()
     {
+        //Picking Mechanics
         if (isCooking && !isPicked)
         {
             //Stop the coroutine there and pick the dish
@@ -77,15 +102,18 @@ public class FryingPan : InteractiveBlock
             isCooking = false;
             StopCoroutine(CookingCoroutine);
             PickupDish();
-            Debug.Log(CustomLogs.CC_TagLog("Frying Pan", $"Done Cooking Dish-- status{dishStatus}"));
+            
+            Debug.Log(CustomLogs.CC_TagLog("Frying Pan", $"Done Cooking Dish-- status{Slots.processed}"));
         }
         if (!isCooking && !isPicked)
         {
             isPicked = true;
             StopCoroutine(CookingCoroutine);
             PickupDish();
+            //isSlotFilled = false;
             Debug.Log(CustomLogs.CC_TagLog("Frying Pan", $"Done Cooking Dish-- status{dishStatus}"));
         }
+        //ADD Mechanics
         var player = GameDataDNDL.Instance.GetPlayer();
         if (player.isHandsfull && player.InHand.IGetType() == typeofhandheld.ingredients && isPicked)
         {
@@ -102,14 +130,14 @@ public class FryingPan : InteractiveBlock
     {
         //base.OnHold();
         if (isCooking || !isPicked) return;
-        if (Slots.Count > 1)
+        if (isSlotFilled)
         {
             //Start Cooking
             //Check for the Output
-            var dish = GameDataDNDL.Instance.GetDish(Slots);
-            var cooktimer = GameDataDNDL.Instance.GetCookingTime(dish);
-            Debug.Log(CustomLogs.CC_TagLog("Frying Pan", $"Start Cooking{dish},{GameDataDNDL.Instance.GetCookingTime(dish)}"));
-            CookingCoroutine = StartCoroutine(StartCooking(cooktimer));
+            //var dish = GameDataDNDL.Instance.GetStoveDish(Slots);
+            //var cooktimer = GameDataDNDL.Instance.GetCookingTime(dish);
+            Debug.Log(CustomLogs.CC_TagLog("Frying Pan", $"Start Frying,{defaultCookingTime}"));
+            CookingCoroutine = StartCoroutine(StartCooking(defaultCookingTime));
         }
         else
         {
@@ -120,6 +148,7 @@ public class FryingPan : InteractiveBlock
     void PickupDish()
     {
 
+        isSlotFilled = false;
     }
     IEnumerator StartCooking(float maxCookingTime)
     {
@@ -144,7 +173,7 @@ public class FryingPan : InteractiveBlock
             $"[GreenZone{GreenZone.fillAmount},{beforeOverCookTimer}]" +
             $"[BlueZone{BlueZone.fillAmount},{(maxCookingTime * undercookPercentage)}]"));
 
-        dishStatus = DishCoookingStatus.None;
+        dishStatus = ProcessStatus.None;
         while (timer < underCookTimer)
         {
             yield return null;
@@ -154,7 +183,7 @@ public class FryingPan : InteractiveBlock
         isInteractable = true;
         Debug.Log(CustomLogs.CC_TagLog("Frying Pan", $"underCooked{timer}"));
         //under cooked
-        dishStatus = DishCoookingStatus.UnderCooked;
+        dishStatus = ProcessStatus.UnderCooked;
         //can interact here onwards
         //Start Cooking 
         while (timer < maxCookingTime)
@@ -165,7 +194,7 @@ public class FryingPan : InteractiveBlock
         }
         Debug.Log(CustomLogs.CC_TagLog("Frying Pan", $"cooked{timer}"));
         //Cooking Done
-        dishStatus = DishCoookingStatus.Cooked;
+        dishStatus = ProcessStatus.Fryed;
         while (timer < maxCookingTime + beforeOverCookTimer)
         {
             yield return null;
@@ -173,7 +202,7 @@ public class FryingPan : InteractiveBlock
             Progress.fillAmount = timer / maxTimer;
         }
         Debug.Log(CustomLogs.CC_TagLog("Frying Pan", $"overcooked{timer}"));
-        dishStatus = DishCoookingStatus.OverCooked;
+        dishStatus = ProcessStatus.OverCooked;
         while (timer < maxTimer)
         {
             yield return null;
@@ -181,7 +210,7 @@ public class FryingPan : InteractiveBlock
             Progress.fillAmount = timer / maxTimer;
         }
         Debug.Log(CustomLogs.CC_TagLog("Frying Pan", $"burned{timer}"));
-        dishStatus = DishCoookingStatus.Burned;
+        dishStatus = ProcessStatus.Burned;
         //Burned food
         isCooking = false;
     }

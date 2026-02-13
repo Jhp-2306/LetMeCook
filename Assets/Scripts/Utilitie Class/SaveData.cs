@@ -68,7 +68,7 @@ public class UserDataLocal
     public int CurrencyAmount;
     public int Day;
     public int Time;
-
+    public bool isNGDataSet;
     public string StartTime;
     public string GameCloseTime;
     public string CurrentTime;
@@ -82,6 +82,7 @@ public class UserDataLocal
         CurrencyAmount = copydata.CurrencyAmount;
         Day = copydata.Day;
         Time = copydata.Time;
+        isNGDataSet = copydata.isNGDataSet;
         StartTime = copydata.StartTime;
         GameCloseTime = copydata.GameCloseTime;
         CurrentTime = copydata.CurrentTime;

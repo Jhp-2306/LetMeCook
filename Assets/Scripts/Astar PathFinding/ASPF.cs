@@ -29,12 +29,12 @@ namespace ASPathFinding
         }
         public void StartFindPath(Vector3 _startpt, Vector3 _endpt)
         {
-            Debug.Log(CustomLogs.CC_TagLog("Astar Path Finding(ASPF class)", "Player Moving"));
+            //Debug.Log(CustomLogs.CC_TagLog("Astar Path Finding(ASPF class)", "Player Moving"));
             StartCoroutine(FindPath(_startpt, _endpt, grid, false));
         }
         public void StartForAIFindPath(Vector3 _startpt, Vector3 _endpt)
         {
-            Debug.Log(CustomLogs.CC_TagLog("Astar Path Finding(ASPF class)", "AI Moving"));
+            //Debug.Log(CustomLogs.CC_TagLog("Astar Path Finding(ASPF class)", "AI Moving"));
             StartCoroutine(FindPath(_startpt, _endpt, AIGrid, true));
         }
         IEnumerator FindPath(Vector3 startPos, Vector3 targetPos, ASPFGrid _grid, bool isAI)
@@ -112,8 +112,6 @@ namespace ASPathFinding
             List<Vector3> vec = new List<Vector3>();
             while (currentNode != startnode)
             {
-                //Debug.Log(CustomLogs.CC_TagLog($"<color=cyan> ASPF</color>", $"current node Wpos{currentNode.worldPosition},{startnode.worldPosition},{startnode==currentNode}"));
-              // currentNode.PrintDetails(Color.cyan);
                 path.Add(currentNode);
                 vec.Add(currentNode.worldPosition);
                 currentNode = currentNode.parent;

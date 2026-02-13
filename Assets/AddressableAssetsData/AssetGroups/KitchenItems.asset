@@ -1,0 +1,83 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: KitchenItems
+  m_EditorClassIdentifier: 
+  m_GroupName: KitchenItems
+  m_GUID: cb4db86a257506b4f9f17d370f800c92
+  m_SerializeEntries:
+  - m_GUID: 1d3ec9d852d799e46913f4c861d3cdae
+    m_Address: Mixing_Bowl
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Equipments
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 22ce45787c4cbc34696f3b3ccd45a4bb
+    m_Address: Fryer
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Equipments
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 30edc5c25f903bf41890d483e1b21940
+    m_Address: Chopping_Board
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Equipments
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 32d75d408b476554cb3d0bf2e62c67d5
+    m_Address: Plate
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Equipments
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4abab0b619587de4399e138ce3468ef6
+    m_Address: Refrigerator
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Equipments
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 57fdc0ce346049f4983794ec45921e8b
+    m_Address: Bin
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Equipments
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6c81a61a607b99b45a17eee93526dbae
+    m_Address: Oven
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Equipments
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a45556cbee3cca64089089a5f77e602d
+    m_Address: Platetray
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Equipments
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e314d656d60dff24e8e9926ff3cc70de
+    m_Address: Empty_Tabel
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Equipments
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fe934b109404be543b16e8da10a6b17e
+    m_Address: Stove
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Equipments
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: a836759115da1c24590b8610924c161a, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 3f0b48457c02e9b4a8df7539acb04c94, type: 2}
+    - {fileID: 11400000, guid: fe289cba1fa0dc34792425004e56e620, type: 2}

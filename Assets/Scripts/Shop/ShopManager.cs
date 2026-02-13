@@ -1,9 +1,10 @@
+using Constants;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using Util;
-using Constants;
-using Unity.VisualScripting;
 
 public class ShopManager : Singletonref<ShopManager>
 {
@@ -20,21 +21,21 @@ public class ShopManager : Singletonref<ShopManager>
         EquipmentType type;
         string name;
         int price;
-        Sprite icon;
-        GameObject Prefab;
+        string icon;
+        string PrefabID;
 
-        public ShopItems(string name, int price, EquipmentType _type, GameObject _prefab, Sprite icon = null)
+        public ShopItems(string name, int price, EquipmentType _type, string _prefab, string icon = null)
         {
             this.name = name;
             this.price = price;
             this.icon = icon;
             this.type = _type;
-            this.Prefab = _prefab;
+            this.PrefabID = _prefab;
         }
         public string GetName() => name;
         public int GetPrice() => price;
-        public Sprite GetIcon() => icon;
-        public GameObject GetPrefab() => Prefab;
+        public string GetIcon() => icon;
+        public string GetPrefab() => PrefabID;
         public EquipmentType GetEquipmentType() => type;
     }
     public List<ShopItems> Items;
@@ -45,6 +46,7 @@ public class ShopManager : Singletonref<ShopManager>
     GameObject CurrentPurchaseObject;
     bool isBuildMode;
     public GameObject GetCurrentPurchaseObject { get => CurrentPurchaseObject; }
+    private string _currentPrefabID;
     private void Start()
     {
         Items = new List<ShopItems>();
@@ -53,7 +55,7 @@ public class ShopManager : Singletonref<ShopManager>
             foreach (var item in GameDataDNDL.Instance.ItemList.equipmentDataList)
             {
                 //Debug.Log(item.Prefab==null);
-                var t = new ShopItems(item.name, item.price, item.Type, item.Prefab);
+                var t = new ShopItems(item.name, item.price, item.Type, item.Prefab,item.Icon);
                 Items.Add(t);
             }
             MaxShopItems = Items.Count;
@@ -73,14 +75,16 @@ public class ShopManager : Singletonref<ShopManager>
         HUDManagerDNDL.Instance.CloseShop();
     }
 
-    public void BuildModeActivate(GameObject _prefab)
+    public void BuildModeActivate(string _prefab)
     {
         var templistpos = GameDataDNDL.Instance.GetGrid().GetAvailableNeighbourPosition(GameDataDNDL.Instance.GetPlayer().gameObject.transform.position);
         if (templistpos.Count > 0)
         {
-            var position = templistpos[Random.RandomRange(0, templistpos.Count)];
-            var go = Instantiate(_prefab, position, Quaternion.identity);
+            var position = templistpos[UnityEngine.Random.RandomRange(0, templistpos.Count)];
+            var go = Instantiate(AssetLoader.Instance.GetEquipmetPrefab(_prefab), position, Quaternion.identity);
+            _currentPrefabID = _prefab;
             CurrentPurchaseObject = go;
+            CurrentPurchaseObject.GetComponent<Collider>().isTrigger = true;
             buildingHud.gameObject.SetActive(true);
             buildingHud.gameObject.transform.SetParent(go.transform);
             buildingHud.gameObject.transform.localPosition = Vector3.up * 1.75f;
@@ -140,9 +144,10 @@ public class ShopManager : Singletonref<ShopManager>
         //Disabling Building Hud
         buildingHud.gameObject.transform.SetParent(this.gameObject.transform);
         buildingHud.gameObject.SetActive(false);
+        CurrentPurchaseObject.GetComponent<Collider>().isTrigger = false;
         //Init the Build Object
         if (CurrentPurchaseObject.GetComponent<InteractiveBlock>() != null)
-        {CurrentPurchaseObject.GetComponent<InteractiveBlock>().Init();}
+        {CurrentPurchaseObject.GetComponent<InteractiveBlock>().Init(EquipmentType.none,_currentPrefabID);}
         //Confirm the build location
         InputManager.Instance.UpdateGridPositions(CurrentPurchaseObject.transform.position, 
             CurrentPurchaseObject.GetComponent<InteractiveBlock>().GetLookPos().position);
@@ -153,6 +158,16 @@ public class ShopManager : Singletonref<ShopManager>
         isBuildMode = false;
     }
     
+    public GameObject PlaceEquipmentAtaPoint(string _prefab,Vector3 position,Vector3 rotation)
+    {
+        var go = Instantiate(AssetLoader.Instance.GetEquipmetPrefab(_prefab), position, Quaternion.Euler(rotation));
+        if (go.GetComponent<InteractiveBlock>() != null)
+        { go.GetComponent<InteractiveBlock>().Init(EquipmentType.none, _prefab); }
+        //Confirm the build location
+        InputManager.Instance.UpdateGridPositions(go.transform.position,
+            go.GetComponent<InteractiveBlock>().GetLookPos().position);
+        return go;
+    }
     IEnumerator CheckConfirmBTN()
     {
         while (isBuildMode) { 

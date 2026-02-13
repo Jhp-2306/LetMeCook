@@ -12,24 +12,25 @@ public class PlateHolder : InteractiveBlock
     public override void ReadFromSave(SaveDataTemplate _data)
     {
         base.ReadFromSave(_data);
+        GameSaveDNDL.DataUpdateBeforeSave -= BeforeSaving;
+        GameSaveDNDL.DataUpdateBeforeSave += BeforeSaving;
     }
-    public override void Init()
+    public override void Init(EquipmentType _equip = EquipmentType.none, string item = "")
     {
-        savedata = new SaveDataTemplate();
-        savedata.id = GameSaveDNDL.GenerateId(EquipmentType.Refrigerator.ToString());
-        savedata.Position = transform.position;
-        savedata.Rotation = transform.rotation;
-        savedata.Type = EquipmentType.Refrigerator;
-        //if (storageSystem == null)
-        //{
-        //    storageSystem = new BasicStorageSystem<IStorageItem>(Slots);
-        //}
-        //savedata.Data = storageSystem.GetAllDataInString();
-        Data = this.GetEquipmentData();
-        equipmentType = EquipmentType.Refrigerator;
-        //BeforeSaving();
-       //GameSaveDNDL.DataUpdateBeforeSave -= BeforeSaving;
-       //GameSaveDNDL.DataUpdateBeforeSave += BeforeSaving;
+        base.Init(EquipmentType.PlateTray, item);
+        //savedata = new SaveDataTemplate();
+        //savedata.id = GameSaveDNDL.GenerateId(EquipmentType.PlateTray.ToString());
+        //savedata.Position = transform.position;
+        //savedata.Rotation = transform.rotation;
+        //savedata.Type = EquipmentType.PlateTray;
+        //Data = this.GetEquipmentData();
+        equipmentType = EquipmentType.PlateTray;
+        BeforeSaving();
+        GameSaveDNDL.DataUpdateBeforeSave += BeforeSaving;
+    }
+    void BeforeSaving()
+    {
+        GameSaveDNDL.Instance.AddSaveData(savedata);
     }
     public override void OnClick()
     {

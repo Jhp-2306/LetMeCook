@@ -7,9 +7,10 @@ using System;
 public class SO_EquipmentData : ScriptableObject
 {
     public string DisplayFuntionName;
+    public string HoldFuntionName;
     public string HandFullDisplayFuntionName;
     public EquipmentType Type;
-    public GameObject Functionatily;
+    //public GameObject Functionatily;
 
     
 }
@@ -20,5 +21,6 @@ public class equipmentData
     public EquipmentType Type;
     public string name;
     public int price;
-    public GameObject Prefab;
+    public string Prefab;
+    public string Icon;
 }

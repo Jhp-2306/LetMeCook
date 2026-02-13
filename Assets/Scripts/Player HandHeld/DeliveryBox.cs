@@ -18,6 +18,7 @@ namespace HandHeld
             AddBoxItem(new RefrigeratorItems(IngredientType.Tomato, 20));
             AddBoxItem(new RefrigeratorItems(IngredientType.Chicken, 2));
             AddBoxItem(new RefrigeratorItems(IngredientType.Carrot, 7));
+            AddBoxItem(new RefrigeratorItems(IngredientType.BurgerBun, 8));
         }
 
         public void AddBoxItem(RefrigeratorItems boxItem)

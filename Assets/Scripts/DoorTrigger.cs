@@ -17,10 +17,10 @@ public class DoorTrigger : MonoBehaviour
     public AnimationCurve DoorRotationCurve;
     public float doorFinalRotationValue;
     Coroutine DoorAnimation;
-
+    List<GameObject> entrylog;
     private void Start()
     {
-       
+       entrylog = new List<GameObject>();
 
     }
 
@@ -28,22 +28,27 @@ public class DoorTrigger : MonoBehaviour
     {
         if (col.gameObject.GetComponent<ITriggerDoor>() != null)
         {
-
-            oppsiteTrigger.gameObject.SetActive(false);
-            //var starttimer=DateTime.Now;
-            //var stopwatch =new System.Diagnostics.Stopwatch();
-            ////stopwatch.Start();
-            if (DoorAnimation != null)
-                StopCoroutine(DoorAnimation);
-            DoorAnimation =StartCoroutine(PlayDoorAnimation());
-            col.gameObject.GetComponent<ITriggerDoor>().onDoorTrigger(MoveToPoint, ToArea, () =>
+            if (!oppsiteTrigger.entrylog.Contains(col.gameObject))
             {
-                oppsiteTrigger.gameObject.SetActive(true);
-                //var seconds=(starttimer-DateTime.Now).Seconds;
-                //stopwatch.Stop();
-                //Debug.Log(CustomLogs.CC_TagLog("DOOR Check", $"Total Timer of movement{stopwatch.ElapsedMilliseconds}mm"));
 
-            });
+                //oppsiteTrigger.gameObject.SetActive(false);
+                entrylog.Add(col.gameObject);
+                //var starttimer=DateTime.Now;
+                //var stopwatch =new System.Diagnostics.Stopwatch();
+                ////stopwatch.Start();
+                if (DoorAnimation != null)
+                    StopCoroutine(DoorAnimation);
+                DoorAnimation = StartCoroutine(PlayDoorAnimation());
+                col.gameObject.GetComponent<ITriggerDoor>().onDoorTrigger(MoveToPoint, ToArea, () =>
+                {
+                    entrylog.Remove(col.gameObject);
+                    //oppsiteTrigger.gameObject.SetActive(true);
+                    //var seconds=(starttimer-DateTime.Now).Seconds;
+                    //stopwatch.Stop();
+                    //Debug.Log(CustomLogs.CC_TagLog("DOOR Check", $"Total Timer of movement{stopwatch.ElapsedMilliseconds}mm"));
+
+            } );
+                }
 
         }
     }
