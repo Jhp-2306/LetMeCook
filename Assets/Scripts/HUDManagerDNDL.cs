@@ -19,11 +19,13 @@ public class HUDManagerDNDL : Singletonref<HUDManagerDNDL>
     [SerializeField] GameObject ShopButton;
     bool isShopOpen;
 
+    [Header("Player Cam Settings")]
     bool isplayerCam;
     const string s_PlayerCam = "Player Cam";
     const string s_FreeCam = "Free Cam";
     public TextMeshProUGUI CameraSettingButton;
 
+    [Header("Tutorial ")]
     [SerializeField] private TutorialHUD tutorialhud;
     public FillUpMiniGame MiniGame;
     [Serializable]
@@ -44,6 +46,12 @@ public class HUDManagerDNDL : Singletonref<HUDManagerDNDL>
     [SerializeField] GameObject MarketApplicationHomePageScreen;
     [SerializeField] GameObject MarketApplicationCheckoutPageScreen;
     [SerializeField] GameObject UpgradeApplicationScreen;
+
+    [Header("Currency Reflector")]
+    [SerializeField] TextMeshProUGUI CurrencyCounter;
+    private float CurrencyAnimationSec;
+    private int previousValue;
+
     public void OnCameraSettingButtonClicked()
     {
         isplayerCam = !isplayerCam;
@@ -171,7 +179,24 @@ public class HUDManagerDNDL : Singletonref<HUDManagerDNDL>
         tutorialhud.SetTutorialHUD(position, _callback,isclose,isUI);
        
     }
-    
+    public void SetTutorialHUD(string _dialog, GameObject focusUI, Action _callback=null)
+    {
+        tutorialhud.SetTutorialHUD(_dialog,focusUI);
+        _callback?.Invoke();
+    }
+    public void TutorialHUDDisableFocus()
+    {
+        tutorialhud.DisableFocus(); 
+    }
+
 
     #endregion
+
+    #region GoldCounter
+    public void AddCurrencyVisual(int Value)
+    {
+        CurrencyCounter.text = Value.ToString();
+    }
+    #endregion
+
 }

@@ -1,10 +1,12 @@
 using ASPathFinding;
 using Constants;
+using NPC;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Util;
+
 
 public class GameDataDNDL : Singletonref<GameDataDNDL>
 {
@@ -65,11 +67,10 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
         SaveData.Instance.LoadInstance();
         StartCoroutine(WaitForAddressableToLoad());
         m_UserDataLocal = SaveData.Instance.LocalData;
-
+        HUDManagerDNDL.Instance.AddCurrencyVisual(m_UserDataLocal.CurrencyAmount);
         BeforeSaving();
         GameSaveDNDL.DataUpdateBeforeSave -= BeforeSaving;
         GameSaveDNDL.DataUpdateBeforeSave += BeforeSaving;
-
     }
     IEnumerator WaitForAddressableToLoad()
     {
@@ -106,6 +107,7 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
     public void AddCurrency(int amount)
     {
         m_UserDataLocal.CurrencyAmount += amount;
+        HUDManagerDNDL.Instance.AddCurrencyVisual(m_UserDataLocal.CurrencyAmount);
     }
 
 
@@ -166,12 +168,13 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
         CurrentArea = area;
     }
 
-
+    #region FTUT
+    public bool isFTUT;
     private GameObject FTUT_Refrigerator;
     private GameObject FTUT_ChoppingBoard;
     private GameObject FTUT_Stove;
     private GameObject FTUT_PlateTray;
-
+    private NPC.NPC FTUT_Npc;
     public void NewSaveSetup()
     {
         //Set Refrigerator
@@ -198,6 +201,7 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
     //First Time User Tutorial
     void FTUT_Phase1()
     {
+        isFTUT = true;
         ///Part 1
         //Start with intro msg
         HUDManagerDNDL.Instance.SetTutorialHUD("hello Welcome to LMC", () =>
@@ -278,6 +282,7 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
                     InputManager.Instance.Interactionbtn.InvokeClick();
                     HUDManagerDNDL.Instance.SetTutorialHUD("Add another Sliced Tomato now", () => {
                     FTUT_Stove.GetComponent<Stove>().init_FTUT();
+                      FTUT_Npc=  NPCManager.Instance.RequestFTUTNPC();
                     },true);
                 },false,true);
                 });
@@ -289,7 +294,7 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
     {
         //throe it into stove
         //show the recipe for the tomato soup
-        HUDManagerDNDL.Instance.SetTutorialHUD("Get a Plate from the Tray", () =>
+        HUDManagerDNDL.Instance.SetTutorialHUD("Wait for the Perfect indicator, meanwhile Get a Plate from the Tray", () =>
         {
             HUDManagerDNDL.Instance.SetTutorialHUD(FTUT_PlateTray.transform, () =>
             {
@@ -317,12 +322,32 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
                     HUDManagerDNDL.Instance.SetTutorialHUD(InputManager.Instance.Interactionbtn.transform, () =>
                     {
                         InputManager.Instance.Interactionbtn.InvokeClick();
-
-                    }, true, true);
+                        //Giving the Dish to the npc
+                        HUDManagerDNDL.Instance.SetTutorialHUD("Give the Dish to the  NPC", () =>
+                        {
+                            HUDManagerDNDL.Instance.SetTutorialHUD(FTUT_Npc.CurrentPlatform.transform, () =>
+                            {
+                                InputManager.Instance.FTUT_MovePlayer(FTUT_Npc.CurrentPlatform.GetComponent<InteractiveBlock>(), () => { 
+                                HUDManagerDNDL.Instance.SetTutorialHUD("wow you earned some currency", () =>
+                                {
+                                    //Move Cam to PC
+                                    // Part 2 Ftut Starts
+                                    ///Part 2
+                                    //use the money in the room to purchase ingredient
+                                    //player level msg
+                                    //restarunt Rating msg
+                                    //day end Bills
+                                    ///------
+                                },true);
+                                });
+                            });
+                        });
+                    }, false, true);
                 });
             });
         });
     }
+    #endregion
     void OnDayEndBilling()
     {
         //pay the Bill

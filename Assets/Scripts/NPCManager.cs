@@ -58,7 +58,8 @@ namespace NPC
                 TrafficTimer += coolDownTimeInSec;
                 if (TimeManagementDNDL.Instance.isRoaminghrs)
                 {
-                    if (TimeManagementDNDL.Instance.CurrentDayPhase == TimeManagementDNDL.DayPhase.KitchenOpen && DestPadsQueue.Count != 0&&TrafficTimer>insideTrafficTimer)
+                    if (TimeManagementDNDL.Instance.CurrentDayPhase == TimeManagementDNDL.DayPhase.KitchenOpen && DestPadsQueue.Count != 0&&TrafficTimer>insideTrafficTimer&&
+                        !GameDataDNDL.Instance.isFTUT)
                     {
                         TrafficTimer = 0;
                         //Send NPC inside the shop
@@ -71,7 +72,11 @@ namespace NPC
                 }
             }
         }
-        public void NPCMovingInsideTheShop()
+        public NPC RequestFTUTNPC()
+        {
+           return NPCMovingInsideTheShop();
+        }
+        public NPC NPCMovingInsideTheShop()
         {
             if (DestPadsQueue.Count > 0)
             {
@@ -82,7 +87,9 @@ namespace NPC
                 Debug.Log(CustomLogs.CC_TagLog("NPC-Manager", $"removing count{DestPadsQueue.Count},{temp.npcName},{finalLocationGO == null}"));
                 temp.transform.position = GetNPCRandomCood();
                 temp.SetNPC(DoorEntryPosition.position, false, finalLocationGO);
+                return temp;
             }
+            return null;
         }
         
         public void NPCMovingOutsideTheShop(NPC npc, Counter location)

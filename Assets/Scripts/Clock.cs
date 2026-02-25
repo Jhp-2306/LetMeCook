@@ -12,7 +12,7 @@ public class Clock : MonoBehaviour
     public Vector3 InitPosition, FinalPosition;
     void Update()
     {
-        DigiClock.text = TimeManagementDNDL.Instance.GetTime(false);
+        DigiClock.text = $"Day-{TimeManagementDNDL.Instance.GetTotalDays()+1}";
         var hrshandRotation = (TimeManagementDNDL.Instance.GetHrs() / 12) * 360;
         HrsHand.transform.eulerAngles = new Vector3(0, 0, -hrshandRotation);
         var minshandRotation = (TimeManagementDNDL.Instance.GetMins() / 60) * 360;

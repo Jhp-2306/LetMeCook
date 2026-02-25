@@ -16,7 +16,7 @@ public class Refrigerator : InteractiveBlock
     {
        base.ReadFromSave(_data);
         var data= BasicStorageSystem<IStorageItem>.LoadDataFromString(_data.Data.ToString());
-        Slots =BasicStorageSystem<IStorageItem>.LoadSizeFromString(_data.Data.ToString());
+        //Slots =BasicStorageSystem<IStorageItem>.LoadSizeFromString(_data.Data.ToString());
         storageSystem=new BasicStorageSystem<IStorageItem>(Slots);
         Debug.Log(data.Count);
         foreach (var slot in data)
@@ -28,6 +28,7 @@ public class Refrigerator : InteractiveBlock
         //Data = this.GetEquipmentData();
         equipmentType = EquipmentType.Refrigerator;
         //BeforeSaving();
+        LoadLevelUpgrades();
         GameSaveDNDL.DataUpdateBeforeSave -= BeforeSaving;
         GameSaveDNDL.DataUpdateBeforeSave += BeforeSaving;
     }
@@ -60,6 +61,7 @@ public class Refrigerator : InteractiveBlock
         savedata.Data = storageSystem.GetAllDataInString();
         //Data = this.GetEquipmentData();
         equipmentType = EquipmentType.Refrigerator;
+        LoadLevelUpgrades();
         BeforeSaving();
         GameSaveDNDL.DataUpdateBeforeSave -= BeforeSaving;
         GameSaveDNDL.DataUpdateBeforeSave += BeforeSaving;
@@ -69,16 +71,7 @@ public class Refrigerator : InteractiveBlock
         savedata.Data = storageSystem.GetAllDataInString();
         GameSaveDNDL.Instance.AddSaveData(savedata);
     }
-    //public SO_EquipmentData GetEquipmentData()
-    //{
-    //    var t = new SO_EquipmentData();
-    //    t.name = "Refrigerator";
-    //    t.DisplayFuntionName = "Open";
-    //    t.HandFullDisplayFuntionName = "Add";
-    //    //t.Functionatily = this.gameObject;
-    //    return t;
-    //}
-
+    
     public EquipmentType GetEquipmentType()
     {
         return EquipmentType.none;
@@ -196,6 +189,11 @@ public class Refrigerator : InteractiveBlock
         return true;
     }
    
+    public void LoadLevelUpgrades()
+    {
+       var temp= Data.upgradeData[savedata.level];
+        Slots=(int)temp.GetUpgradeValue(E_ValueName.Slots);
+    }
 }
 public class RefrigeratorItems : IStorageItem
 {

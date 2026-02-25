@@ -304,6 +304,10 @@ namespace NPC
                                 currentOrder = new List<Dishes>();
                             currentOrder.Clear();
                             //TODO:-Logic for multi Order HERE
+                            if (GameDataDNDL.Instance.isFTUT)
+                            {
+                            currentOrder.Add(Dishes.TomatoSoup);
+                            }else
                             currentOrder.Add((Dishes)UnityEngine.Random.RandomRange(0, ((int)Dishes.count - 1)));
                             var timer = GameDataDNDL.Instance.GetCookingTime(currentOrder[0]);
                             namedis.text = currentOrder[0].ToString();

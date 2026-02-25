@@ -109,5 +109,6 @@ public class TimeManagementDNDL : Singletonref<TimeManagementDNDL>
         var mins = ((int)(t) - (hr * 3600)) / 60;
         return mins;
     }
+    public int GetTotalDays() => (int)_currentday;
 
 }

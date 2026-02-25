@@ -12,9 +12,11 @@ public class Stove : InteractiveBlock
     //start to cook for timer
     public List<ProcedureStep> Slots;
     private const int MaxSlots = 4;
-    private float OverCookaddOnTimer = 20f;
-    private float OverCookBeforeAddOn = 30f;
+    //private float OverCookaddOnTimer = 20f;
+    //private float OverCookBeforeAddOn = 30f;
     private float undercookPercentage = 0.08f;
+    private float overcookPercentage = 0.1f;
+    private float perfectcookingPercentage = 0.08f;
     //Hud
     public Image Progress;
     public Image RedZone;
@@ -126,10 +128,10 @@ public class Stove : InteractiveBlock
 
             if (isFTUT)
             {
-                
+
                 //We Call the Cooking FTUT
                 FTUT_Cooking();
-               
+
             }
         }
         else
@@ -156,8 +158,8 @@ public class Stove : InteractiveBlock
             DoneHUD.SetActive(false);
             if (isFTUT)
             {
+                Debug.Log(CustomLogs.CC_TagLog("Stove", "init phase 3"));
                 GameDataDNDL.Instance.FTUT_Phase3();
-
             }
         }
         else
@@ -169,12 +171,13 @@ public class Stove : InteractiveBlock
     bool tryPickupDish()
     {
         var player = GameDataDNDL.Instance.GetPlayer();
-        if (player.InHand!=null&&player.InHand.GetGameObject().GetComponent<Plate>() != null)
+        if (player.InHand != null && player.InHand.GetGameObject().GetComponent<Plate>() != null)
         {
             if (player.InHand.GetGameObject().GetComponent<Plate>().isPlateEmpty)
             {
                 GetFoodcookMulti();
                 player.InHand.GetGameObject().GetComponent<Plate>().pickupDish(Currentcookingdish, CurrentcookingdishPrice, CurrentcookingdishPriceMulti);
+                Slots = new List<ProcedureStep>();
                 return true;
             }
             //throw a toast here or try to merge the dish?
@@ -194,23 +197,23 @@ public class Stove : InteractiveBlock
         {
             case ProcessStatus.None: break;
             case ProcessStatus.UnderCooked:
-                CurrentcookingdishPriceMulti += 0.75f;break;
+                CurrentcookingdishPriceMulti += 0.75f; break;
             case ProcessStatus.Cooked:
-                CurrentcookingdishPriceMulti += 1.5f;break;
+                CurrentcookingdishPriceMulti += 1.5f; break;
             case ProcessStatus.OverCooked:
-                CurrentcookingdishPriceMulti += 1f;break;
+                CurrentcookingdishPriceMulti += 1f; break;
             case ProcessStatus.Burned:
-                CurrentcookingdishPriceMulti = 1;break;
+                CurrentcookingdishPriceMulti = 1; break;
         }
     }
     IEnumerator StartCooking(float maxCookingTime)
     {
         isInteractable = false;
         float timer = 0;
-        float overcooktimer = maxCookingTime * .1f;
-        float beforeOverCookTimer = maxCookingTime * .08f;
-        float underCookTimer = maxCookingTime - (maxCookingTime * undercookPercentage);
-        var maxTimer = maxCookingTime + overcooktimer + beforeOverCookTimer;
+        float underCookTimer = maxCookingTime - (maxCookingTime * undercookPercentage);//First Point from here on its undercooked
+        float beforeOverCookTimer = maxCookingTime * perfectcookingPercentage;//third Point from here on its overcooked point
+        float overcooktimer = maxCookingTime * overcookPercentage;
+        var maxTimer = maxCookingTime + overcooktimer + beforeOverCookTimer;//fouth Point from here on its burnt point
         isCooking = true;
         isPicked = false;
         //Set the timer visuals
@@ -248,7 +251,7 @@ public class Stove : InteractiveBlock
         }
         Debug.Log(CustomLogs.CC_TagLog("Stove", $"cooked{timer}"));
         //Cooking Done
-        
+
         dishStatus = ProcessStatus.Cooked;
         if (isFTUT)
         {
@@ -291,13 +294,17 @@ public class Stove : InteractiveBlock
 
     public void FTUT_Cooking()
     {
-        HUDManagerDNDL.Instance.SetTutorialHUD("Explain Stove Mechanics", () => {
-            HUDManagerDNDL.Instance.SetTutorialHUD(InputManager.Instance.Interactionbtn.transform, () =>
+        HUDManagerDNDL.Instance.SetTutorialHUD("Explain Stove Mechanics", () =>
+        {
+            HUDManagerDNDL.Instance.SetTutorialHUD("Now Hold to Start Cooking", InputManager.Instance.Interactionbtn.gameObject, () =>
                 {
-                    InputManager.Instance.Interactionbtn.OnPressDown();
-                    HUDManagerDNDL.Instance.SetTutorialHUD("Wait for the Perfect indicator", () => {
+                    InputManager.Instance.Interactionbtn.AddEventsspc(null,() =>
+                    {
+                        HUDManagerDNDL.Instance.TutorialHUDDisableFocus();
+
                     });
-                },true,true);
+                }
+                );
         });
     }
 }

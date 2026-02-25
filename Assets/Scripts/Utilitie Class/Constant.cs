@@ -245,6 +245,7 @@ namespace Constants
     public class SaveDataTemplate
     {
         public string id;
+        public int level;
         public Vector3 Position;
         public Quaternion Rotation;
 

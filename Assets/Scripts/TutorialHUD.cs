@@ -21,8 +21,10 @@ public class TutorialHUD : MonoBehaviour
     [SerializeField] private AnimationCurve Curve;
     [SerializeField] private float bouncetimeinSec;
 
-    private GameObject PreviousParent;
-    [SerializeField] private GameObject SubParent;
+    [SerializeField]private int childposition;
+    private GameObject FocusUI;
+    private Transform PreviousParent;
+    [SerializeField] private Transform SubParent;
     public void SetTutorialHUD(string _dialog, Action _callback, bool isclose = false)
     {
         this.gameObject.SetActive(true);
@@ -30,8 +32,6 @@ public class TutorialHUD : MonoBehaviour
         DialogText.text = _dialog;
         DialogParent.SetActive(true);
         isLerpActive = false;
-        //onClickMask.onClick = new Button.ButtonClickedEvent();
-        //onClickDialog.onClick.AddListener(delegate
         OnClickCallBack = () =>
         {
             isLerpActive = false;
@@ -64,6 +64,25 @@ public class TutorialHUD : MonoBehaviour
             if (isclose)
                 CloseTutorial();
         };
+    }
+    public void SetTutorialHUD(string _dialog,GameObject focusUI)
+    {
+        this.gameObject.SetActive(true);
+        MaskImg.gameObject.SetActive(false);
+        DialogText.text = _dialog;
+        DialogParent.SetActive(true);
+        isLerpActive = false;
+        childposition=focusUI.gameObject.transform.GetSiblingIndex();
+
+        PreviousParent = focusUI.gameObject.transform.parent;
+        focusUI.transform.SetParent(SubParent);
+        FocusUI=focusUI;
+    }
+    public void DisableFocus()
+    {
+       // FocusUI.transform.sib
+        FocusUI.transform.SetParent(PreviousParent);
+        FocusUI.transform.SetSiblingIndex(childposition);
     }
     public void OnClick()
     {

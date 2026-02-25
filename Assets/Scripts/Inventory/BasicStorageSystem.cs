@@ -8,21 +8,21 @@ public class BasicStorageSystem<T> where T : IStorageItem
 {
     struct BasicStorageSystemDataStruct
     {
-        public List<string> items;
-        public int size;
+        public List<string> items;        
+        //public int size;
     }
     List<T> items;
-    //int size;
+    int size;
     BasicStorageSystemDataStruct data;
     public BasicStorageSystem(int _size)
     {
         items = new List<T>();
-        data.size = _size;
+        size = _size;
     }
 
     public bool AddItems(T obj)
     {
-        if (items.Count < data.size)
+        if (items.Count < size)
         {
             items.Add(obj);
             return true;
@@ -70,11 +70,11 @@ public class BasicStorageSystem<T> where T : IStorageItem
         var tempData = JsonUtility.FromJson<BasicStorageSystemDataStruct>(data);
         return tempData.items;
     }
-    public static int LoadSizeFromString(string data)
-    {
-        var tempData = JsonUtility.FromJson<BasicStorageSystemDataStruct>(data);
-        return tempData.size;
-    }
+    //public static int LoadSizeFromString(string data)
+    //{
+    //    var tempData = JsonUtility.FromJson<BasicStorageSystemDataStruct>(data);
+    //    return size;
+    //}
 }
 
 public interface IStorageItem

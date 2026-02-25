@@ -32,11 +32,16 @@ public class Counter : InteractiveBlock
     {
         //if Player entered then check for the dish in hand
         var player = GameDataDNDL.Instance.GetPlayer();
-        if (player != null) {
-            var Plate = player.InHand.GetGameObject().GetComponent<Plate>();
-            if (Plate!=null &&myClient.GetOrderList().Contains(Plate.GetFinalDish())){
-                myClient.OnOrderComplete(Plate.GetFinalDish(),Plate.GetFinalPrice());
-                player.RemoveFromHand();
+        if (player != null)
+        {
+            if (player.InHand.GetGameObject().GetComponent<Plate>() != null)
+            {
+                var plate = player.InHand.GetGameObject().GetComponent<Plate>();
+                if (myClient.GetOrderList().Contains(plate.GetFinalDish()))
+                {
+                    myClient.OnOrderComplete(plate.GetFinalDish(), plate.GetFinalPrice());
+                    player.RemoveFromHand();
+                }
             }
         }
     }

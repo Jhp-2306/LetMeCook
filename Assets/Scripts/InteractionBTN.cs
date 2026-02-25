@@ -33,11 +33,13 @@ public class InteractionBTN : MonoBehaviour
     [Header("Inventory")]
     [SerializeField] GameObject InventoryUIObj;
     [SerializeField] InventoryUI inventoryUI;
-    Action OnClick;
-    Action OnHold;
+    event Action OnClick;
+    event Action OnHold;
     bool isButtonActionPerformed;
     bool isInventoryOpen;
 
+    [SerializeField] Image purplebtn, cyanbtn, btnmask;
+    
     private void Awake()
     {
         Interactionbtn = this.gameObject.GetComponent<Button>();
@@ -47,6 +49,11 @@ public class InteractionBTN : MonoBehaviour
     private void OnDisable()
     {
         //InputManager.OnDrag -= onValuChange;
+    }
+    public void AddEventsspc(Action _OnClick=null, Action _OnHold = null)
+    {
+        OnClick += _OnClick;
+        OnHold += _OnHold;
     }
     public void AddEvent(InteractiveBlock table, string btnname, bool isbuttonActive)
     {
@@ -73,10 +80,12 @@ public class InteractionBTN : MonoBehaviour
         //Adding the event
         Interactionbtn.gameObject.SetActive(true);
         ButtonText.text = btnname;
+        HoldInfo.gameObject.SetActive(false); btnmask.gameObject.SetActive(false);
         if (!table.GetHoldInteractableName().Equals("none"))
         {
             HoldButtonText.text =table.GetHoldInteractableName();
             HoldInfo.gameObject.SetActive(true);
+            btnmask.gameObject.SetActive(true);
         }
         OnClick = delegate { };
         OnHold = delegate { };
@@ -96,11 +105,12 @@ public class InteractionBTN : MonoBehaviour
     {
         HoldInfo.gameObject.SetActive(false);
         Interactionbtn.gameObject.SetActive(false);
+
         ButtonText.text = btnname;
         OnClick = delegate { };
         OnHold = delegate { };
     }
-
+   
 
 
     #region Old Shop Methods 

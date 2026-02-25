@@ -12,6 +12,7 @@ public class InteractiveBlock : MonoBehaviour, IInteractable
     //
     // can remove this variable not in use
 
+  
     public enum PlacementTags
     {
         Kitchen,
@@ -27,6 +28,7 @@ public class InteractiveBlock : MonoBehaviour, IInteractable
     public int CellSize = 2;
     public bool isGizmos;
     public bool PreSpawn;
+    public int Level;
     public Transform GetLookPos()
     {
         return LookAtMe;
@@ -46,7 +48,9 @@ public class InteractiveBlock : MonoBehaviour, IInteractable
         !Data.HoldFuntionName.Equals("-")? Data.HoldFuntionName : "none": "none";
     public virtual void Init(EquipmentType _equip = EquipmentType.none, string _prefabID = "")
     {
+        Level = 0;
         savedata = new SaveDataTemplate();
+        savedata.level = Level;
         if (_equip == EquipmentType.Furnitures)
             savedata.id = GameSaveDNDL.GenerateId(_prefabID);
         else
@@ -62,16 +66,18 @@ public class InteractiveBlock : MonoBehaviour, IInteractable
         savedata = _data;
         transform.position = _data.Position;
         transform.rotation = _data.Rotation;
+        Level=savedata.level;
         //update the Grid
         InputManager.Instance.UpdateGridPositions(transform.position, LookAtMe.position);
     }
     public virtual void OnClick()
     {
 
+        // Toast Say no funtionality here
     }
     public virtual void OnHold()
     {
-
+        // Toast Say no funtionality here
     }
 
     public List<Vector3> GetBlockCells(Vector3 centerPos)
@@ -107,5 +113,7 @@ public class InteractiveBlock : MonoBehaviour, IInteractable
             Gizmos.DrawCube(transform.TransformPoint(pos), Vector3.one * 2);
         }
     }
+   
+    //protected virtual void 
 }
 

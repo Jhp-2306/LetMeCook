@@ -16,3 +16,13 @@ MonoBehaviour:
   HoldFuntionName: '-'
   HandFullDisplayFuntionName: Add
   Type: 10
+  upgradeData:
+  - Upgrades:
+    - ValueName: 3
+      ValueInPercentage: 4
+  - Upgrades:
+    - ValueName: 3
+      ValueInPercentage: 6
+  - Upgrades:
+    - ValueName: 3
+      ValueInPercentage: 8
