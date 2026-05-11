@@ -28,6 +28,7 @@ public class TimeManagementDNDL : Singletonref<TimeManagementDNDL>
     public bool isRoaminghrs;
     private void Update()
     {
+        m_gameTimer=GameDataDNDL.Instance.GetGameState==Constants.GameState.PlayGame;
         if (m_gameTimer)
         {
             _currentSec += Time.deltaTime;
@@ -101,6 +102,14 @@ public class TimeManagementDNDL : Singletonref<TimeManagementDNDL>
         hr =  hr > 12 ? hr - 12 : hr;
         return hr;
     }
+    public float GetHrs(float time)
+    {
+        //var _sec = (IRLMinsForInGameDay * 60);
+        var t = (time / 60) * m_TotalSecondPerDayIRL;
+        var hr = t / 3600;
+        hr = hr > 12 ? hr - 12 : hr;
+        return hr;
+    }
     public float GetMins()
     {
         var _sec = (IRLMinsForInGameDay * 60);
@@ -109,6 +118,33 @@ public class TimeManagementDNDL : Singletonref<TimeManagementDNDL>
         var mins = ((int)(t) - (hr * 3600)) / 60;
         return mins;
     }
+    public float GetMins(float time)
+    {
+        //var _sec = (IRLMinsForInGameDay * 60);
+        var t = (time / 60) * m_TotalSecondPerDayIRL;
+        var hr = (int)t / 3600;
+        var mins = ((int)(t) - (hr * 3600)) / 60;
+        return mins;
+    }
+    public float GetSec(float time)
+    {
+        //var _sec = (IRLMinsForInGameDay * 60);
+        var t = (time / 60) * m_TotalSecondPerDayIRL;
+        var hr = (int)t / 3600;
+        var mins = ((int)(t) - (hr * 3600)) / 60;
+        return mins;
+    }
+    public string GetTimerinFormate(float timeinSec)
+    {
+        //var _sec = (IRLMinsForInGameDay * 60);
+       ///* var t = (timeinSec / 60)/*/* * m_TotalSecondPerDayIRL*/;
+        var hr = (int)timeinSec / 3600;
+        var mins = ((int)(timeinSec) - (hr * 3600)) / 60;
+        var sec= (int)timeinSec -(mins*60);
+        //hr = is24hrs ? hr : hr > 12 ? hr - 12 : hr;
+        //Debug.Log("Total Sec:" + t + " hrs: " + hr + " Mins:" + mins);
+        return hr>0? $"{hr.ToString("00")}:{mins.ToString("00")}": $"{mins.ToString("00")}:{sec.ToString("00")}";
+    } 
     public int GetTotalDays() => (int)_currentday;
 
 }

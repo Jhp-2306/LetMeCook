@@ -16,7 +16,7 @@ MonoBehaviour:
   - DisplayFuntionName: Heat
     Type: 0
     name: Stove
-    price: 200
+    price: 400
     Prefab: Stove
     Icon: Stove_Icon
   - DisplayFuntionName: Bake
@@ -28,15 +28,9 @@ MonoBehaviour:
   - DisplayFuntionName: Chopping
     Type: 2
     name: Cutting Board
-    price: 50
+    price: 100
     Prefab: Chopping_Board
     Icon: Chopping_Board_Icon
-  - DisplayFuntionName: Mix
-    Type: 3
-    name: Mixing bowl
-    price: 100
-    Prefab: Mixing_Bowl
-    Icon: Mixing_Bowl_Icon
   - DisplayFuntionName: Refrigerator
     Type: 10
     name: Refrigerator
@@ -46,7 +40,7 @@ MonoBehaviour:
   - DisplayFuntionName: Fry
     Type: 5
     name: Frying Pan
-    price: 350
+    price: 400
     Prefab: Fryer
     Icon: Fryer_Icon
   - DisplayFuntionName: Plate Tray

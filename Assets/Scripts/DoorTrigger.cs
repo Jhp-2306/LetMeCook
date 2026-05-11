@@ -18,10 +18,13 @@ public class DoorTrigger : MonoBehaviour
     public float doorFinalRotationValue;
     Coroutine DoorAnimation;
     List<GameObject> entrylog;
+    public bool DontRegForGrid;
     private void Start()
     {
        entrylog = new List<GameObject>();
-
+        //update me a occiied
+        if(!DontRegForGrid)
+        InputManager.Instance.UpdateGridPositions(this.transform.position, GridMaker.CellStatus.Occupied);
     }
 
     private void OnTriggerEnter(Collider col)

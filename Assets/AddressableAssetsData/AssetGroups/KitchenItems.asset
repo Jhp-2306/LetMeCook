@@ -39,6 +39,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - Equipments
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3ddc6cc6e7f52094789573f380b8da0a
+    m_Address: Delivery box
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Equipments
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4abab0b619587de4399e138ce3468ef6
     m_Address: Refrigerator
     m_ReadOnly: 0

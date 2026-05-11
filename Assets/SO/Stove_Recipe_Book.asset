@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   items:
   - items:
-    - Ingredient: 24
+    - Ingredient: 1
       processed: 1
       Descriptions: 
     - Ingredient: 3
@@ -24,8 +24,8 @@ MonoBehaviour:
       processed: 1
       Descriptions: 
     OutputDish: 0
-    CookingTime: 20
-    price: 100
+    CookingTime: 30
+    price: 125
   - items:
     - Ingredient: 1
       processed: 1
@@ -40,8 +40,8 @@ MonoBehaviour:
       processed: 1
       Descriptions: 
     OutputDish: 1
-    CookingTime: 1
-    price: 50
+    CookingTime: 30
+    price: 55
   - items:
     - Ingredient: 3
       processed: 1
@@ -50,5 +50,87 @@ MonoBehaviour:
       processed: 1
       Descriptions: 
     OutputDish: 3
+    CookingTime: 7
+    price: 35
+  - items:
+    - Ingredient: 2
+      processed: 1
+      Descriptions: 
+    - Ingredient: 2
+      processed: 1
+      Descriptions: 
+    OutputDish: 4
     CookingTime: 10
-    price: 30
+    price: 35
+  - items:
+    - Ingredient: 3
+      processed: 1
+      Descriptions: 
+    - Ingredient: 1
+      processed: 1
+      Descriptions: 
+    - Ingredient: 5
+      processed: 1
+      Descriptions: 
+    OutputDish: 5
+    CookingTime: 30
+    price: 80
+  - items:
+    - Ingredient: 3
+      processed: 1
+      Descriptions: 
+    - Ingredient: 3
+      processed: 1
+      Descriptions: 
+    - Ingredient: 1
+      processed: 1
+      Descriptions: 
+    OutputDish: 6
+    CookingTime: 12
+    price: 55
+  - items:
+    - Ingredient: 3
+      processed: 1
+      Descriptions: 
+    - Ingredient: 3
+      processed: 1
+      Descriptions: 
+    - Ingredient: 9
+      processed: 1
+      Descriptions: 
+    OutputDish: 7
+    CookingTime: 20
+    price: 125
+  - items:
+    - Ingredient: 7
+      processed: 0
+      Descriptions: 
+    - Ingredient: 1
+      processed: 1
+      Descriptions: 
+    - Ingredient: 9
+      processed: 1
+      Descriptions: 
+    OutputDish: 8
+    CookingTime: 35
+    price: 160
+  - items:
+    - Ingredient: 7
+      processed: 0
+      Descriptions: 
+    - Ingredient: 1
+      processed: 1
+      Descriptions: 
+    - Ingredient: 0
+      processed: 1
+      Descriptions: 
+    OutputDish: 9
+    CookingTime: 25
+    price: 90
+  - items:
+    - Ingredient: 9
+      processed: 0
+      Descriptions: 
+    OutputDish: 10
+    CookingTime: 20
+    price: 90

@@ -1,0 +1,1 @@
+E:\Work\Unity\Projects\LetMeCook\LetMeCook\Library\Bee\Android\Prj\IL2CPP\Gradle\unityLibrary\build\intermediates\cxx\RelWithDebInfo\534r2d5y\obj\armeabi-v7a

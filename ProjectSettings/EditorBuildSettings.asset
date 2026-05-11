@@ -5,13 +5,20 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/Scenes/Astar PG.unity
-    guid: 451def3f04eea7c4982c88dc5dfb1ff7
+  - enabled: 1
+    path: Assets/Scenes/LevelEditor.unity
+    guid: 52cba4848e1f77c4e9ce436be6b06772
   - enabled: 1
     path: Assets/Scenes/MainGameScene.unity
     guid: a4e61cf19028c5a41852663f61d023ee
+  - enabled: 1
+    path: Assets/Scenes/MainMenu.unity
+    guid: 8ced051c30d1b384ea4a37b0448a3b19
+  - enabled: 1
+    path: Assets/Scenes/LevelDesign.unity
+    guid: 40d1dda0602a641409ed4558487ec2d9
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: 82a441c67d2db11429c4769da0e62dc2, type: 2}
     com.unity.input.settings: {fileID: 11400000, guid: 5df993df788021d40b6e208faf4b4cee, type: 2}
+    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: b2b0d3d9e529ab1459181e7aad5b3a0d, type: 3}
   m_UseUCBPForAssetBundles: 0

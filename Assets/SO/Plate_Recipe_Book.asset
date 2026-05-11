@@ -1,0 +1,126 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8cde7a169ea8f87439ba25ec1db09e9b, type: 3}
+  m_Name: Plate_Recipe_Book
+  m_EditorClassIdentifier: 
+  items:
+  - items:
+    - Ingredient: 8
+      processed: 0
+      Descriptions: 
+    - Ingredient: 15
+      processed: 5
+      Descriptions: 
+    - Ingredient: 4
+      processed: 1
+      Descriptions: 
+    - Ingredient: 14
+      processed: 1
+      Descriptions: 
+    DishMix: 0
+    dishes: 
+    OutputDish: 2
+    CookingTime: 0
+    price: 130
+  - items:
+    - Ingredient: 0
+      processed: 1
+      Descriptions: 
+    - Ingredient: 4
+      processed: 1
+      Descriptions: 
+    - Ingredient: 3
+      processed: 1
+      Descriptions: 
+    DishMix: 0
+    dishes: 
+    OutputDish: 11
+    CookingTime: 0
+    price: 60
+  - items:
+    - Ingredient: 7
+      processed: 0
+      Descriptions: 
+    DishMix: 1
+    dishes: 00000000
+    OutputDish: 12
+    CookingTime: 0
+    price: 175
+  - items:
+    - Ingredient: 7
+      processed: 0
+      Descriptions: 
+    DishMix: 1
+    dishes: 01000000
+    OutputDish: 13
+    CookingTime: 0
+    price: 100
+  - items:
+    - Ingredient: 7
+      processed: 0
+      Descriptions: 
+    DishMix: 1
+    dishes: 05000000
+    OutputDish: 13
+    CookingTime: 0
+    price: 100
+  - items:
+    - Ingredient: 6
+      processed: 1
+      Descriptions: 
+    - Ingredient: 3
+      processed: 1
+      Descriptions: 
+    - Ingredient: 4
+      processed: 1
+      Descriptions: 
+    - Ingredient: 14
+      processed: 1
+      Descriptions: 
+    DishMix: 0
+    dishes: 
+    OutputDish: 19
+    CookingTime: 0
+    price: 115
+  - items:
+    - Ingredient: 6
+      processed: 5
+      Descriptions: 
+    - Ingredient: 14
+      processed: 1
+      Descriptions: 
+    DishMix: 0
+    dishes: 
+    OutputDish: 21
+    CookingTime: 0
+    price: 115
+  - items:
+    - Ingredient: 6
+      processed: 1
+      Descriptions: 
+    DishMix: 1
+    dishes: 14000000
+    OutputDish: 25
+    CookingTime: 0
+    price: 115
+  - items:
+    - Ingredient: 6
+      processed: 1
+      Descriptions: 
+    - Ingredient: 14
+      processed: 1
+      Descriptions: 
+    DishMix: 1
+    dishes: 14000000
+    OutputDish: 26
+    CookingTime: 0
+    price: 115

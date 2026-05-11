@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -9,6 +10,7 @@ public class InventoryUI : MonoBehaviour
     
     public List<GameObject> Items;
 
+    public TextMeshProUGUI Slots;
     
     private void Awake()
     {
@@ -30,7 +32,7 @@ public class InventoryUI : MonoBehaviour
 
     public void Set(BasicStorageSystem<IStorageItem> items)
     {
-       
+        int currentSlotsFilled = 0;
         for (int i = 0; i < Items.Count; i++) {
             if (items.GetAllItems().Count - 1 >= i)
             {
@@ -40,12 +42,14 @@ public class InventoryUI : MonoBehaviour
                     item.GetQuanitity().ToString(),item.Type.ToString(),()=> { item.RemoveQuanitity();
                     Close();
                 });
+                currentSlotsFilled++;
             }
             else
             {
                 Items[i].SetActive(false);
             }
         }
+        Slots.text = $"{currentSlotsFilled}/{items.GetSlotsCapcity()}";
     }
 
     public Transform GetItemSlots()

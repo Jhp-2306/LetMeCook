@@ -6,3 +6,6 @@ public class SO_EquipmentDataList : ScriptableObject
 {
     public List<equipmentData> equipmentDataList;
 }
+
+
+

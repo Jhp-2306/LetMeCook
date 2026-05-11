@@ -17,6 +17,7 @@ public class GameSaveDNDL : Singletonref<GameSaveDNDL>
     private void Awake()
     {
         base.Awake();
+        DontDestroyOnLoad(this);
         SaveData.Instance.Init();
         //StartCoroutine(SaveTick());
         Debug.Log($"check {SaveData.Instance.LocalData == null}");

@@ -61,6 +61,10 @@ namespace Constants
         Milk,
         Cheese,
         Burgerpatty,
+        Chocolate,
+        Vanillia,
+        Strawberry,
+        IceCream,
         count
         //Spinach,
         //Cabbage,
@@ -107,6 +111,32 @@ namespace Constants
         VegetableCurry,
         Burger,
         TomatoSoup,
+        MashedPotato,
+        MushroomCurry,
+        VegetableSoup,
+        ChickenSoup,
+        FiredChickenRice,
+        FiredVegetableRice,
+        FiredChicken,
+        Salad,
+        RiceAndChickenCurry,
+        RiceAndVegetableCurry,
+        RiceAndMushroomCurry,
+        Milkshake,
+        ChocolateMilkshake,
+        VanilliaMilkshake,
+        StrawberryMilkshake,
+        Sandwich,
+        EggOmblet,
+        ToastedBreadWithCheese,
+        SteakMid,
+        SteakWell,
+        SteakRare,
+        BreadOmblet,
+        BreadOmbletWithCheese,
+        ChocolateIceCream,
+        VanillaIceCream,
+        StrawberryIceCream,
         trash,
         count,
     }
@@ -124,12 +154,15 @@ namespace Constants
     public class Recipes
     {
         public List<ProcedureStep> items;
+        public bool DishMix;
+        public List<Dishes> dishes;
         public Dishes OutputDish;
         public int CookingTime;
         public float price;
+        
         public bool IsthisDish(List<ProcedureStep> _items)
         {
-            if(items.Count!=_items.Count) return false;
+            if (items.Count != _items.Count) return false;
             var templist = GetthisDishIngreident();
             foreach (var item in _items)
             {

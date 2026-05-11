@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 
 public class InteractiveBlock : MonoBehaviour, IInteractable
@@ -54,11 +55,19 @@ public class InteractiveBlock : MonoBehaviour, IInteractable
         if (_equip == EquipmentType.Furnitures)
             savedata.id = GameSaveDNDL.GenerateId(_prefabID);
         else
+        {
             savedata.id = GameSaveDNDL.GenerateId(_equip.ToString());
+            var temp = new ObjectLevelDetails();
+            temp.Name = _equip.ToString();
+            temp.Level = savedata.level;
+            GameDataDNDL.Instance.AddUpgradableObject(savedata.id, temp);
+            GameDataDNDL.LevelupEvent -= LvlUpCallback;
+            GameDataDNDL.LevelupEvent += LvlUpCallback;
+        }
         savedata.Type = _equip;
         savedata.PrefabString = _prefabID;
         savedata.Position = transform.position;
-        savedata.Rotation = transform.rotation;
+        savedata.Rotation = transform.rotation;       
     }
     public virtual void ReadFromSave(SaveDataTemplate _data)
     {
@@ -67,7 +76,16 @@ public class InteractiveBlock : MonoBehaviour, IInteractable
         transform.position = _data.Position;
         transform.rotation = _data.Rotation;
         Level=savedata.level;
-        //update the Grid
+        if(savedata.Type != EquipmentType.Furnitures)
+        {
+        var temp = new ObjectLevelDetails();
+        temp.Name = savedata.Type.ToString();
+        temp.Level = savedata.level;
+        GameDataDNDL.Instance.AddUpgradableObject(savedata.id, temp);
+            GameDataDNDL.LevelupEvent -= LvlUpCallback;
+            GameDataDNDL.LevelupEvent += LvlUpCallback;
+        }
+        //-----update the Grid------
         InputManager.Instance.UpdateGridPositions(transform.position, LookAtMe.position);
     }
     public virtual void OnClick()
@@ -114,6 +132,23 @@ public class InteractiveBlock : MonoBehaviour, IInteractable
         }
     }
    
+    public void LvlUpCallback(string id, int lvl)
+    {
+        if (id == savedata.id)
+        {
+            Level=lvl;
+            savedata.level = lvl;
+            var temp = new ObjectLevelDetails();
+            temp.Name = savedata.Type.ToString();
+            temp.Level = savedata.level;
+            GameDataDNDL.Instance.AddUpgradableObject(savedata.id, temp);
+            LoadLevelUpgrades();
+        }
+    }
+    public virtual void LoadLevelUpgrades()
+    {
+       
+    }
     //protected virtual void 
 }
 

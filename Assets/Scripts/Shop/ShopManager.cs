@@ -16,6 +16,7 @@ public class ShopManager : Singletonref<ShopManager>
     public InteractionBTN interactionBTN;
     float rotateduration=025f;
     //public Table GetCurrentTable { get => CurrentSelectTable; }
+    private int CurrentCost;
     public class ShopItems
     {
         EquipmentType type;
@@ -75,13 +76,14 @@ public class ShopManager : Singletonref<ShopManager>
         HUDManagerDNDL.Instance.CloseShop();
     }
 
-    public void BuildModeActivate(string _prefab)
+    public void BuildModeActivate(string _prefab,int cost)
     {
         var templistpos = GameDataDNDL.Instance.GetGrid().GetAvailableNeighbourPosition(GameDataDNDL.Instance.GetPlayer().gameObject.transform.position);
         if (templistpos.Count > 0)
         {
             var position = templistpos[UnityEngine.Random.RandomRange(0, templistpos.Count)];
             var go = Instantiate(AssetLoader.Instance.GetEquipmetPrefab(_prefab), position, Quaternion.identity);
+            CurrentCost = cost;
             _currentPrefabID = _prefab;
             CurrentPurchaseObject = go;
             CurrentPurchaseObject.GetComponent<Collider>().isTrigger = true;
@@ -140,6 +142,11 @@ public class ShopManager : Singletonref<ShopManager>
     public void ConfirmPurchas()
     {
         //TODO: currency Deduction here
+        //if (!GameDataDNDL.Instance.tryDeductingCurrency(CurrentCost))
+        //{
+        //    HUDManagerDNDL.Instance.ShowToastMsg("Something went wrong");
+        //    return;
+        //}
 
         //Disabling Building Hud
         buildingHud.gameObject.transform.SetParent(this.gameObject.transform);
@@ -162,7 +169,9 @@ public class ShopManager : Singletonref<ShopManager>
     {
         var go = Instantiate(AssetLoader.Instance.GetEquipmetPrefab(_prefab), position, Quaternion.Euler(rotation));
         if (go.GetComponent<InteractiveBlock>() != null)
-        { go.GetComponent<InteractiveBlock>().Init(EquipmentType.none, _prefab); }
+        { go.GetComponent<InteractiveBlock>().Init(EquipmentType.none, _prefab);
+            go.transform.SetParent(GameDataDNDL.Instance.SaveSpawnerParent.transform);
+        }
         //Confirm the build location
         InputManager.Instance.UpdateGridPositions(go.transform.position,
             go.GetComponent<InteractiveBlock>().GetLookPos().position);

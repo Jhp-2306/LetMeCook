@@ -125,6 +125,10 @@ public class Refrigerator : InteractiveBlock
                                {
                                    canDestory = storageSystem.AddItems(new RefrigeratorItems(item.Type, item.GetQuanitity()));
                                }
+                               if(!isAdded&& storageSystem.isFull())// fail to create a new slot and adding it back to the box
+                               {
+                                   remainingItems.Add(new RefrigeratorItems(item.Type, item.GetQuanitity()));
+                               }
                                // create a new item slot for the remain item in the box
                                if (remain > 0)
                                {
@@ -156,14 +160,12 @@ public class Refrigerator : InteractiveBlock
                    if (canDestory)
                    {
                        GameDataDNDL.Instance.GetPlayer().RemoveFromHand();
-
                    }
                    else //add remaining items back to the box
                    {
                        HUDManagerDNDL.Instance.ShowToastMsg("Storage Full!!");
                        foreach (var remainingite in remainingItems)
                        {
-
                            box.AddBoxItem(remainingite);
                        }
                    }
@@ -189,10 +191,11 @@ public class Refrigerator : InteractiveBlock
         return true;
     }
    
-    public void LoadLevelUpgrades()
+    public override void LoadLevelUpgrades()
     {
-       var temp= Data.upgradeData[savedata.level];
+        var temp= Data.upgradeData[savedata.level];
         Slots=(int)temp.GetUpgradeValue(E_ValueName.Slots);
+        storageSystem.SetSlotsCapcity(Slots);
     }
 }
 public class RefrigeratorItems : IStorageItem

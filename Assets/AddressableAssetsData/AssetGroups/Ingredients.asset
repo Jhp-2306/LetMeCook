@@ -1,0 +1,185 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Ingredients
+  m_EditorClassIdentifier: 
+  m_GroupName: Ingredients
+  m_GUID: 79f375ffdfe7d4a429d342d240bd7b86
+  m_SerializeEntries:
+  - m_GUID: 0425024811963c446b17dc6c8ac1d971
+    m_Address: Ingredients/Mushroom_Icon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Icons
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 048e16c2bc088b3488aaa60703021cf9
+    m_Address: Ingredients/Pepperoni_Icon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Icons
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 148d79def6b35654fb16765cbfbd8969
+    m_Address: Pc_Market/Steak_Icon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Icons
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1935f227aa126734ab55cf7ec66c0bd5
+    m_Address: Ingredients/Lettuce_Icon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Icons
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 38c2d50b67249f743ac2f6607debb25d
+    m_Address: Ingredients/Onion_Icon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Icons
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3d8e2b92f82b76643ac39c50ef19ded4
+    m_Address: Pc_Market/Chicken_Icon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Icons
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3feb6da1dd97a4040858c87d11ce4ff7
+    m_Address: Pc_Market/Lettuce_Icon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Icons
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 41397bed5c0eea74581d49dd7e9a0969
+    m_Address: Ingredients/Cheese_Icon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Icons
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 44c6ffb90721b574e92ba4b994b2aa92
+    m_Address: Pc_Market/Patty_Icon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Icons
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 651fdf95cc5474740bc74254affbecb2
+    m_Address: Ingredients/Tomato_Icon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Icons
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6a034379e21f75340a87d74f9e4cf103
+    m_Address: Pc_Market/Ingreident_Tab_Icon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Icons
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 727fe072d96c0674db8514847825fded
+    m_Address: Pc_Market/Potato_Icon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Icons
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 74b6b1538d6062445b55da012471b6db
+    m_Address: Ingredients/Bun_Icon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Icons
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7ffdd82abfe366b48a2f10e61b9faf57
+    m_Address: Ingredients/Potato_Icon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Icons
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8614613a1e5e1b64c8e536b76133862e
+    m_Address: Pc_Market/Mushroom_Icon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Icons
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 89164adc7f2a47349a67fa4e0f67c885
+    m_Address: Ingredients/Steak_Icon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Icons
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8d1150bba0df58c4494746c5909fe8cc
+    m_Address: Ingredients/Chicken_Icon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Icons
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8dbe7e5624831a74a8e2dc47cd95b1be
+    m_Address: Ingredients/Food_Rice_Icon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Icons
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 99a9df2057ee3c7459fe0ebdd4ef5325
+    m_Address: Ingredients/Patty_Icon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Icons
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9f901307829c55f43bb365441a6535c8
+    m_Address: Ingredients/Carrot_Icon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Icons
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a0b9413305d1bac478a18befd346c1cd
+    m_Address: Ingredients/Food_Milk Bottle_Icon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Icons
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: abf49af48a4f7c8419843e48dc552eda
+    m_Address: Pc_Market/Tomato_Icon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Icons
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b9dbf518b9da0c04da0cde1a081395f7
+    m_Address: Ingredients/Food_Egg_Icon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Icons
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d409db3d959c13a41845008889740a58
+    m_Address: Ingredients/Plate_Icon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Icons
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: decaa697b4754bd459f3498bee2766f7
+    m_Address: Pc_Market/Carrot_Icon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Icons
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e3b1ee9c32af43e4982b08ee67299eea
+    m_Address: Pc_Market/Onion_Icon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Icons
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fc2fb91ed251a874aa103c170415e640
+    m_Address: Ingredients/Food_Bread_Icon
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Icons
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: a836759115da1c24590b8610924c161a, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: fd8186dbd00738d4d85caa970869c32b, type: 2}
+    - {fileID: 11400000, guid: d06e786cf0ab9b844b2a1abf13cd6c90, type: 2}

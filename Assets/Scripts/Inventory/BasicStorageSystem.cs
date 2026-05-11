@@ -11,8 +11,8 @@ public class BasicStorageSystem<T> where T : IStorageItem
         public List<string> items;        
         //public int size;
     }
-    List<T> items;
-    int size;
+    private List<T> items;
+    private int size;
     BasicStorageSystemDataStruct data;
     public BasicStorageSystem(int _size)
     {
@@ -70,6 +70,10 @@ public class BasicStorageSystem<T> where T : IStorageItem
         var tempData = JsonUtility.FromJson<BasicStorageSystemDataStruct>(data);
         return tempData.items;
     }
+    public int GetSlotsCapcity ()=>size;
+    public void SetSlotsCapcity(int value) { size = value; }
+
+    public bool isFull() => items.Count == size;
     //public static int LoadSizeFromString(string data)
     //{
     //    var tempData = JsonUtility.FromJson<BasicStorageSystemDataStruct>(data);

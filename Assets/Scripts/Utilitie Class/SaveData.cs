@@ -49,12 +49,21 @@ public class SaveData
     {
         return SerializationManager.Save(file_name, Instance);
     }
-    public void LoadInstance()
+    public bool LoadInstance()
     {
-        var t = (SaveData)SerializationManager.Load(file_name);
-        Debug.Log($"check {t.LocalData == null},{LocalData == null}{t.saveDataType.GetAllTheData().Count}");
-        LocalData = t.LocalData;
-        saveDataType=t.saveDataType;
+        try
+        {
+            var t = (SaveData)SerializationManager.Load(file_name);
+            Debug.Log($"check {t.LocalData == null},{LocalData == null}{t.saveDataType.GetAllTheData().Count}");
+            LocalData = t.LocalData;
+            saveDataType = t.saveDataType;
+            return true;
+        }
+        catch (Exception e)
+        {
+            Debug.Log(CustomLogs.CC_TagLog($"-_-Save Data-_-", "NO USER DATA WAS FOUND"));
+            return false;
+        }
     }
 
     

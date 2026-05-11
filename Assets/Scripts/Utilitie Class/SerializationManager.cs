@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class SerializationManager 
 {
-   static string _path = Application.dataPath + "/Resource/saves";
+   static string _path = Application.dataPath + "/Resources/saves";
     public static bool Save(string _savename,object _data)
     {
         BinaryFormatter _formatter = GetFormatter();

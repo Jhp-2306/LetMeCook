@@ -24,7 +24,7 @@ public class Stove : InteractiveBlock
     public Image BlueZone;
     public Image TickMark;
     public List<Image> SlotsIcon;
-    public GameObject HUD, ProgressbarHUD, SlotsHUD, DoneHUD;
+    public GameObject HUD, ProgressbarHUD, SlotsHUD;
     ProcessStatus dishStatus;
     bool isCooking;
     bool isPicked;
@@ -84,7 +84,7 @@ public class Stove : InteractiveBlock
         HUD.SetActive(true);
         SlotsHUD.SetActive(true);
         ProgressbarHUD.SetActive(false);
-        DoneHUD.SetActive(false);
+        TickMark.gameObject.SetActive(false);
         int idx = 0;
         foreach (var t in Slots)
         {
@@ -103,7 +103,6 @@ public class Stove : InteractiveBlock
             isCooking = false;
             StopCoroutine(CookingCoroutine);
             ProgressbarHUD.SetActive(false);
-            DoneHUD.SetActive(true);
             switch (dishStatus)
             {
                 case ProcessStatus.UnderCooked:
@@ -112,6 +111,7 @@ public class Stove : InteractiveBlock
                 case ProcessStatus.OverCooked: TickMark.color = RedZone.color; break;
                 case ProcessStatus.Cooked: TickMark.color = GreenZone.color; break;
             }
+            TickMark.gameObject.SetActive(true);
             isPicked = tryPickupDish();
             Debug.Log(CustomLogs.CC_TagLog("Stove", $"Done Cooking Dish-- status{dishStatus}"));
         }
@@ -155,7 +155,7 @@ public class Stove : InteractiveBlock
             var cooktimer = GameDataDNDL.Instance.GetCookingTime(Currentcookingdish);
             Debug.Log(CustomLogs.CC_TagLog("Stove", $"Start Cooking{Currentcookingdish},{cooktimer},{CurrentcookingdishPrice}{CurrentcookingdishPriceMulti}"));
             CookingCoroutine = StartCoroutine(StartCooking(cooktimer));
-            DoneHUD.SetActive(false);
+            TickMark.gameObject.SetActive(false);
             if (isFTUT)
             {
                 Debug.Log(CustomLogs.CC_TagLog("Stove", "init phase 3"));
@@ -219,7 +219,7 @@ public class Stove : InteractiveBlock
         //Set the timer visuals
         HUD.SetActive(true);
         SlotsHUD.SetActive(false);
-        DoneHUD.SetActive(false);
+        TickMark.gameObject.SetActive(false);
         ProgressbarHUD.SetActive(true);
         Progress.fillAmount = 0;
         RedZone.fillAmount = overcooktimer / maxTimer;

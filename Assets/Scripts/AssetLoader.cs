@@ -25,6 +25,12 @@ public class AssetLoader : Singletonref<AssetLoader>
     private Dictionary<string, AsyncOperationHandle<GameObject>> cache;
     private Dictionary<string, AsyncOperationHandle<IList<Sprite>>> Spritescache;
 
+    private void Awake()
+    {
+        base.Awake();
+        DontDestroyOnLoad(this);
+    }
+
     public bool GetisAddressableLoaded() => isAddressableLoaded;
     public void Addressableinit()
     {
@@ -93,8 +99,9 @@ public class AssetLoader : Singletonref<AssetLoader>
         Addressables.LoadAssetsAsync<Sprite>("Icons")
                .Completed += (handle) =>
                {
+                   //handle.DebugName
                    sprites = new List<Sprite>(handle.Result);
-                   Debug.Log(EquipmentPrefab.Count);
+                   Debug.Log(sprites.Count+"_" + handle.DebugName);
                    Spritescache.Add("Icons", handle);
                    //isAddressableLoaded = true;
                };

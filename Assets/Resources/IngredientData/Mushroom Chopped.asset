@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 80165ed6c7a984d48a98d086803d6643, type: 3}
+  m_Name: Mushroom Chopped
+  m_EditorClassIdentifier: 
+  type: 5
+  handheldtype: 0
+  process: 1
+  icon: {fileID: 21300000, guid: 0425024811963c446b17dc6c8ac1d971, type: 3}
+  mesh: {fileID: 3122113244843107561, guid: 31429405553536a45b634970ba8a3a9a, type: 3}
+  material: {fileID: -1724080987372072942, guid: 49920f5e53536e840b680d22fc00aa8a, type: 3}

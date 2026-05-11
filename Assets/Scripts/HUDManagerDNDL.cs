@@ -40,13 +40,14 @@ public class HUDManagerDNDL : Singletonref<HUDManagerDNDL>
 
     [Header("Pc")]
     [SerializeField] GameObject PcParent;
+    [SerializeField] GameObject ApplicationScreenParent;
     [SerializeField] GameObject NewsApplicationScreen;
     [SerializeField] GameObject StatsApplicationScreen;
     [SerializeField] GameObject MarketApplicatinScreen;
     [SerializeField] GameObject MarketApplicationHomePageScreen;
     [SerializeField] GameObject MarketApplicationCheckoutPageScreen;
     [SerializeField] GameObject UpgradeApplicationScreen;
-
+    [SerializeField] TMPro.TextMeshProUGUI ApplicationTitle;
     [Header("Currency Reflector")]
     [SerializeField] TextMeshProUGUI CurrencyCounter;
     private float CurrencyAnimationSec;
@@ -139,6 +140,7 @@ public class HUDManagerDNDL : Singletonref<HUDManagerDNDL>
     #endregion
 
     #region PC Setting
+    private int currentApplications;
     public void PcPowerOn()
     {
         PcParent.SetActive(true);
@@ -149,21 +151,30 @@ public class HUDManagerDNDL : Singletonref<HUDManagerDNDL>
     }
     public void SetApplicationScreen(PC_Application application, bool Activate)
     {
+        ApplicationScreenParent.SetActive(Activate);
+        ApplicationTitle.text = $"{application.ToString()}";
         switch (application)
         {
             case PC_Application.News: NewsApplicationScreen.SetActive(Activate); break;
             case PC_Application.Stats: StatsApplicationScreen.SetActive(Activate); break;
-            case PC_Application.Market: MarketApplicatinScreen.SetActive(Activate); break;
-            case PC_Application.Upgrade: UpgradeApplicationScreen.SetActive(Activate); break;
+            case PC_Application.Market: MarketApplicatinScreen.SetActive(Activate);
+                MarketApplicatinScreen.GetComponent<Pc_Market>().Init();
+                break;
+            case PC_Application.Upgrade: 
+                UpgradeApplicationScreen.SetActive(Activate); 
+                UpgradeApplicationScreen.GetComponent<Pc_UpgradeWindow>().init();
+                break;
         }
     }
     public void OpenApplication(int application)
     {
+        currentApplications= application;
         SetApplicationScreen((PC_Application)application, true);
     }
-    public void CloseApplication(int application)
+    public void CloseApplication()
     {
-        SetApplicationScreen((PC_Application)application, false);
+        
+        SetApplicationScreen((PC_Application)currentApplications, false);
     }
     #endregion
 

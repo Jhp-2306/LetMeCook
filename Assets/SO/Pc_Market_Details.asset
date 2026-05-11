@@ -1,0 +1,91 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8534f932b1b67bf4c80e9859f02c4148, type: 3}
+  m_Name: Pc_Market_Details
+  m_EditorClassIdentifier: 
+  items:
+  - name: Carrots
+    des: 10
+    icon_Name: Pc_Carrot_Icon
+    IngredientType: 0
+  - name: Tomato
+    des: 10
+    icon_Name: Pc_Tomato_Icon
+    IngredientType: 3
+  - name: Onion
+    des: 10
+    icon_Name: Pc_Onion_Icon
+    IngredientType: 1
+  - name: Potato
+    des: 10
+    icon_Name: Pc_Potato_Icon
+    IngredientType: 2
+  - name: Cheese
+    des: 10
+    icon_Name: Cheese_Icon
+    IngredientType: 14
+  - name: Lettuce
+    des: 15
+    icon_Name: Pc_Lettuce_Icon
+    IngredientType: 4
+  - name: BurgerBun
+    des: 15
+    icon_Name: Bun_Icon
+    IngredientType: 8
+  - name: Egg
+    des: 20
+    icon_Name: Food_Egg_Icon
+    IngredientType: 12
+  - name: Milk
+    des: 20
+    icon_Name: Food_Milk Bottle_Icon
+    IngredientType: 13
+  - name: Mushroom
+    des: 25
+    icon_Name: Pc_Mushroom_Icon
+    IngredientType: 5
+  - name: Chocolate
+    des: 25
+    icon_Name: 
+    IngredientType: 16
+  - name: Vanillia
+    des: 25
+    icon_Name: 
+    IngredientType: 17
+  - name: Strawberry
+    des: 25
+    icon_Name: 
+    IngredientType: 18
+  - name: Ice Cream
+    des: 30
+    icon_Name: 
+    IngredientType: 19
+  - name: Bread
+    des: 30
+    icon_Name: Food_Bread_Icon
+    IngredientType: 6
+  - name: Rice
+    des: 30
+    icon_Name: Food_Rice_Icon
+    IngredientType: 7
+  - name: Patty
+    des: 35
+    icon_Name: Pc_Patty_Icon
+    IngredientType: 15
+  - name: Chicken
+    des: 50
+    icon_Name: Pc_Chicken_Icon
+    IngredientType: 9
+  - name: Steak
+    des: 100
+    icon_Name: Pc_Steak_Icon
+    IngredientType: 10

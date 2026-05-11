@@ -4,6 +4,7 @@ using NPC;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
 using Util;
 
@@ -37,16 +38,23 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
     public List<GameObject> KitchenArea, RoomArea;
     public PlayableAreas CurrentArea;
 
+    public GameObject SaveSpawnerParent;
 
+    private Dictionary<string, ObjectLevelDetails> upgradableObjects;
+
+    public static event Action<string, int> LevelupEvent;
+
+    public GameState GetGameState {  get { return m_GameState; } }
     private void Awake()
     {
         base.Awake();
         //Variable init
         m_KitchenState = 0;
-        m_GameState = GameState.PlayGame;
+        m_GameState = GameState.PauseGame;
         m_UserDataLocal = new UserDataLocal();
         CurrentArea = PlayableAreas.Kitchen;
         //script inits
+        grid.Init();
         Navmesh.Init();
         AINavmesh.Init();
         Stovebook.init();
@@ -64,9 +72,15 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
     }
     private void Start()
     {
-        SaveData.Instance.LoadInstance();
+        //for Testing Purpose only
+        if (!SaveData.Instance.LoadInstance())
+        {
+            //Failed to get the local data
+            SaveData.Instance.NewGameSaveData();
+        }
         StartCoroutine(WaitForAddressableToLoad());
         m_UserDataLocal = SaveData.Instance.LocalData;
+        upgradableObjects = new Dictionary<string, ObjectLevelDetails>();
         HUDManagerDNDL.Instance.AddCurrencyVisual(m_UserDataLocal.CurrencyAmount);
         BeforeSaving();
         GameSaveDNDL.DataUpdateBeforeSave -= BeforeSaving;
@@ -76,14 +90,12 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
     {
         AssetLoader.Instance.Addressableinit();
         yield return new WaitUntil(AssetLoader.Instance.GetisAddressableLoaded);
-
         //New Save Setting
         if (m_UserDataLocal != null)
         {
             if (!m_UserDataLocal.isNGDataSet)
             {
-                NewSaveSetup();
-                FTUT_Phase1();
+                NewSave();
                 yield return null;
             }
             //Debug.Log($"check {SaveData.Instance.LocalData == null}");
@@ -94,11 +106,19 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
                     //here spawn the Tools
                     var go = Instantiate(AssetLoader.Instance.GetEquipmetPrefab(t.PrefabString));
                     if (go.GetComponent<InteractiveBlock>() != null)
-                    { go.GetComponent<InteractiveBlock>().ReadFromSave(t); }
+                    { go.GetComponent<InteractiveBlock>().ReadFromSave(t);
+                        go.transform.SetParent(SaveSpawnerParent.transform);
+                    }
                 }
         }
     }
-
+    public void NewSave()
+    {
+        GameSaveDNDL.Instance.NewGame();
+        NewSaveSetup();
+        if (!DisableFTUT)
+            FTUT_Phase1();
+    }
     void BeforeSaving()
     {
         SaveData.Instance.LocalData = m_UserDataLocal;
@@ -109,7 +129,27 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
         m_UserDataLocal.CurrencyAmount += amount;
         HUDManagerDNDL.Instance.AddCurrencyVisual(m_UserDataLocal.CurrencyAmount);
     }
-
+    public bool DoIHaveEnoughCurrency(int amount)
+    {
+        var temp = m_UserDataLocal.CurrencyAmount;
+        if (temp - amount > 0)
+        {
+            return true;
+           
+        }
+        else return false;
+    }
+    public bool tryDeductingCurrency(int amount)
+    {
+        var temp = m_UserDataLocal.CurrencyAmount;
+        if (temp - amount > 0)
+        {
+            m_UserDataLocal.CurrencyAmount -= amount;
+            HUDManagerDNDL.Instance.AddCurrencyVisual(m_UserDataLocal.CurrencyAmount);
+            return true;
+        }
+        else return false;
+    }
 
     public void SetPlayer(Player player)
     {
@@ -168,8 +208,22 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
         CurrentArea = area;
     }
 
+    public Dictionary<string, ObjectLevelDetails> GetalltheLevels() => upgradableObjects;   
+    public void AddUpgradableObject(string id, ObjectLevelDetails lvl)
+    {
+        if(!upgradableObjects.TryAdd(id, lvl))
+        {
+            upgradableObjects[id] = lvl;
+        }
+    }
+    public void LevelUpCallback(string id, int lvl)
+    {
+        LevelupEvent(id, lvl);
+    }
+
     #region FTUT
     public bool isFTUT;
+    public bool DisableFTUT;
     private GameObject FTUT_Refrigerator;
     private GameObject FTUT_ChoppingBoard;
     private GameObject FTUT_Stove;
@@ -187,6 +241,7 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
         //Set PlateTray
         FTUT_PlateTray = ShopManager.Instance.PlaceEquipmentAtaPoint("Platetray", new Vector3(11, 0, 11), new Vector3());
         //Set Bin
+        ShopManager.Instance.PlaceEquipmentAtaPoint("Bin", new Vector3(9, 0, 11), new Vector3());
         m_UserDataLocal.isNGDataSet = true;
     }
 
@@ -357,4 +412,10 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
         //Tax For no reason
         //Failed to pay result in Save Faileds
     }
+}
+public struct ObjectLevelDetails
+{
+    public int Level;
+    public string Name;
+    public string Icon;
 }

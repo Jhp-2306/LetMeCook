@@ -28,7 +28,7 @@ namespace Util
             if (instance == null)
             {
                 instance = this as T;
-                DontDestroyOnLoad(this);
+                //DontDestroyOnLoad(this);
             }
             else
             {

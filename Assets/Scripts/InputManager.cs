@@ -8,6 +8,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.SocialPlatforms;
 using UnityEngine.UI;
 using Util;
+using static GridMaker;
 using static UnityEngine.Rendering.DebugUI;
 
 public class InputManager : Singletonref<InputManager>
@@ -258,6 +259,10 @@ public class InputManager : Singletonref<InputManager>
         _grid.UpdateCellOccupied(pos, GridMaker.CellStatus.Occupied, fwdpos);
         var t = GridMaker.GetIndexFromAnchorPosition(new Vector2(pos.x, pos.z));
         GameDataDNDL.Instance.UpdateNavMesh((int)t.x, (int)t.y, false);
+    }
+    public void UpdateGridPositions(Vector3 pos,GridMaker.CellStatus occ)
+    {
+        _grid.updateACellOccupied(pos, occ);
     }
     public void ChangeMode(CameraTargetMode _mode, GameObject _target)
     {

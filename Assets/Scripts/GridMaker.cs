@@ -19,7 +19,7 @@ public class GridMaker : MonoBehaviour
     public LayerMask notWalkable;
     public LayerMask floor;
     public GameObject GridVisual;
-    public void Start()
+    public void Init()
     {
         CheckAnchor();
         UpdateIsOccupied();
@@ -54,6 +54,7 @@ public class GridMaker : MonoBehaviour
         {
             _tempcell.IsOccupied = (Physics.CheckBox(_tempcell.GetCoordinates3D(), Vector3.one * 0.1f, Quaternion.identity, notWalkable) ? CellStatus.Occupied : CellStatus.None);
             Layout.EditIndex((int)_tempcell.GetIndex().x, (int)_tempcell.GetIndex().y, _tempcell);
+            //need to update for the paritcal occupie
         }
     }
     //public bool ProcessCoordsList(List<Vector3> coordsList)
@@ -85,11 +86,20 @@ public class GridMaker : MonoBehaviour
 
     public void UpdateCellOccupied(Vector3 pos, CellStatus isOcc, Vector3 fwdpos)
     {
+        //var t = GetGridFromPos(pos);
+        //t.IsOccupied = isOcc;
+        //Layout.EditIndex((int)t.GetIndex().x, (int)t.GetIndex().y, t);
+        //t = GetGridFromPos(fwdpos);
+        //t.IsOccupied = CellStatus.ParticalOccupied;
+        //Layout.EditIndex((int)t.GetIndex().x, (int)t.GetIndex().y, t);
+        updateACellOccupied(pos, isOcc);
+        updateACellOccupied(fwdpos, CellStatus.ParticalOccupied);
+    }
+    public void updateACellOccupied(Vector3 pos, CellStatus isOcc)
+    {
         var t = GetGridFromPos(pos);
         t.IsOccupied = isOcc;
         Layout.EditIndex((int)t.GetIndex().x, (int)t.GetIndex().y, t);
-        t = GetGridFromPos(fwdpos);
-        t.IsOccupied = CellStatus.ParticalOccupied;
     }
 
     //public void UpdateCellOccupied(List<Vector3> Coords, CellStatus isOcc)
