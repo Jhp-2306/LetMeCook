@@ -1,7 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -9,7 +7,6 @@ using UnityEngine.SocialPlatforms;
 using UnityEngine.UI;
 using Util;
 using static GridMaker;
-using static UnityEngine.Rendering.DebugUI;
 
 public class InputManager : Singletonref<InputManager>
 {
@@ -43,7 +40,8 @@ public class InputManager : Singletonref<InputManager>
     GameObject _currenttarget { get => ShopManager.Instance.GetCurrentPurchaseObject; }
     GridMaker _grid { get => GameDataDNDL.Instance.GetGrid(); }
     bool disableClick;
-
+    bool IsPointingUI;
+    bool clickRequested;
     private void Start()
     {
         //Basic Mode
@@ -55,18 +53,152 @@ public class InputManager : Singletonref<InputManager>
         _action.FindActionMap("Building").FindAction("Click").started += OnBuildModeEnabled;
         _action.FindActionMap("Building").FindAction("Click").canceled += context => { Invoke("OnBuildModeDisable", Time.deltaTime * 5f); };
         //ChangeMode(CameraTargetMode.PlayerCam);
+        Selector.SetActive(false);
+#if UNITY_EDITOR
+        Selector.SetActive(true);
+#endif
     }
+    private void OnDestroy()
+    {
+        _action.FindAction("Click").started -= OnClick;
+        _action.FindAction("Click").canceled -= OnClickCancel;
+        _action.FindAction("ClickPosition").performed -= OnMouseMove;
+        _action.FindActionMap("Building").FindAction("Click").started -= OnBuildModeEnabled;
+        _action.FindActionMap("Building").FindAction("Click").canceled -= context => { Invoke("OnBuildModeDisable", Time.deltaTime * 5f); };
+    }
+    private void Update()
+    {
+        //        IsPointingUI = false;
+        //#if UNITY_EDITOR
+        //        if (EventSystem.current.IsPointerOverGameObject())
+        //        {
+        //            IsPointingUI = true;
+        //            return;
+        //        }
+        //#endif
+        //        for (int i = 0; i < Input.touchCount; i++)
+        //        {
+        //            if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(i).fingerId))
+        //            {
+        //                IsPointingUI = true;
+        //            return;
+        //            }
+        //        }
 
+        #region UI Detector For Click
+        IsPointingUI = false;
+
+        if (EventSystem.current != null)
+        {
+#if UNITY_EDITOR
+            IsPointingUI = EventSystem.current.IsPointerOverGameObject();
+#else
+        if (Touchscreen.current != null)
+        {
+            var touch = Touchscreen.current.primaryTouch;
+
+            if (touch.press.isPressed)
+            {
+                int touchId = touch.touchId.ReadValue();
+
+                IsPointingUI =
+                    EventSystem.current.IsPointerOverGameObject(touchId);
+            }
+        }
+#endif
+        }
+        if (clickRequested)
+        {
+            clickRequested = false;
+
+            if (IsPointingUI)
+                return;
+
+            // gameplay logic here
+            clickAction();
+        }
+        #endregion
+    }
     #region InputActions
     void OnClick(InputAction.CallbackContext context)
     {
+        clickRequested=true;
+        //if (_currenttargetmode == CameraTargetMode.PlayerCam)
+        //{
+        //    // On Clicked
+        //    if (disableClick) return;
+        //    if (IsPointingUI) return; 
+        //    //if (EventSystem.current.IsPointerOverGameObject())
+        //    //    return;
+        //    //for (int i = 0; i < Input.touchCount; i++)
+        //    //{
+        //    //    Debug.Log($"{Input.GetTouch(i).fingerId} ------------------ here");
+        //    //    if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(i).fingerId))
+        //    //    return;
+        //    //}
+        //    RaycastHit ray;
+        //    if (Physics.Raycast(Camera.main.ScreenPointToRay(ClickPosition), out ray, 1000f))
+        //    {
+        //        //CustomLogs.CC_Log($"{ray.point}", "cyan");
+        //        if (ray.transform.tag == GameDataDNDL.Instance.CurrentArea.ToString())
+        //        {
 
+        //            if (GameDataDNDL.Instance.GetPlayer().isHandsfull)
+        //                GameDataDNDL.Instance.GetPlayer().InHand.AddEvent();
+        //            else
+        //                Interactionbtn.ResetButton("Interact");
+        //            var pos = GameDataDNDL.Instance.GetGrid().GetRoundAnchorPositionFromWorldPosiion(ray.point);
+        //            OnMovementInput(pos, false, null);
+        //        }
+        //        if (ray.transform.GetComponent<InteractiveBlock>() != null)
+        //        {
+        //            ///CustomLogs.CC_Log($"{rayUE.transform.GetComponent<Table>().GetLookPos().position}", "cyan");
+        //            //if (ray.transform.GetComponent<InteractiveBlock>().IsInteractionSatisfied())
+        //            //    InteractionButtonClick(ray.transform.GetComponent<InteractiveBlock>());
+        //            ///TODO: Hold to Move Equipment
+
+        //            OnMovementInput(ray.transform.GetComponent<InteractiveBlock>().GetLookPos().position, true, () =>
+        //            {
+        //                if (ray.transform.GetComponent<Counter>() == null)
+        //                {
+        //                    if (ray.transform.GetComponent<InteractiveBlock>().IsInteractionSatisfied())
+        //                        InteractionButtonClick(ray.transform.GetComponent<InteractiveBlock>());
+        //                }
+        //                else
+        //                {
+        //                    ray.transform.GetComponent<Counter>().OnPlayerReached();
+        //                }
+        //                //give 
+        //            });
+        //            if (Vector3.Distance(new Vector3(GameDataDNDL.Instance.GetPlayer().transform.position.x, ray.transform.GetComponent<InteractiveBlock>().GetLookPos().position.y, GameDataDNDL.Instance.GetPlayer().transform.position.z),
+        //                ray.transform.GetComponent<InteractiveBlock>().GetLookPos().position) < 0.5f)
+        //                if (ray.transform.GetComponent<InteractiveBlock>().IsInteractionSatisfied())
+        //                    InteractionButtonClick(ray.transform.GetComponent<InteractiveBlock>());
+        //        }
+        //    }
+        //}
+        //if (_currenttargetmode == CameraTargetMode.FreeCam)
+        //{
+        //    _dragcoroutine = StartCoroutine(OnDrag());
+        //}
+
+
+    }
+    void clickAction()
+    {
         if (_currenttargetmode == CameraTargetMode.PlayerCam)
         {
             // On Clicked
             if (disableClick) return;
-            if (EventSystem.current.IsPointerOverGameObject())
-                return;
+            if (IsPointingUI) return;
+            //if (EventSystem.current.IsPointerOverGameObject())
+            //    return;
+            //for (int i = 0; i < Input.touchCount; i++)
+            //{
+            //    Debug.Log($"{Input.GetTouch(i).fingerId} ------------------ here");
+            //    if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(i).fingerId))
+            //    return;
+            //}
             RaycastHit ray;
             if (Physics.Raycast(Camera.main.ScreenPointToRay(ClickPosition), out ray, 1000f))
             {
@@ -112,8 +244,6 @@ public class InputManager : Singletonref<InputManager>
         {
             _dragcoroutine = StartCoroutine(OnDrag());
         }
-
-
     }
     void OnClickCancel(InputAction.CallbackContext context)
     {
@@ -331,9 +461,9 @@ public class InputManager : Singletonref<InputManager>
         Interactionbtn.ResetButton("Interact");
         Interactionbtn.AddEvent(btnName, onClick);
     }
-    public bool CanPlaceHere(Vector3 pos, Vector3 fwdpos)
+    public bool CanPlaceHere(Vector3 pos, Vector3 fwdpos,string tag)
     {
-        return _grid.CanPlaceHere(pos, fwdpos);
+        return _grid.CanPlaceHere(pos, fwdpos,tag);
     }
 
     public void SetClick(bool Disable)

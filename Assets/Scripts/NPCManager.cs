@@ -8,6 +8,13 @@ namespace NPC
 {
     public class NPCManager : Singletonref<NPCManager>
     {
+        [System.Serializable]
+        public struct AiTrafficParameter
+        {
+            public int NumberofAI;
+            public int OrdersMin;
+            public int OrdersMax;
+        }
         public List<GameObject> DestPads;
         private Queue<Counter> DestPadsQueue;
 
@@ -19,6 +26,15 @@ namespace NPC
         public Vector3Int roam_AnchorMin, roam_AnchorMax;
         public List<Vector3> LeftSide, RightSide;
         public Transform DoorEntryPosition, DoorExitPosition;
+
+        public List<AiTrafficParameter> AiTrafficParameters;
+        private AiTrafficParameter CurrentDayAIParameter;
+        private int TotalOrderFortheday;
+
+        //for the day stats
+        public int CurrentAICount;
+        public int TotalOrderDone;
+
         private void Start()
         {
             CreatIDs();
@@ -33,7 +49,21 @@ namespace NPC
                 DestPadsQueue.Enqueue(t.GetComponent<Counter>());
             }
             StartCoroutine(NPC_RoamingTimer());
-
+            TimeManagementDNDL.StartOfTheDay -= SetParameter;
+            TimeManagementDNDL.StartOfTheDay += SetParameter;
+        }
+        private void OnDestroy()
+        {
+            TimeManagementDNDL.StartOfTheDay -= SetParameter;            
+        }
+        private void OnApplicationQuit()
+        {
+            TimeManagementDNDL.StartOfTheDay -= SetParameter;            
+        }
+        public void SetParameter()
+        {
+            CurrentDayAIParameter = AiTrafficParameters[GameDataDNDL.Instance.GetStars()];
+            TotalOrderFortheday = UnityEngine.Random.value<0.3? CurrentDayAIParameter.OrdersMin : CurrentDayAIParameter.OrdersMax;
         }
         void CreatIDs()
         {
@@ -58,17 +88,21 @@ namespace NPC
                 TrafficTimer += coolDownTimeInSec;
                 if (TimeManagementDNDL.Instance.isRoaminghrs)
                 {
-                    if (TimeManagementDNDL.Instance.CurrentDayPhase == TimeManagementDNDL.DayPhase.KitchenOpen && DestPadsQueue.Count != 0&&TrafficTimer>insideTrafficTimer&&
-                        !GameDataDNDL.Instance.isFTUT)
+                    if (TimeManagementDNDL.Instance.CurrentDayPhase == TimeManagementDNDL.DayPhase.KitchenOpen 
+                        /*&& DestPadsQueue.Count != 0*/
+                        && GameDataDNDL.Instance.GetGameState==Constants.GameState.PlayGame
+                        &&TrafficTimer>insideTrafficTimer&&
+                        !GameDataDNDL.Instance.isFTUT&& 
+                        TrafficCondition())
                     {
                         TrafficTimer = 0;
                         //Send NPC inside the shop
                         NPCMovingInsideTheShop();
                     }
-                    else
-                    {
-                        NpcRoaming();
-                    }
+                    //else
+                    //{
+                    //    NpcRoaming();
+                    //}
                 }
             }
         }
@@ -84,19 +118,19 @@ namespace NPC
                 var finalLocationGO = DestPadsQueue.Dequeue();
                 //return finalLocationGO;
                 var temp = roaming_npc.Dequeue();
-                Debug.Log(CustomLogs.CC_TagLog("NPC-Manager", $"removing count{DestPadsQueue.Count},{temp.npcName},{finalLocationGO == null}"));
+                //Debug.Log(CustomLogs.CC_TagLog("NPC-Manager", $"removing count{DestPadsQueue.Count},{temp.npcName},{finalLocationGO == null}"));
                 temp.transform.position = GetNPCRandomCood();
-                temp.SetNPC(DoorEntryPosition.position, false, finalLocationGO);
+                temp.SetNPC(DoorEntryPosition.position, false, finalLocationGO,null, GetOrderCount());
                 return temp;
             }
             return null;
         }
         
-        public void NPCMovingOutsideTheShop(NPC npc, Counter location)
+        public void NPCMovingOutsideTheShop(NPC npc, Counter location,int TotalOrdersDid)
         {
+            TotalOrderFortheday += TotalOrdersDid;
             DestPadsQueue.Enqueue(location);
             Debug.Log(CustomLogs.CC_TagLog("NPC-Manager", $"adding back count{DestPadsQueue.Count},{location == null}"));
-            //npc.SetNPC(GetNPCRandomCood(), true);
         }
         #region IGC Functions
         public void IGC_NPC_Back_Roaming(int id)
@@ -144,5 +178,33 @@ namespace NPC
             return UnityEngine.Random.value < 0.5 ? LeftSide[UnityEngine.Random.RandomRange(0, LeftSide.Count)] : RightSide[UnityEngine.Random.RandomRange(0, RightSide.Count)];
         }
         #endregion
+
+        public bool TrafficCondition()
+        {
+            //var parameter = AiTrafficParameters[GameDataDNDL.Instance.GetStars()];
+            if (3-DestPadsQueue.Count< CurrentDayAIParameter.NumberofAI)
+            {
+                return true;
+            }
+            return false;
+        }
+        int GetOrderCount()
+        {
+            if (TotalOrderFortheday == 1 || TotalOrderFortheday == 2)
+            {
+                var retu = TotalOrderFortheday;
+                TotalOrderFortheday -= TotalOrderFortheday;
+                return retu;
+
+            }
+            else
+            {
+
+                TotalOrderFortheday -= 2;
+                return 2;
+            }
+            return 0;
+        }
     }
 }
+

@@ -1,4 +1,5 @@
 {
+    "version": 1,
     "name": "InputMapping",
     "maps": [
         {
@@ -9,9 +10,9 @@
                     "name": "Click",
                     "type": "Button",
                     "id": "213bc437-dee9-44bb-864d-bdbf28c362ff",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
-                    "interactions": "",
+                    "interactions": "Press",
                     "initialStateCheck": false
                 },
                 {
@@ -110,7 +111,7 @@
                     "name": "Click",
                     "type": "Button",
                     "id": "21ac3cde-50ad-4b2c-8b72-72c3db92928a",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -140,7 +141,7 @@
                 {
                     "name": "",
                     "id": "c3e52820-aac0-4e09-bd69-9cf002e892eb",
-                    "path": "<Touchscreen>/primaryTouch/tap",
+                    "path": "<Touchscreen>/primaryTouch/press",
                     "interactions": "",
                     "processors": "",
                     "groups": "Phones",

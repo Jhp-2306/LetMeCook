@@ -1,13 +1,47 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
+using Unity.VisualScripting;
 using UnityEngine;
+
+
 namespace Constants
 {
     public static class Constant
     {
         public static readonly string DateTimeFormate = "MM/dd/yyyy HH:mm";
 
+        public static string EO = "Equipment Owned ...{0}";
+        public static string CpE = "Usage Cost per Equipment ...{0}";
+        public static string CR = "Customer Recived ...{0}";
+        public static string IE = "Income Earned ...{0}";
+        public static string ITp = "Income Tax Percentage ...{0}";
+        public static string D = "Difficulty ...{0}";
+        public static string DB = "Difficulty Bonus ...{0}";
+        public static string RGT = "Random govt. Tax ...{0}";
+        public static string EF = "Equipment Fee ...{0}";
+        public static string TF = "Tax Fee...{0}";
+        public static string DD = "Discount...{0}";
+        public static string FA = "Final Amount ...{0}";
+
+
+    }
+
+    public static class StringExtensions
+    {
+        public static string CamelCaseToWords(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text))
+                return text;
+
+            return Regex.Replace(
+                text,
+                @"(?<=[a-z])([A-Z])|(?<=[A-Z])(?=[A-Z][a-z])",
+                " $1"
+            ).Trim();
+        }
     }
     public enum KitchenState
     {
@@ -55,7 +89,7 @@ namespace Constants
         Rice,
         BurgerBun,
         Chicken,
-        Staeak,
+        Steak,
         Pepperoni,
         Egg,
         Milk,
@@ -124,16 +158,16 @@ namespace Constants
         RiceAndMushroomCurry,
         Milkshake,
         ChocolateMilkshake,
-        VanilliaMilkshake,
+        VanillaMilkshake,
         StrawberryMilkshake,
         Sandwich,
-        EggOmblet,
+        EggOmelette,
         ToastedBreadWithCheese,
         SteakMid,
         SteakWell,
         SteakRare,
-        BreadOmblet,
-        BreadOmbletWithCheese,
+        BreadOmelette,
+        BreadOmeletteWithCheese,
         ChocolateIceCream,
         VanillaIceCream,
         StrawberryIceCream,
@@ -141,6 +175,13 @@ namespace Constants
         count,
     }
 
+    [System.Serializable]
+    public struct ObjectLevelDetails
+    {
+        public int Level;
+        public string Name;
+        public string Icon;
+    }
 
     [System.Serializable]
     public struct ProcedureStep
@@ -159,7 +200,7 @@ namespace Constants
         public Dishes OutputDish;
         public int CookingTime;
         public float price;
-        
+
         public bool IsthisDish(List<ProcedureStep> _items)
         {
             if (items.Count != _items.Count) return false;
@@ -274,6 +315,18 @@ namespace Constants
         public List<T> GetAllTheData() => Data.Values.ToList();
 
     }
+
+    [System.Serializable]
+    public struct PerkData
+    {
+        public int Rank;
+        public string PerkName;
+        public perkSystem_Value Type;
+        public bool isBool;
+        public int Value;
+        public string Des;
+    }
+
     [System.Serializable]
     public class SaveDataTemplate
     {
@@ -298,4 +351,67 @@ namespace Constants
         Kitchen,
         Room,
     }
+
+    public class Bill
+    {
+        private BillData data;
+
+        public Bill(int equipmentOwne, int costPerEquipment, int totalCustomerAttended, int totalIncome, int incomeTax, int difficulty, int difficultyBonus, int randomGovtTax)
+        {
+            data.EquipmentOwne = equipmentOwne;
+            data.CostPerEquipment = costPerEquipment;
+            data.TotalCustomerAttended = totalCustomerAttended;
+            data.TotalIncome = totalIncome;
+            data.IncomeTax = incomeTax;
+            data.Difficulty = difficulty;
+            data.DifficultyBonus = difficultyBonus;
+            data.RandomGovtTax = randomGovtTax;
+        }
+        public Bill(BillData data)
+        {
+            this.data = data;
+        }
+
+        public int GetEquipmentsurgeFee() => data.EquipmentOwne * data.CostPerEquipment;
+        public int GetTaxsurgeFee() => (data.IncomeTax/100) * data.TotalIncome;
+        public int GetBonusFeeDeduction() => data.Difficulty * data.DifficultyBonus;
+        public int GetRandomGovtTax() => data.RandomGovtTax;
+
+        // Gacha 
+        public int GetRandomDiscountAfterAVideo()
+        {
+            data.RandomDiscount = 0;
+            return 0;
+        }
+        public int GetTotal() => (GetEquipmentsurgeFee() + GetTaxsurgeFee() + GetRandomGovtTax()) - (GetBonusFeeDeduction() + GetRandomDiscountAfterAVideo());
+        public BillData GetBillData() => data;
+    }
+    [System.Serializable]
+    public struct BillData
+    {
+        public bool isBillPayed;
+        public int EquipmentOwne;
+        public int CostPerEquipment;
+        public int TotalCustomerAttended;
+        public int TotalIncome;
+        public int IncomeTax;
+        public int Difficulty;
+        public int DifficultyBonus;
+        public int RandomGovtTax;
+        public int RandomDiscount;
+    }
+
+    public enum perkSystem_Value
+    {
+        EquipmentOwnePrice,
+        IncomeTaxRate,
+        Instant,
+        BlackMarket,
+        Auto,
+        OrderWaitingPeroid,
+        Govt_Tax,
+        Count
+    }
+    
+
 }

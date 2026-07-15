@@ -189,17 +189,19 @@ public class GridMaker : MonoBehaviour
         return availableposition;
     }
 
-    public bool CanPlaceHere(Vector3 pos, Vector3 fwdpos)
+    public bool CanPlaceHere(Vector3 pos, Vector3 fwdpos,string tag)
     {
         var cell = GetGridFromPos(pos);
         var fwdcell = GetGridFromPos(fwdpos);
         if (cell == null) return false;
         if (fwdcell == null) return false;
-        Debug.Log($"Can Place Here {pos}{cell.GetCoordinates3D()}");
+        
+        //Debug.Log($"Can Place Here {pos}{cell.GetCoordinates3D()}");
         if (/*cell.GetCoordinates2D() == new Vector2(pos.x, pos.z) && NEED TO CHECK WHY I PUT THIS CONDITION*/
             cell.IsOccupied == CellStatus.None)
         {
-            if (fwdcell.IsOccupied == CellStatus.Occupied) return false;
+            if (fwdcell.IsOccupied == CellStatus.Occupied )return false;
+            if(cell.Tag != tag ||fwdcell.Tag!=tag) return false;
             return true;
         }
         return false;

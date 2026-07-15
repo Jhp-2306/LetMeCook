@@ -195,12 +195,12 @@ public class InteractionBTN : MonoBehaviour
 
     #region Inventory System
 
-    public void OpenInventory(BasicStorageSystem<IStorageItem> items)
+    public void OpenInventory(BasicStorageSystem<IStorageItem> items, Action callback = null)
     {
         if (isInventoryOpen) return;
         isInventoryOpen = true;
         InventoryUIObj.SetActive(true);
-        inventoryUI.Set(items);
+        inventoryUI.Set(items,callback);
     }
     public void CloseInventory()
     {

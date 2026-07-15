@@ -28,13 +28,13 @@ public class LevelUpgradeData
     }
 }
 [Serializable]
-public struct UpgradeData
+public struct UpgradeData// Equipment Upgrade Save Data
 {
     public E_ValueName ValueName;
     public float ValueInPercentage;
 }
 [Serializable]
-public enum E_ValueName
+public enum E_ValueName//Equipment Upgrade Values 
 {
     BillRate,
     Speed,

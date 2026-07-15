@@ -4,7 +4,6 @@ using NPC;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-
 using UnityEngine;
 using Util;
 
@@ -44,7 +43,20 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
 
     public static event Action<string, int> LevelupEvent;
 
-    public GameState GetGameState {  get { return m_GameState; } }
+    public GameState GetGameState { get { return m_GameState; } }
+
+    public Bill currentDayBill;
+
+    private int currentDaysIncome;
+
+    //TODO: Alist of unlocked ingredients for proficiency system--Done
+    public List<IngredientType> unlockedIngredient { get => m_UserDataLocal.ingredientsUnlocked; }
+
+    public List<Dishes> CurrentDaysDishes;
+
+    
+
+    #region Init
     private void Awake()
     {
         base.Awake();
@@ -54,6 +66,7 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
         m_UserDataLocal = new UserDataLocal();
         CurrentArea = PlayableAreas.Kitchen;
         //script inits
+
         grid.Init();
         Navmesh.Init();
         AINavmesh.Init();
@@ -63,11 +76,15 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
     private void OnApplicationQuit()
     {
         GameSaveDNDL.DataUpdateBeforeSave -= BeforeSaving;
+        TimeManagementDNDL.OnKitchenOpen -= SelectDish;
+        TimeManagementDNDL.EndOfTheDay -= OnDayEndBilling;
     }
 
     private void OnDestroy()
     {
         GameSaveDNDL.DataUpdateBeforeSave -= BeforeSaving;
+        TimeManagementDNDL.OnKitchenOpen -= SelectDish;
+        TimeManagementDNDL.EndOfTheDay -= OnDayEndBilling;
 
     }
     private void Start()
@@ -80,11 +97,24 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
         }
         StartCoroutine(WaitForAddressableToLoad());
         m_UserDataLocal = SaveData.Instance.LocalData;
+        if (m_UserDataLocal.ingredientsUnlocked == null)
+        {
+            m_UserDataLocal.ingredientsUnlocked = new List<IngredientType>();
+        }
+        m_UserDataLocal.ingredientsUnlocked.Add(IngredientType.Tomato);
         upgradableObjects = new Dictionary<string, ObjectLevelDetails>();
+        PerkSystemManager.Instance.init();
+        ProficiencySystem.Instance.init();
         HUDManagerDNDL.Instance.AddCurrencyVisual(m_UserDataLocal.CurrencyAmount);
+        HUDManagerDNDL.Instance.SetStarsVisual();
+        TimeManagementDNDL.OnKitchenOpen -= SelectDish;
+        TimeManagementDNDL.OnKitchenOpen += SelectDish;
+        TimeManagementDNDL.EndOfTheDay -= OnDayEndBilling;
+        TimeManagementDNDL.EndOfTheDay += OnDayEndBilling;
         BeforeSaving();
         GameSaveDNDL.DataUpdateBeforeSave -= BeforeSaving;
         GameSaveDNDL.DataUpdateBeforeSave += BeforeSaving;
+        //OnDayEndBilling ();
     }
     IEnumerator WaitForAddressableToLoad()
     {
@@ -106,27 +136,42 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
                     //here spawn the Tools
                     var go = Instantiate(AssetLoader.Instance.GetEquipmetPrefab(t.PrefabString));
                     if (go.GetComponent<InteractiveBlock>() != null)
-                    { go.GetComponent<InteractiveBlock>().ReadFromSave(t);
+                    {
+                        go.GetComponent<InteractiveBlock>().ReadFromSave(t);
                         go.transform.SetParent(SaveSpawnerParent.transform);
                     }
                 }
         }
+    }
+
+    #endregion
+
+    #region Save
+    public void ContinueSave()
+    {
+        m_GameState = GameState.PlayGame;
     }
     public void NewSave()
     {
         GameSaveDNDL.Instance.NewGame();
         NewSaveSetup();
         if (!DisableFTUT)
-            FTUT_Phase1();
+            StartCoroutine(WaitForState(isGamePlay, FTUT_Phase1));
+        //FTUT_Phase1();
     }
     void BeforeSaving()
     {
         SaveData.Instance.LocalData = m_UserDataLocal;
         //GameSaveDNDL.Instance.AddSaveData(savedata);
     }
+    bool isGamePlay() => m_GameState == GameState.PlayGame;
+    #endregion
+
+    #region Currency,Star,Unlock_Conditions
     public void AddCurrency(int amount)
     {
         m_UserDataLocal.CurrencyAmount += amount;
+        currentDaysIncome += amount;
         HUDManagerDNDL.Instance.AddCurrencyVisual(m_UserDataLocal.CurrencyAmount);
     }
     public bool DoIHaveEnoughCurrency(int amount)
@@ -135,14 +180,14 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
         if (temp - amount > 0)
         {
             return true;
-           
+
         }
         else return false;
     }
     public bool tryDeductingCurrency(int amount)
     {
         var temp = m_UserDataLocal.CurrencyAmount;
-        if (temp - amount > 0)
+        if (temp - amount >= 0)
         {
             m_UserDataLocal.CurrencyAmount -= amount;
             HUDManagerDNDL.Instance.AddCurrencyVisual(m_UserDataLocal.CurrencyAmount);
@@ -150,7 +195,45 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
         }
         else return false;
     }
+    public int GetStars()
+    {
+        return m_UserDataLocal.Stars;
+    }
+    public int GetDifficultyBonus()
+    {
+        var stars = GetStars();
+        switch (stars)
+        {
+            case 0: return 1;
+            case 1: return 1;
+            case 2: return 2;
+            case 3: return 2;
+            case 4: return 3;
+            case 5: return 4;
+            case 6: return 5;
+            default: return 1;
+        }
+    }
 
+    public void UnlockedIngredients(IngredientType type)
+    {
+        if (m_UserDataLocal.ingredientsUnlocked.Count == (int)IngredientType.count) return;//All ingredient unlocked
+        if (m_UserDataLocal.ingredientsUnlocked == null)// init for value
+        {
+            m_UserDataLocal.ingredientsUnlocked = new List<IngredientType>();
+            m_UserDataLocal.ingredientsUnlocked.Add(type);
+        }
+        else// confirm and add value to the list
+        {
+            if (!m_UserDataLocal.ingredientsUnlocked.Contains(type))
+            {
+                m_UserDataLocal.ingredientsUnlocked.Add(type);
+            }
+        }
+    }
+    #endregion
+
+    #region Player and Cam
     public void SetPlayer(Player player)
     {
         m_player = player;
@@ -167,6 +250,9 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
     {
         return m_FreeCamRig;
     }
+    #endregion
+
+    #region Grid and NavMesh
     public GridMaker GetGrid() => grid;
     public void UpdateNavMesh(int x, int y, bool value)
     {
@@ -181,6 +267,13 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
     {
         AINavmesh.UpdateIsWalkableSpecificCell(worldpos, value);
     }
+    public void SwitchArea(PlayableAreas area)
+    {
+        CurrentArea = area;
+    }
+    #endregion
+
+    #region Dishes Data
     public Dishes GetStoveDish(List<ProcedureStep> procedureSteps)
     {
         return Stovebook.GetDishes(procedureSteps);
@@ -203,15 +296,29 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
         var dishes = book.GetAllThePossibleDishes(procedureStep);
         return dishes;
     }
-    public void SwitchArea(PlayableAreas area)
+
+    //Open Selection panel
+    public void SelectDish()
     {
-        CurrentArea = area;
+        //Pause Timer
+        m_GameState = GameState.PauseGame;
+        HUDManagerDNDL.Instance.ShowDishSelector();
+    }
+    public void StartTheDay(List<Dishes> CurrentSelected)
+    {
+        CurrentDaysDishes=CurrentSelected;
+        m_GameState = GameState.PlayGame;
     }
 
-    public Dictionary<string, ObjectLevelDetails> GetalltheLevels() => upgradableObjects;   
+
+
+    #endregion
+
+    #region Equipments
+    public Dictionary<string, ObjectLevelDetails> GetalltheLevels() => upgradableObjects;
     public void AddUpgradableObject(string id, ObjectLevelDetails lvl)
     {
-        if(!upgradableObjects.TryAdd(id, lvl))
+        if (!upgradableObjects.TryAdd(id, lvl))
         {
             upgradableObjects[id] = lvl;
         }
@@ -220,8 +327,11 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
     {
         LevelupEvent(id, lvl);
     }
+    #endregion
 
     #region FTUT
+    [Space(10)]
+    [Header("FTUT")]
     public bool isFTUT;
     public bool DisableFTUT;
     private GameObject FTUT_Refrigerator;
@@ -234,6 +344,7 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
         //Set Refrigerator
         FTUT_Refrigerator = ShopManager.Instance.PlaceEquipmentAtaPoint("Refrigerator", new Vector3(17, 0, 11), new Vector3());
         FTUT_Refrigerator.GetComponent<Refrigerator>().AddFTUTIngredient();
+        //UnlockedIngredients(IngredientType.Tomato);
         //Set ChoppingBoard
         FTUT_ChoppingBoard = ShopManager.Instance.PlaceEquipmentAtaPoint("Chopping_Board", new Vector3(15, 0, 11), new Vector3());
         //Set Stove
@@ -245,14 +356,6 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
         m_UserDataLocal.isNGDataSet = true;
     }
 
-    //public GameObject GetFTUTTarget(int _case)
-    //{
-    //    switch (_case)
-    //    {
-    //        case 0: return FTUT_Refrigerator;
-    //        default: return null;
-    //    }
-    //}
     //First Time User Tutorial
     void FTUT_Phase1()
     {
@@ -308,7 +411,7 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
 
 
 
-        
+
         //wait for the player to add on more ingredient
         //stove FTUT
         //grab a plate
@@ -332,19 +435,20 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
             {
                 InputManager.Instance.FTUT_MovePlayer(FTUT_Stove.GetComponent<InteractiveBlock>(), () =>
                 {
-               HUDManagerDNDL.Instance.SetTutorialHUD(InputManager.Instance.Interactionbtn.transform, () =>
-                {
-                    InputManager.Instance.Interactionbtn.InvokeClick();
-                    HUDManagerDNDL.Instance.SetTutorialHUD("Add another Sliced Tomato now", () => {
-                    FTUT_Stove.GetComponent<Stove>().init_FTUT();
-                      FTUT_Npc=  NPCManager.Instance.RequestFTUTNPC();
-                    },true);
-                },false,true);
+                    HUDManagerDNDL.Instance.SetTutorialHUD(InputManager.Instance.Interactionbtn.transform, () =>
+                     {
+                         InputManager.Instance.Interactionbtn.InvokeClick();
+                         HUDManagerDNDL.Instance.SetTutorialHUD("Add another Sliced Tomato now", () =>
+                         {
+                             FTUT_Stove.GetComponent<Stove>().init_FTUT();
+                             FTUT_Npc = NPCManager.Instance.RequestFTUTNPC();
+                         }, true);
+                     }, false, true);
                 });
             });
         });
     }
-    public bool isPhase3done; 
+    public bool isPhase3done;
     public void FTUT_Phase3()
     {
         //throe it into stove
@@ -358,9 +462,9 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
                     HUDManagerDNDL.Instance.SetTutorialHUD(InputManager.Instance.Interactionbtn.transform, () =>
                     {
                         InputManager.Instance.Interactionbtn.InvokeClick();
-                        if(isPhase3done)
+                        if (isPhase3done)
                         { FTUT_Phase4(); }
-                        isPhase3done= true;
+                        isPhase3done = true;
                     }, true, true);
                 });
             });
@@ -382,18 +486,19 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
                         {
                             HUDManagerDNDL.Instance.SetTutorialHUD(FTUT_Npc.CurrentPlatform.transform, () =>
                             {
-                                InputManager.Instance.FTUT_MovePlayer(FTUT_Npc.CurrentPlatform.GetComponent<InteractiveBlock>(), () => { 
-                                HUDManagerDNDL.Instance.SetTutorialHUD("wow you earned some currency", () =>
+                                InputManager.Instance.FTUT_MovePlayer(FTUT_Npc.CurrentPlatform.GetComponent<InteractiveBlock>(), () =>
                                 {
-                                    //Move Cam to PC
-                                    // Part 2 Ftut Starts
-                                    ///Part 2
-                                    //use the money in the room to purchase ingredient
-                                    //player level msg
-                                    //restarunt Rating msg
-                                    //day end Bills
-                                    ///------
-                                },true);
+                                    HUDManagerDNDL.Instance.SetTutorialHUD("wow you earned some currency", () =>
+                                    {
+                                        //Move Cam to PC
+                                        // Part 2 Ftut Starts
+                                        ///Part 2
+                                        //use the money in the room to purchase ingredient
+                                        //player level msg
+                                        //restarunt Rating msg
+                                        //day end Bills
+                                        ///------
+                                    }, true);
                                 });
                             });
                         });
@@ -403,19 +508,48 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
         });
     }
     #endregion
+
+
+    IEnumerator WaitForState(Func<bool> condition, Action callback)
+    {
+        var trigger = false;
+        //while (!trigger) { 
+        yield return new WaitUntil(condition);
+        callback();
+        //}
+    }
     void OnDayEndBilling()
     {
+        //Save Data
         //pay the Bill
         //Bill
-        //Calculate the equipment usage and electric price
-        //Gst
-        //Tax For no reason
+        m_GameState = GameState.PauseGame;
+        currentDayBill = new Bill(equipmentOwne: upgradableObjects.Count,
+                                  costPerEquipment: PerkSystemManager.Instance.GetPerkValue(perkSystem_Value.EquipmentOwnePrice),
+                                  totalCustomerAttended: NPCManager.Instance.CurrentAICount,
+                                  totalIncome: currentDaysIncome,
+                                  incomeTax: PerkSystemManager.Instance.GetPerkValue(perkSystem_Value.IncomeTaxRate),
+                                  difficulty: GetStars(),
+                                  difficultyBonus: GetDifficultyBonus(),
+                                  randomGovtTax: 7);
         //Failed to pay result in Save Faileds
+        HUDManagerDNDL.Instance.BillUi.SetBill(currentDayBill);
+    }
+    public void OnbillPayment()
+    {
+        if (tryDeductingCurrency(currentDayBill.GetTotal()))
+        {
+            //Start A new day 
+            //save data
+        }
+        else
+        {
+            // issue Bankruptcy 
+            // check for prestige
+            // if Presitige then open popup for it 
+            // else move to a new save popup
+            // and Save Data
+        }
     }
 }
-public struct ObjectLevelDetails
-{
-    public int Level;
-    public string Name;
-    public string Icon;
-}
+

@@ -17,7 +17,7 @@ public class TrashBin : InteractiveBlock
     }
     public override void Init(EquipmentType _equip = EquipmentType.none, string item = "")
     {
-        base.Init(EquipmentType.TrashBin);
+        base.Init(EquipmentType.TrashBin,item);
         ///Any additional init/data distribution code here
 
         ///in-between here

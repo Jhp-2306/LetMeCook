@@ -24,7 +24,9 @@ public class AssetLoader : Singletonref<AssetLoader>
     private Dictionary<string, AsyncOperationHandle<IList<GameObject>>> batchcache;
     private Dictionary<string, AsyncOperationHandle<GameObject>> cache;
     private Dictionary<string, AsyncOperationHandle<IList<Sprite>>> Spritescache;
-
+    public Material TMPLockedMaterial;
+    public Material IconLockedMaterial;
+    //public Material TMPLockedMaterial;
     private void Awake()
     {
         base.Awake();

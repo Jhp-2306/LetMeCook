@@ -34,7 +34,7 @@ public class GameSaveDNDL : Singletonref<GameSaveDNDL>
     }
     public bool ForceSave()
     {
-        SaveData.Instance.LocalData.Playername = "hallow";
+        //SaveData.Instance.LocalData.Playername = "hallow";
         DataUpdateBeforeSave();
         return SaveData.Instance.SaveInstance();
     }

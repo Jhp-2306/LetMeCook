@@ -15,12 +15,14 @@ public class MainMenuDNDL : Singletonref<MainMenuDNDL>
     public void StartCurrentSave()
     {
         HUD.SetActive(false);
+        GameDataDNDL.Instance.ContinueSave() ;
     }
     public void NewSave()
     {
         //HUD.SetActive(false);
+        GameSaveDNDL.Instance.NewGame();
         SceneManagerDNDL.Instance.ReloadScene(SceneManagerDNDL.Instance.GameScene, () => { });
-        GameDataDNDL.Instance.NewSave();
+        //GameDataDNDL.Instance.NewSave();
     }
     public void Settings()
     {

@@ -182,7 +182,7 @@ public class Refrigerator : InteractiveBlock
         else
         {
             CustomLogs.CC_Log("Opening inventory", "red");
-            HUDManagerDNDL.Instance.OpenInventory(storageSystem);
+            HUDManagerDNDL.Instance.OpenInventory(storageSystem,storageSystem.Refresh);
         }
     }
     
@@ -248,6 +248,7 @@ public class RefrigeratorItems : IStorageItem
         {
             _data.count--;
         }
+       
 
     }
     public string GetData()

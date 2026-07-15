@@ -5,6 +5,7 @@ using UnityEngine;
 using Constants;
 using UnityEngine.UI;
 using Unity.VisualScripting;
+using JetBrains.Annotations;
 
 [Serializable]
 public class SaveData
@@ -30,19 +31,20 @@ public class SaveData
         }
     }
 
+    public PresistenUserData userData;
     public UserDataLocal LocalData;
     public SaveDataType<SaveDataTemplate> saveDataType;
     public void Init()
     {
         LocalData = new UserDataLocal();
         saveDataType = new SaveDataType<SaveDataTemplate>();
-        
+
         Debug.Log("Init on SaveData");
     }
     public void NewGameSaveData()
     {
         LocalData = new UserDataLocal();
-        saveDataType= new SaveDataType<SaveDataTemplate>();
+        saveDataType = new SaveDataType<SaveDataTemplate>();
         SaveInstance();
     }
     public bool SaveInstance()
@@ -66,28 +68,47 @@ public class SaveData
         }
     }
 
-    
+
 
 }
+/// <summary>
+/// this data will NOT get Deleted when loading a new save
+/// </summary>
 [System.Serializable]
-public class UserDataLocal
+public class PresistenUserData
 {
     public string Playername;
     public int PlayerLevel;
+    public PresistenUserData() { }
+    public PresistenUserData(PresistenUserData copydata)
+    {
+        Playername = copydata.Playername;
+        PlayerLevel = copydata.PlayerLevel;
+    }
+}
+/// <summary>
+/// this data will GET Deleted when loading a new save
+/// </summary>
+[System.Serializable]
+public class UserDataLocal
+{
     public int CurrencyAmount;
+    public int Stars;
     public int Day;
     public int Time;
     public bool isNGDataSet;
     public string StartTime;
     public string GameCloseTime;
     public string CurrentTime;
+    public Dictionary<perkSystem_Value,int> Perkdata;
+    public List<IngredientType> ingredientsUnlocked;
 
-    public UserDataLocal() {}
+    public UserDataLocal() {        
+    ingredientsUnlocked = new List<IngredientType>();
+    }
 
     public UserDataLocal(UserDataLocal copydata)
     {
-        Playername = copydata.Playername;
-        PlayerLevel = copydata.PlayerLevel;
         CurrencyAmount = copydata.CurrencyAmount;
         Day = copydata.Day;
         Time = copydata.Time;
@@ -95,6 +116,9 @@ public class UserDataLocal
         StartTime = copydata.StartTime;
         GameCloseTime = copydata.GameCloseTime;
         CurrentTime = copydata.CurrentTime;
+        Stars = copydata.Stars;
+        Perkdata=copydata.Perkdata;
+        ingredientsUnlocked=copydata.ingredientsUnlocked;
     }
 }
 
@@ -122,3 +146,5 @@ public class InventoryDataLocal
         return IngredientData[(IngredientType)_id];
     }
 }
+
+

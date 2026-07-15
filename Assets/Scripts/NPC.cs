@@ -45,6 +45,9 @@ namespace NPC
         List<Dishes> currentOrder;
         public Image OrderTimerProgressBar;
         float FoodCost;
+
+        int TotalOrder;
+
         public void Start()
         {
             //Agent = GetComponent<NavMeshAgent>();
@@ -58,15 +61,16 @@ namespace NPC
             namedis.text = npcName;
             iddis.text = id.ToString();
         }
-        public void SetNPC(Vector3 pos, bool isroaming, Counter myplatform = null, Action callback = null)
+        public void SetNPC(Vector3 pos, bool isroaming, Counter myplatform = null, Action callback = null, int totalOrder = 0)
         {
-            Debug.Log(CustomLogs.CC_TagLog($"NPC{npcName}", $"isplatform{myplatform == null}"));
+            Debug.Log(CustomLogs.CC_TagLog($"NPC{npcName}", $"isplatform{myplatform == null}, total order{totalOrder}"));
             this.gameObject.SetActive(true);
             if (myCor != null)
             {
                 StopCoroutine(myCor);
             }
             gameObject.SetActive(true);
+            TotalOrder = totalOrder;
             isRoaming = isroaming;
             CurrentPlatform = myplatform;
             Vector3 snappedPos = new Vector3(pos.x, transform.position.y, pos.z);
@@ -92,7 +96,7 @@ namespace NPC
             SetNPC(NPCManager.Instance.DoorExitPosition.position, true, CurrentPlatform);
 
         }
-        public void OnOrderComplete(Dishes dish,float cost)
+        public void OnOrderComplete(Dishes dish, float cost)
         {
             currentOrder.Remove(dish);
             FoodCost += cost;
@@ -303,16 +307,23 @@ namespace NPC
                             if (currentOrder == null)
                                 currentOrder = new List<Dishes>();
                             currentOrder.Clear();
-                            //TODO:-Logic for multi Order HERE
+                            //TODO:-Logic for multi Order HERE--Done
                             if (GameDataDNDL.Instance.isFTUT)
                             {
-                            currentOrder.Add(Dishes.TomatoSoup);
-                            }else
-                            currentOrder.Add((Dishes)UnityEngine.Random.RandomRange(0, ((int)Dishes.count - 1)));
+                                currentOrder.Add(Dishes.TomatoSoup);
+                            }
+                            else
+                            {
+                                for (int i = 0; i < TotalOrder; i++)
+                                {
+                                    //TODO:-get the Current Active Dishes
+                                    currentOrder.Add((Dishes)UnityEngine.Random.RandomRange(0, ((int)Dishes.count - 1)));
+                                }
+                            }
                             var timer = GameDataDNDL.Instance.GetCookingTime(currentOrder[0]);
                             namedis.text = currentOrder[0].ToString();
                             orderWaitingCoroutine = StartCoroutine(WaitingForTheOrder(timer + waitingfororderTimer));
-                        });//Callback should trigger ording and waiting phase
+                        },TotalOrder);//Callback should trigger ording and waiting phase
                         Callback?.Invoke();
                     }
                     else
@@ -326,12 +337,12 @@ namespace NPC
                 {
                     //request a End Roaming Point
                     Debug.Log(CustomLogs.CC_TagLog("NPC", "Exiting the Shop"));
-                    NPCManager.Instance.NPCMovingOutsideTheShop(this, CurrentPlatform);
+                    NPCManager.Instance.NPCMovingOutsideTheShop(this, CurrentPlatform,TotalOrder);
                     Callback?.Invoke();
                     SetNPC(NPCManager.Instance.GetNPCRandomCood(), true);
                     CurrentPlatform = null;
                 }
-            });
+            },TotalOrder);
         }
     }
 }

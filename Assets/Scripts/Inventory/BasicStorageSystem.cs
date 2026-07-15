@@ -79,6 +79,15 @@ public class BasicStorageSystem<T> where T : IStorageItem
     //    var tempData = JsonUtility.FromJson<BasicStorageSystemDataStruct>(data);
     //    return size;
     //}
+
+    //TODO Add Refresh methode that re allocats the empty slots
+    public void Refresh()
+    {
+        foreach (var item in items)
+        {
+            if(item.GetQuanitity() <= 0) RemoveItemAt(GetIndexOfItem(item));
+        }
+    }
 }
 
 public interface IStorageItem

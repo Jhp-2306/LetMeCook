@@ -27,6 +27,7 @@ namespace ASPathFinding
         bool isGridCreated;
         //public GameObject GuiPrefab;
         //public GameObject PrefabGridUIParent;
+        public bool isAI;
         
         public void Init()
         {
@@ -35,13 +36,20 @@ namespace ASPathFinding
             gridSizeY = Mathf.RoundToInt(m_GridSize.y / nodeDiameter);
             if(SerializationManager.Load(file_name)==null)
             {
-            CreateGrid();
+                Debug.Log(CustomLogs.CC_TagLog($"<color=cyan>ASPF Grid</color>", $"Creating New Grid for {gameObject.name}"));
+                CreateGrid();
             }
             else
             {
+                Debug.Log(CustomLogs.CC_TagLog($"<color=cyan>ASPF Grid</color>", $"Load was Successful for {gameObject.name}"));
                 grid = new ASPFNode[gridSizeX, gridSizeY];
+                if(isAI)
+                grid = (ASPFNode[,])SerializationManager.Load(file_name, Application.dataPath + "/Resources/saves");
+                else
                 grid = (ASPFNode[,])SerializationManager.Load(file_name);
                 isGridCreated = true;
+                if(!isAI)
+                UpdateGrid();
             }
         }
         
@@ -92,7 +100,7 @@ namespace ASPathFinding
         }
         void saveGridData()
         {
-            return;//Testing Only
+            //return;//Testing Only
             SerializationManager.Save(file_name, grid);
         }
         /// <summary>

@@ -7,9 +7,14 @@ using UnityEngine;
 
 public class SerializationManager 
 {
-   static string _path = Application.dataPath + "/Resources/saves";
+#if UNITY_EDITOR
+    static string _path = Application.dataPath + "/Resources/saves";
+#else
+    static string _path = Application.persistentDataPath + "/Resources/saves";
+#endif
     public static bool Save(string _savename,object _data)
     {
+
         BinaryFormatter _formatter = GetFormatter();
         //string _path = Application.dataPath + "/Resource/saves";
         if (!Directory.Exists(_path))
@@ -20,13 +25,17 @@ public class SerializationManager
         FileStream _file = File.Create(_filepath);
         _formatter.Serialize(_file, _data);
         _file.Close();
-        CustomLogs.CC_Log($"*** \"{_savename}\" File is saved at \n {_path}\n successfully ***","cyan");
+        Debug.Log(CustomLogs.CC_Log($"*** \"{_savename}\" File is saved at \n {_path}\n successfully ***{Application.persistentDataPath}","cyan"));
         return true;
     }
 
-    public static object Load(string _savename)
+    public static object Load(string _savename, string pathupdate="null")
     {
-        string path = $"{_path}/{_savename}.lmc";
+        string path = "";
+        if (pathupdate=="null")
+            path = $"{_path}/{_savename}.lmc";
+        else
+             path = $"{pathupdate}/{_savename}.lmc";
         if (!File.Exists(path))
         {
             return null;

@@ -36,6 +36,9 @@ public class HUDManagerDNDL : Singletonref<HUDManagerDNDL>
         Stats,
         Market,
         Upgrade,
+        Perk,
+        Recipe,
+        Black_Market,
     }
 
     [Header("Pc")]
@@ -47,12 +50,19 @@ public class HUDManagerDNDL : Singletonref<HUDManagerDNDL>
     [SerializeField] GameObject MarketApplicationHomePageScreen;
     [SerializeField] GameObject MarketApplicationCheckoutPageScreen;
     [SerializeField] GameObject UpgradeApplicationScreen;
+    [SerializeField] GameObject BlackApplicationScreen;
+    [SerializeField] GameObject PerksystemApplicationScreen;
+    [SerializeField] GameObject ProficiencyApplicationScreen;
     [SerializeField] TMPro.TextMeshProUGUI ApplicationTitle;
     [Header("Currency Reflector")]
     [SerializeField] TextMeshProUGUI CurrencyCounter;
     private float CurrencyAnimationSec;
     private int previousValue;
+    [Header("Bill Ui")]
+    public BillUI BillUi;
 
+    [Header("DishSelector UI")]
+    public DishSelectorUI dishSelectorUI;
     public void OnCameraSettingButtonClicked()
     {
         isplayerCam = !isplayerCam;
@@ -61,6 +71,20 @@ public class HUDManagerDNDL : Singletonref<HUDManagerDNDL>
         InputManager.Instance.ChangeMode(isplayerCam ? CameraTargetMode.PlayerCam : CameraTargetMode.FreeCam,
             isplayerCam ? GameDataDNDL.Instance.GetPlayer().gameObject : GameDataDNDL.Instance.GetFreeCamRig());
     }
+
+    private void OnEnable()
+    {
+        TimeManagementDNDL.OnKitchenOpen -= ShopDisable;
+        TimeManagementDNDL.OnKitchenOpen += ShopDisable;
+        TimeManagementDNDL.OnKitchenClose -= ShopEnable;
+        TimeManagementDNDL.OnKitchenClose += ShopEnable;
+    }
+    private void OnDisable()
+    {
+        TimeManagementDNDL.OnKitchenClose -= ShopEnable;
+        TimeManagementDNDL.OnKitchenOpen -= ShopDisable;
+    }
+
     #region Shop
     public void OpenShop()
     {
@@ -88,10 +112,10 @@ public class HUDManagerDNDL : Singletonref<HUDManagerDNDL>
     #endregion
     #region Inventory 
 
-    public void OpenInventory(BasicStorageSystem<IStorageItem> items)
+    public void OpenInventory(BasicStorageSystem<IStorageItem> items,Action callback=null)
     {
         currentOpenStorage = items;
-        interactionBTN.OpenInventory(items);
+        interactionBTN.OpenInventory(items,callback);
         //interactionBTN.ResetButton();
     }
     public void CloseInventory()
@@ -164,6 +188,18 @@ public class HUDManagerDNDL : Singletonref<HUDManagerDNDL>
                 UpgradeApplicationScreen.SetActive(Activate); 
                 UpgradeApplicationScreen.GetComponent<Pc_UpgradeWindow>().init();
                 break;
+            case PC_Application.Perk:
+                PerksystemApplicationScreen.SetActive(Activate);
+                //UpgradeApplicationScreen.GetComponent<Pc_UpgradeWindow>().init();
+                break;
+            case PC_Application.Recipe:
+                ProficiencyApplicationScreen.SetActive(Activate);
+                //UpgradeApplicationScreen.GetComponent<Pc_UpgradeWindow>().init();
+                break;
+            case PC_Application.Black_Market:
+                BlackApplicationScreen.SetActive(Activate);
+                //UpgradeApplicationScreen.GetComponent<Pc_UpgradeWindow>().init();
+                break;
         }
     }
     public void OpenApplication(int application)
@@ -209,5 +245,20 @@ public class HUDManagerDNDL : Singletonref<HUDManagerDNDL>
         CurrencyCounter.text = Value.ToString();
     }
     #endregion
+
+    public List<GameObject> Stars;
+    public void SetStarsVisual()
+    {
+        var stars=GameDataDNDL.Instance.GetStars();
+        foreach (var star in Stars) { 
+            star.gameObject.SetActive(Stars.IndexOf(star)<stars);
+        
+        }
+    }
+
+    public void ShowDishSelector()
+    {
+        dishSelectorUI.Init();
+    }
 
 }

@@ -1,7 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class InventoryUI : MonoBehaviour
@@ -30,7 +30,7 @@ public class InventoryUI : MonoBehaviour
         //Set();
     }
 
-    public void Set(BasicStorageSystem<IStorageItem> items)
+    public void Set(BasicStorageSystem<IStorageItem> items,Action Callback=null)
     {
         int currentSlotsFilled = 0;
         for (int i = 0; i < Items.Count; i++) {
@@ -40,6 +40,7 @@ public class InventoryUI : MonoBehaviour
                 var item = items.GetItemAtIndex(i);
                 Items[i].GetComponent<InventoryItemHolder>().Set(AssetLoader.Instance.GetIngredientSO(item.Type), 
                     item.GetQuanitity().ToString(),item.Type.ToString(),()=> { item.RemoveQuanitity();
+                        Callback();
                     Close();
                 });
                 currentSlotsFilled++;

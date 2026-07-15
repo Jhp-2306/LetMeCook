@@ -70,7 +70,7 @@ MonoBehaviour:
       Descriptions: 
     DishMix: 1
     dishes: 05000000
-    OutputDish: 13
+    OutputDish: 14
     CookingTime: 0
     price: 100
   - items:

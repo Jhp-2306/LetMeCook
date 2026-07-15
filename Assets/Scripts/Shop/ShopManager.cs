@@ -89,7 +89,7 @@ public class ShopManager : Singletonref<ShopManager>
             CurrentPurchaseObject.GetComponent<Collider>().isTrigger = true;
             buildingHud.gameObject.SetActive(true);
             buildingHud.gameObject.transform.SetParent(go.transform);
-            buildingHud.gameObject.transform.localPosition = Vector3.up * 1.75f;
+            buildingHud.gameObject.transform.localPosition = Vector3.up * 2.5f;
             //Enter Building mode
             InputManager.Instance.ChangeMode(CameraTargetMode.BuildingMode, go);
             InputManager.Instance.EnterBuildingMode();
@@ -183,7 +183,7 @@ public class ShopManager : Singletonref<ShopManager>
         var t = CurrentPurchaseObject.GetComponent<InteractiveBlock>();
         yield return null;
             if(t!=null)
-            buildingHud.ConfirmButton.interactable= InputManager.Instance.CanPlaceHere(t.transform.position,t.GetLookPos().position);
+            buildingHud.ConfirmButton.interactable= InputManager.Instance.CanPlaceHere(t.transform.position,t.GetLookPos().position,t.Tag.ToString());
         }
     }
 }

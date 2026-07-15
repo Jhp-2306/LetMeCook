@@ -109,7 +109,8 @@ public class Plate : MonoBehaviour, IHandHeld
     public void pickupDish(Dishes dish, float price, float multi)
     {
         FinalDish = dish;
-        Price = price; PriceMultiplier = multi;
+        Price = price; 
+        PriceMultiplier = multi;
         this.gameObject.GetComponent<Dish>().SetaDishActive(dish);
         isPlateEmpty = false;
     }

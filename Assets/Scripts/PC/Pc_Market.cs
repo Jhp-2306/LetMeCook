@@ -21,11 +21,16 @@ public class Pc_Market : MonoBehaviour
     public SO_PCMarketItemList ItemList;
     public List<Pc_MarketItemsDetails> Items;
     public GameObject SliderPrefab;
-    public GameObject SliderPrefabParent1, SliderPrefabParent2;
+    public GameObject SliderPrefabParent;
     public GameObject SliderCheckoutPrefab;
     public GameObject CheckoutSliderParent;
     public List<Pc_Checkout_Slider> checkout_Sliders;
     public Vector3 position;
+
+    //Scalablity 
+    public GridLayout gridvis;
+    
+
     public void checkout()
     {
         ShopPage.SetActive(false);
@@ -42,11 +47,12 @@ public class Pc_Market : MonoBehaviour
         onCart = new Dictionary<string, cartData>();
         MarketTab();
         Items = ItemList.items;
+       //gridvis.
         var tempbool = true;
         if(Sliders.Count!=Items.Count)
         foreach (var item in Items)
         {
-            var go = Instantiate(SliderPrefab, tempbool ? SliderPrefabParent1.transform : SliderPrefabParent2.transform);
+            var go = Instantiate(SliderPrefab, /*tempbool ? */SliderPrefabParent.transform/*1.transform : SliderPrefabParent2.transform*/);
             go.GetComponent<Pc_Market_IngredientSliders>().SetUp(item.name, item.des, item.icon_Name, this);
             Sliders.Add(go.GetComponent<Pc_Market_IngredientSliders>());
             tempbool = !tempbool;
@@ -167,6 +173,7 @@ public class Pc_Market : MonoBehaviour
             foreach( var t in onCart.Values)
             {
                 RefrigeratorItems item = new RefrigeratorItems(GetItemDetailsFromName(t.name).IngredientType,(int)t.quantity);
+                GameDataDNDL.Instance.UnlockedIngredients(item.Type);
                 box.AddBoxItem(item);
             }
         }

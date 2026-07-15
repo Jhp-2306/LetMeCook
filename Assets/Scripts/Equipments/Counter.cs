@@ -45,5 +45,9 @@ public class Counter : InteractiveBlock
             }
         }
     }
-    //Player Deliver the order here
+    public void CalculateQualityOfFood()
+    {
+        //Here Calculate the Quality For the AI 
+        //here Star and Review initials
+    }
 }

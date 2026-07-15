@@ -17,6 +17,7 @@ public class SceneManagerDNDL : Singletonref<SceneManagerDNDL>
     private void Awake()
     {
         base.Awake();
+        DontDestroyOnLoad(this);
         StartCoroutine(Starter());
     }
     IEnumerator Starter()
