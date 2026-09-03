@@ -29,7 +29,7 @@ public class FillUpMiniGame : MonoBehaviour
         HUDParent.SetActive(true);
         var width = ParentSafeArea.rect.width * fillUpProgressWitdh;
         var pos = (ParentSafeArea.rect.width * fillUpProgressMin) - width / 2;
-        CustomLogs.CC_Log($"Setting Mini Game{width},pos{pos},parent width{ParentSafeArea.rect.width},{SafeArea.localPosition}", "cyan");
+        Debug.Log(CustomLogs.CC_Log($"Setting Mini Game{width},pos{pos},parent width{ParentSafeArea.rect.width},{SafeArea.localPosition}", "cyan"));
         SafeArea.sizeDelta = new Vector2(width, SafeArea.rect.height);
         SafeArea.anchoredPosition = new Vector3(pos, SafeArea.localPosition.y, SafeArea.localPosition.z);
         //Start Game
@@ -54,6 +54,7 @@ public class FillUpMiniGame : MonoBehaviour
         if (fillUpProgress > fillUpProgressMin - fillUpProgressWitdh && fillUpProgress < fillUpProgressMin + fillUpProgressWitdh) val = 1;
         OnMiniGameOver?.Invoke(val);
         isMiniStart = false;
+        InputManager.Instance.DisablePlayerMovement(false);
         //InputManager.OnHoldingCancel -= OnEnd;
     }
 

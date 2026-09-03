@@ -181,8 +181,6 @@ public class InputManager : Singletonref<InputManager>
         //{
         //    _dragcoroutine = StartCoroutine(OnDrag());
         //}
-
-
     }
     void clickAction()
     {
@@ -199,32 +197,39 @@ public class InputManager : Singletonref<InputManager>
             //    if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(i).fingerId))
             //    return;
             //}
+            if(_cameraControle.Target!= GameDataDNDL.Instance.GetPlayer().gameObject)
+            _cameraControle.SetTarget(GameDataDNDL.Instance.GetPlayer().gameObject);
             RaycastHit ray;
             if (Physics.Raycast(Camera.main.ScreenPointToRay(ClickPosition), out ray, 1000f))
             {
                 //CustomLogs.CC_Log($"{ray.point}", "cyan");
+                //Move With in playable area
                 if (ray.transform.tag == GameDataDNDL.Instance.CurrentArea.ToString())
                 {
-
+                    Debug.Log(_grid.GetGridFromPos(_grid.GetRoundAnchorPositionFromWorldPosition(ray.point)).GetCoordinates2D());
                     if (GameDataDNDL.Instance.GetPlayer().isHandsfull)
                         GameDataDNDL.Instance.GetPlayer().InHand.AddEvent();
                     else
                         Interactionbtn.ResetButton("Interact");
-                    var pos = GameDataDNDL.Instance.GetGrid().GetRoundAnchorPositionFromWorldPosiion(ray.point);
+                    var pos = GameDataDNDL.Instance.GetGrid().GetRoundAnchorPositionFromWorldPosition(ray.point);
                     OnMovementInput(pos, false, null);
                 }
+                //Move to An Object
                 if (ray.transform.GetComponent<InteractiveBlock>() != null)
                 {
                     ///CustomLogs.CC_Log($"{rayUE.transform.GetComponent<Table>().GetLookPos().position}", "cyan");
                     //if (ray.transform.GetComponent<InteractiveBlock>().IsInteractionSatisfied())
                     //    InteractionButtonClick(ray.transform.GetComponent<InteractiveBlock>());
-                    ///TODO: Hold to Move Equipment
-
+                    ///TODO: Hold to Move Equipments            
+                    HUDManagerDNDL.Instance.HideinteractionButton();
+                    //Move to an Obect With in the playable Area
+                    if (_grid.GetGridFromPos(_grid.GetRoundAnchorPositionFromWorldPosition(ray.transform.GetComponent<InteractiveBlock>().GetLookPos().position)).Tag==GameDataDNDL.Instance.CurrentArea.ToString())
+                    {
                     OnMovementInput(ray.transform.GetComponent<InteractiveBlock>().GetLookPos().position, true, () =>
                     {
                         if (ray.transform.GetComponent<Counter>() == null)
                         {
-                            if (ray.transform.GetComponent<InteractiveBlock>().IsInteractionSatisfied())
+                            if (ray.transform.GetComponent<InteractiveBlock>().IsInteractionSatisfied() || ray.transform.GetComponent<InteractiveBlock>().IsHoldInteractionSatisfied())
                                 InteractionButtonClick(ray.transform.GetComponent<InteractiveBlock>());
                         }
                         else
@@ -235,8 +240,11 @@ public class InputManager : Singletonref<InputManager>
                     });
                     if (Vector3.Distance(new Vector3(GameDataDNDL.Instance.GetPlayer().transform.position.x, ray.transform.GetComponent<InteractiveBlock>().GetLookPos().position.y, GameDataDNDL.Instance.GetPlayer().transform.position.z),
                         ray.transform.GetComponent<InteractiveBlock>().GetLookPos().position) < 0.5f)
-                        if (ray.transform.GetComponent<InteractiveBlock>().IsInteractionSatisfied())
+                        if (ray.transform.GetComponent<InteractiveBlock>().IsInteractionSatisfied()|| ray.transform.GetComponent<InteractiveBlock>().IsHoldInteractionSatisfied())
                             InteractionButtonClick(ray.transform.GetComponent<InteractiveBlock>());
+                    }
+
+                    //TODO: Move Toward Object in a different area
                 }
             }
         }
@@ -262,7 +270,7 @@ public class InputManager : Singletonref<InputManager>
         RaycastHit rayUE;
         if (Physics.Raycast(Camera.main.ScreenPointToRay(ClickPosition), out rayUE, 1000f))
         {
-            Selector.transform.position = GameDataDNDL.Instance.GetGrid().GetRoundAnchorPositionFromWorldPosiion(new Vector3(rayUE.point.x, 0.015f, rayUE.point.z));
+            Selector.transform.position = GameDataDNDL.Instance.GetGrid().GetRoundAnchorPositionFromWorldPosition(new Vector3(rayUE.point.x, 0.015f, rayUE.point.z));
             if (rayUE.transform.GetComponent<InteractiveBlock>() != null)
             {
                 if (previousdata != null && rayUE.transform != previousdata)
@@ -340,7 +348,7 @@ public class InputManager : Singletonref<InputManager>
             if (Physics.Raycast(Camera.main.ScreenPointToRay(tempos), out rayFloor, 1000f))
             {
                 //Debug.Log("is occp"+_grid.processCoords(_grid.GetRoundAnchorPositionFromWorldPosiion(new Vector3(rayFloor.point.x, 1.69f, rayFloor.point.z))));
-                var gridpos = _grid.GetRoundAnchorPositionFromWorldPosiion(new Vector3(rayFloor.point.x, 1.69f, rayFloor.point.z));
+                var gridpos = _grid.GetRoundAnchorPositionFromWorldPosition(new Vector3(rayFloor.point.x, 1.69f, rayFloor.point.z));
                 if (_grid.processCoords(gridpos,
                     SelectedObject.GetComponent<InteractiveBlock>().Tag.ToString())&& GameDataDNDL.Instance.GetPlayer().transform.position!=gridpos)
                 {
@@ -405,6 +413,7 @@ public class InputManager : Singletonref<InputManager>
                 _action.FindActionMap("BasicMovement").Enable();
                 _action.FindActionMap("Building").Disable();
                 //_cameraControle.SetTarget(/*GameDataDNDL.Instance.GetPlayer().gameObject*/_target);
+                return;
                 break;
             case CameraTargetMode.FreeCam:
 
@@ -466,7 +475,7 @@ public class InputManager : Singletonref<InputManager>
         return _grid.CanPlaceHere(pos, fwdpos,tag);
     }
 
-    public void SetClick(bool Disable)
+    public void DisablePlayerMovement(bool Disable)
     {
         disableClick = Disable;
     }

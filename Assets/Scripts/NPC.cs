@@ -4,9 +4,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 using UnityEngine.UI;
-using static UnityEngine.GraphicsBuffer;
+
 
 namespace NPC
 {
@@ -107,6 +106,7 @@ namespace NPC
                 SetNPC(NPCManager.Instance.DoorExitPosition.position, true, CurrentPlatform);
                 //Give Coins
                 GameDataDNDL.Instance.AddCurrency((int)cost);
+                //Food Rating
                 //TODO:-coins visual here
                 Debug.Log(CustomLogs.CC_TagLog($"NPC{id}", $"Giving Coins{cost} "));
             }
@@ -302,7 +302,6 @@ namespace NPC
                     {
                         SetNPC(CurrentPlatform.AILookAtMe().position, false, CurrentPlatform, () =>
                         {
-                            CurrentPlatform.GetComponent<Counter>().SetClient(this);
                             //Ording Here
                             if (currentOrder == null)
                                 currentOrder = new List<Dishes>();
@@ -314,14 +313,23 @@ namespace NPC
                             }
                             else
                             {
+                                var DishInMenu = GameDataDNDL.Instance.CurrentDaysDishes;
+                                if(DishInMenu != null)
+                                if( DishInMenu.Count>TotalOrder)
                                 for (int i = 0; i < TotalOrder; i++)
                                 {
                                     //TODO:-get the Current Active Dishes
-                                    currentOrder.Add((Dishes)UnityEngine.Random.RandomRange(0, ((int)Dishes.count - 1)));
+                                    //currentOrder.Add((Dishes)UnityEngine.Random.RandomRange(0, ((int)Dishes.count - 1)));
+                                    currentOrder.Add(DishInMenu[UnityEngine.Random.Range(0, DishInMenu.Count)]);
+                                }
+                                else
+                                {
+                                    currentOrder.Add(DishInMenu[0]);
                                 }
                             }
                             var timer = GameDataDNDL.Instance.GetCookingTime(currentOrder[0]);
                             namedis.text = currentOrder[0].ToString();
+                            CurrentPlatform.GetComponent<Counter>().SetClient(this);
                             orderWaitingCoroutine = StartCoroutine(WaitingForTheOrder(timer + waitingfororderTimer));
                         },TotalOrder);//Callback should trigger ording and waiting phase
                         Callback?.Invoke();

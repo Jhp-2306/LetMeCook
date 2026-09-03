@@ -14,12 +14,35 @@ public class CameraControle : MonoBehaviour
     {
         MoveCam();
     }
+    //void MoveCam()
+    //{        
+    //    var pos = new Vector3(0, 0, 0);     
+    //    var newposition= new Vector3(SafeAreaMin.position.x <= Mathf.Abs(Target.transform.position.x) && SafeAreaMax.position.x >= Mathf.Abs(Target.transform.position.x) ? Target.transform.position.x : Rig.transform.position.x, Target.transform.position.y,
+    //       SafeAreaMin.position.z <= Mathf.Abs(Target.transform.position.z) && SafeAreaMax.position.z >= Mathf.Abs(Target.transform.position.z) ? Target.transform.position.z : Rig.transform.position.z);
+    //    Rig.transform.position = Vector3.Lerp(Rig.transform.position, newposition, Time.deltaTime * CameraSmoothValue);
+    //    _cam.transform.position = MovementTransformPosition.position;
+    //}
     void MoveCam()
-    {        
-        var pos = new Vector3(0, 0, 0);     
-        var newposition= new Vector3(SafeAreaMin.position.x <= Mathf.Abs(Target.transform.position.x) && SafeAreaMax.position.x >= Mathf.Abs(Target.transform.position.x) ? Target.transform.position.x : Rig.transform.position.x, Target.transform.position.y,
-           SafeAreaMin.position.z <= Mathf.Abs(Target.transform.position.z) && SafeAreaMax.position.z >= Mathf.Abs(Target.transform.position.z) ? Target.transform.position.z : Rig.transform.position.z);
-        Rig.transform.position = Vector3.Lerp(Rig.transform.position, newposition, Time.deltaTime * CameraSmoothValue);
+    {
+        Vector3 targetPos = Rig.transform.position;
+
+        bool insideX = Target.transform.position.x >= SafeAreaMin.position.x &&
+                       Target.transform.position.x <= SafeAreaMax.position.x;
+
+        bool insideZ = Target.transform.position.z >= SafeAreaMin.position.z &&
+                       Target.transform.position.z <= SafeAreaMax.position.z;
+
+        if (insideX)
+            targetPos.x = Target.transform.position.x;
+
+        if (insideZ)
+            targetPos.z = Target.transform.position.z;
+
+        Rig.transform.position = Vector3.Lerp(
+            Rig.transform.position,
+            targetPos,
+            Time.deltaTime * CameraSmoothValue);
+
         _cam.transform.position = MovementTransformPosition.position;
     }
     public void SetTarget(GameObject _target)

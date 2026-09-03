@@ -49,7 +49,7 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
 
     private int currentDaysIncome;
 
-    //TODO: Alist of unlocked ingredients for proficiency system--Done
+    //TODO: A list of unlocked ingredients for proficiency system--Done
     public List<IngredientType> unlockedIngredient { get => m_UserDataLocal.ingredientsUnlocked; }
 
     public List<Dishes> CurrentDaysDishes;
@@ -105,8 +105,10 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
         upgradableObjects = new Dictionary<string, ObjectLevelDetails>();
         PerkSystemManager.Instance.init();
         ProficiencySystem.Instance.init();
+
         HUDManagerDNDL.Instance.AddCurrencyVisual(m_UserDataLocal.CurrencyAmount);
         HUDManagerDNDL.Instance.SetStarsVisual();
+        HUDManagerDNDL.Instance.DisableHUD();
         TimeManagementDNDL.OnKitchenOpen -= SelectDish;
         TimeManagementDNDL.OnKitchenOpen += SelectDish;
         TimeManagementDNDL.EndOfTheDay -= OnDayEndBilling;
@@ -150,6 +152,7 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
     public void ContinueSave()
     {
         m_GameState = GameState.PlayGame;
+        HUDManagerDNDL.Instance.Init();
     }
     public void NewSave()
     {
@@ -550,6 +553,13 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
             // else move to a new save popup
             // and Save Data
         }
+    }
+
+    public void TesterToolCommandGiveIngredientToPlayer(IngredientType type)
+    {
+        var go = Instantiate(AssetLoader.Instance.itemPrefab);
+        go.GetComponent<Ingredient>().Setup(AssetLoader.Instance.GetIngredientSO(type));
+        GetPlayer().PickSomeThing(go.GetComponent<IHandHeld>(), go);
     }
 }
 

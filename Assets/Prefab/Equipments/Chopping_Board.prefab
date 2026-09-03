@@ -219,10 +219,12 @@ MonoBehaviour:
   CellSize: 2
   isGizmos: 0
   PreSpawn: 0
+  Level: 0
   CurrentIngredientAdded:
     Ingredient: 0
     processed: 0
     Descriptions: 
+  AccessableIngredient: 00000000010000000200000003000000040000000500000006000000090000000e000000
 --- !u!1 &5067152103242568251
 GameObject:
   m_ObjectHideFlags: 0

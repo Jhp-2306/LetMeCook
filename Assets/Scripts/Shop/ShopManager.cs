@@ -17,6 +17,8 @@ public class ShopManager : Singletonref<ShopManager>
     float rotateduration=025f;
     //public Table GetCurrentTable { get => CurrentSelectTable; }
     private int CurrentCost;
+
+    
     public class ShopItems
     {
         EquipmentType type;
@@ -82,6 +84,7 @@ public class ShopManager : Singletonref<ShopManager>
         if (templistpos.Count > 0)
         {
             var position = templistpos[UnityEngine.Random.RandomRange(0, templistpos.Count)];
+            Debug.Log(_prefab);
             var go = Instantiate(AssetLoader.Instance.GetEquipmetPrefab(_prefab), position, Quaternion.identity);
             CurrentCost = cost;
             _currentPrefabID = _prefab;

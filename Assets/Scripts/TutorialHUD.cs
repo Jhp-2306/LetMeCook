@@ -25,7 +25,7 @@ public class TutorialHUD : MonoBehaviour
     private GameObject FocusUI;
     private Transform PreviousParent;
     [SerializeField] private Transform SubParent;
-    public void SetTutorialHUD(string _dialog, Action _callback, bool isclose = false)
+    public void SetTutorialHUD(string _dialog, Action _callback, bool isclose = false)//used for dialog
     {
         this.gameObject.SetActive(true);
         MaskImg.gameObject.SetActive(false);
@@ -40,7 +40,7 @@ public class TutorialHUD : MonoBehaviour
                 CloseTutorial();
         };
     }
-    public void SetTutorialHUD(Transform position, Action _callback, bool isclose = false, bool isUI = false)
+    public void SetTutorialHUD(Transform position, Action _callback, bool isclose = false, bool isUI = false)//used for UI focus
     {
         this.gameObject.SetActive(true);
         MaskImg.gameObject.SetActive(true);
@@ -65,7 +65,7 @@ public class TutorialHUD : MonoBehaviour
                 CloseTutorial();
         };
     }
-    public void SetTutorialHUD(string _dialog,GameObject focusUI)
+    public void SetTutorialHUD(string _dialog,GameObject focusUI)// used for dialog focused 
     {
         this.gameObject.SetActive(true);
         MaskImg.gameObject.SetActive(false);

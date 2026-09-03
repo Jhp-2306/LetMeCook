@@ -37,9 +37,11 @@ public class InteractionBTN : MonoBehaviour
     event Action OnHold;
     bool isButtonActionPerformed;
     bool isInventoryOpen;
-
+    bool isHoldEnable;
     [SerializeField] Image purplebtn, cyanbtn, btnmask;
-    
+    private InteractiveBlock currentTable;
+    public GameObject ClickInfo;
+
     private void Awake()
     {
         Interactionbtn = this.gameObject.GetComponent<Button>();
@@ -50,11 +52,23 @@ public class InteractionBTN : MonoBehaviour
     {
         //InputManager.OnDrag -= onValuChange;
     }
-    public void AddEventsspc(Action _OnClick=null, Action _OnHold = null)
+    /// <summary>
+    /// This is for FTUT Only
+    /// </summary>
+    /// <param name="_OnClick"></param>
+    /// <param name="_OnHold"></param>
+
+    public void AddEventsspc(Action _OnClick = null, Action _OnHold = null)
     {
         OnClick += _OnClick;
         OnHold += _OnHold;
     }
+    /// <summary>
+    /// this is for adding interactive table only
+    /// </summary>
+    /// <param name="table"></param>
+    /// <param name="btnname"></param>
+    /// <param name="isbuttonActive"></param>
     public void AddEvent(InteractiveBlock table, string btnname, bool isbuttonActive)
     {
         {
@@ -79,19 +93,30 @@ public class InteractionBTN : MonoBehaviour
         }
         //Adding the event
         Interactionbtn.gameObject.SetActive(true);
-        ButtonText.text = btnname;
-        HoldInfo.gameObject.SetActive(false); btnmask.gameObject.SetActive(false);
-        if (!table.GetHoldInteractableName().Equals("none"))
-        {
-            HoldButtonText.text =table.GetHoldInteractableName();
-            HoldInfo.gameObject.SetActive(true);
-            btnmask.gameObject.SetActive(true);
-        }
+        //ButtonText.text = btnname;
+        //HoldInfo.gameObject.SetActive(false); btnmask.gameObject.SetActive(false);
+        //if (!table.GetHoldInteractableName().Equals("none") && table.IsHoldInteractionSatisfied())
+        //{
+        //    isHoldEnable=true;
+        //    HoldButtonText.text =table.GetHoldInteractableName();
+        //    HoldInfo.gameObject.SetActive(true);
+        //    btnmask.gameObject.SetActive(true);
+        //}
+        currentTable = table;
         OnClick = delegate { };
         OnHold = delegate { };
         OnClick += table.OnClick;
         OnHold += table.OnHold;
+        //Override HoldDuration Here
+
+        Refreshbutton();
     }
+    /// <summary>
+    /// This is for Adding Hand held Objects Callbacks
+    /// </summary>
+    /// <param name="btnname"> Title for the function</param>
+    /// <param name="_OnClick"> on Click callback </param>
+    /// <param name="_OnHold"> on hold callback </param>
     public void AddEvent(string btnname, Action _OnClick = null, Action _OnHold = null)
     {
         Interactionbtn.gameObject.SetActive(true);
@@ -103,15 +128,64 @@ public class InteractionBTN : MonoBehaviour
     }
     public void ResetButton(string btnname = "Interact")
     {
-        HoldInfo.gameObject.SetActive(false);
-        Interactionbtn.gameObject.SetActive(false);
+        hideButtons();
 
         ButtonText.text = btnname;
         OnClick = delegate { };
         OnHold = delegate { };
     }
-   
 
+    public void hideButtons()
+    {
+        //return;//Testing 
+        HoldInfo.gameObject.SetActive(false);
+        Interactionbtn.gameObject.SetActive(false);
+    }
+    public void Refreshbutton()
+    {
+        Debug.Log(CustomLogs.CC_TagLog("Interactive Button", $"Running Refresh Code {currentTable.IsInteractionSatisfied()},{currentTable.IsHoldInteractionSatisfied()}"));
+        if (currentTable.IsInteractionSatisfied() && !currentTable.IsHoldInteractionSatisfied())
+        {
+            //Show only click interaction
+            cyanbtn.gameObject.SetActive(true);
+            purplebtn.gameObject.SetActive(false);
+            ButtonText.text = currentTable.GetInteractableName();
+            //hold
+            isHoldEnable = false;
+            //HoldButtonText.text = currentTable.GetHoldInteractableName();
+            HoldInfo.gameObject.SetActive(false);
+            btnmask.gameObject.SetActive(false);
+
+        }
+        if (currentTable.IsInteractionSatisfied() && currentTable.IsHoldInteractionSatisfied())
+        {
+            //show both click and hold
+            //Click
+            cyanbtn.gameObject.SetActive(true);
+            purplebtn.gameObject.SetActive(false);
+            ButtonText.text = currentTable.GetInteractableName();
+            //Hold
+            isHoldEnable = true;
+            HoldButtonText.text = currentTable.GetHoldInteractableName();
+            HoldInfo.gameObject.SetActive(true);
+            btnmask.gameObject.SetActive(true);
+        }
+        if (!currentTable.IsInteractionSatisfied() && currentTable.IsHoldInteractionSatisfied())
+        {
+            //Show only Hold
+            cyanbtn.gameObject.SetActive(false);
+            ButtonText.gameObject.SetActive(false);
+            purplebtn.gameObject.SetActive(true);
+            isHoldEnable = true;
+            HoldButtonText.text = currentTable.GetHoldInteractableName();
+            HoldInfo.gameObject.SetActive(true);
+            //btnmask.gameObject.SetActive(true);
+        }
+        if (!currentTable.IsInteractionSatisfied() && !currentTable.IsHoldInteractionSatisfied())
+        {
+            hideButtons();
+        }
+    }
 
     #region Old Shop Methods 
     //public Vector3 GetpositionFortheCircle(Vector3 offset,float angle)
@@ -200,7 +274,7 @@ public class InteractionBTN : MonoBehaviour
         if (isInventoryOpen) return;
         isInventoryOpen = true;
         InventoryUIObj.SetActive(true);
-        inventoryUI.Set(items,callback);
+        inventoryUI.Set(items, callback);
     }
     public void CloseInventory()
     {
@@ -267,22 +341,26 @@ public class InteractionBTN : MonoBehaviour
     public Image HoldFiller;
     public GameObject HoldUI;
     public GameObject HoldInfo;
+    public float HoldDuration = 2.4f;
+    bool overrideHoldDuration { get => currentTable == null ? false : currentTable.IsOverrideHoldInteraction(); }
+    float OverrideHoldDurationAmount { get => currentTable == null ? HoldDuration : currentTable.GetOverrideHoldDuration(); }
     public void OnPressDown()
     {
         Debug.Log(CustomLogs.CC_TagLog("Interactive Button", "Hold Stating."));
         isButtonActionPerformed = false;
+        var _holdDuration = overrideHoldDuration ? OverrideHoldDurationAmount : HoldDuration;
         if (onHoldCoroutine != null)
         {
             StopCoroutine(onHoldCoroutine);
             onHoldCoroutine = null;
         }
-        //var timer = 0f;
-        onHoldCoroutine = StartCoroutine(HoldTimer(2.4f, (value) =>
-        {
-            if (value > .2f)
-                HoldUI.SetActive(true);
-            HoldFiller.fillAmount = value * 0.4f;
-        }, OnHoldSuccessful));
+        if (isHoldEnable)
+            onHoldCoroutine = StartCoroutine(HoldTimer(_holdDuration, (value) =>
+            {
+                if (value > .2f)//Starts After 20% delay on the give seconds 
+                    HoldUI.SetActive(true);
+                HoldFiller.fillAmount = value * 0.4f;//0.4f is the Fill Size we wanted
+            }, OnHoldSuccessful));
     }
     public void OnPressUp()
     {
@@ -296,6 +374,7 @@ public class InteractionBTN : MonoBehaviour
         }
         HoldUI.SetActive(false);
         OnClick?.Invoke();
+        Refreshbutton();
     }
     public void InvokeClick()
     {
@@ -308,6 +387,12 @@ public class InteractionBTN : MonoBehaviour
         isButtonActionPerformed = true;
         HoldUI.SetActive(false);
         OnHold?.Invoke();
+        Refreshbutton();
     }
+
+    //public void OverrideHoldDuration(bool value = false)
+    //{
+    //    overrideHoldDuration = value;
+    //}
     #endregion
 }

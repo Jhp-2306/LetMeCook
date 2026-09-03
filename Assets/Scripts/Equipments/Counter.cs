@@ -18,7 +18,10 @@ public class Counter : InteractiveBlock
     //AI place the order 
     public void SetClient(NPC.NPC client)
     {
+        //if(myClient==null) 
+        //    myClient=new NPC.NPC();
         myClient = client;
+        Debug.Log("Setting client here"+client.GetOrderList().Count);
         //trigger the and send the npc out
     }
     private void Update()
@@ -37,7 +40,8 @@ public class Counter : InteractiveBlock
             if (player.InHand.GetGameObject().GetComponent<Plate>() != null)
             {
                 var plate = player.InHand.GetGameObject().GetComponent<Plate>();
-                if (myClient.GetOrderList().Contains(plate.GetFinalDish()))
+
+                if (myClient!=null&& myClient.GetOrderList().Contains(plate.GetFinalDish()))
                 {
                     myClient.OnOrderComplete(plate.GetFinalDish(), plate.GetFinalPrice());
                     player.RemoveFromHand();

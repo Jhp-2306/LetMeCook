@@ -109,7 +109,7 @@ public class GridMaker : MonoBehaviour
     //        UpdateCellOccupied(pos, isOcc);
     //    }
     //}
-    public Vector3 GetRoundAnchorPositionFromWorldPosiion(Vector3 pos)
+    public Vector3 GetRoundAnchorPositionFromWorldPosition(Vector3 pos)
     {
         var temppos = GetIndexFromAnchorPosition(new Vector2(pos.x, pos.z));
         if ((int)temppos.x < GridWxH && (int)temppos.y < GridWxH)

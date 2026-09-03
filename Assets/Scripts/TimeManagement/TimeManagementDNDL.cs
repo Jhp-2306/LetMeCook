@@ -39,7 +39,7 @@ public class TimeManagementDNDL : Singletonref<TimeManagementDNDL>
         {
             _currentSec += Time.deltaTime;
             //Starting Ai Roaming At morning Hrs
-            if (_currentSec >= (IRLMinsForInGameDay * ((6f / 24f) * 60f)) && !DayFlag)
+            if (_currentSec >= (IRLMinsForInGameDay * ((6f / 24f) * 60f)) && !DayFlag) 
             {
                 isRoaminghrs = true;
                 StartOfTheDay();
@@ -157,4 +157,9 @@ public class TimeManagementDNDL : Singletonref<TimeManagementDNDL>
     } 
     public int GetTotalDays() => (int)_currentday;
 
+    public void TesterTool_SetIRLMinsForInGameDay(float mins)
+    {
+        _currentSec = _currentSec * mins;
+        IRLMinsForInGameDay=mins;
+    }
 }

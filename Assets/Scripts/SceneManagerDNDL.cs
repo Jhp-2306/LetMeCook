@@ -22,7 +22,7 @@ public class SceneManagerDNDL : Singletonref<SceneManagerDNDL>
     }
     IEnumerator Starter()
     {
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(0.75f);
         operations = new List<AsyncOperation>();
         operations.Add(SceneManager.LoadSceneAsync(GameLevelDesign, LoadSceneMode.Additive));
         operations.Add(SceneManager.LoadSceneAsync(GameScene, LoadSceneMode.Additive));

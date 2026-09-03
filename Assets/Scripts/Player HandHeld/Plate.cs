@@ -3,28 +3,45 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Plate : MonoBehaviour, IHandHeld
+
+public class Plate : MonoBehaviour, IHandHeld,IObjectPoolingSettings
 {
     //public typeofhandheld type;
     [SerializeField]
     List<ProcedureStep> ingredients;
     [SerializeField]
     List<Recipes> AssumedDishRecipe;
+    [SerializeField]    
     Dishes FinalDish;
     public bool isPlateEmpty = true;
     float Price, PriceMultiplier;
-    public Dishes GetFinalDish()
+
+    public bool isDishDone;
+
+    public bool canCombine()
     {
-        if (AssumedDishRecipe != null && AssumedDishRecipe.Count > 1)
+        if(AssumedDishRecipe != null)
         {
             foreach (var t in AssumedDishRecipe)
             {
-                if (t.IsthisDish(ingredients))
-                    return t.OutputDish;
+                if (t.IsthisDish(ingredients))return true;
             }
-            return Dishes.trash;
         }
+        return false;
+    }
+    public Dishes GetFinalDish()
+    {
+        //if (AssumedDishRecipe != null && AssumedDishRecipe.Count > 1)
+        //{
+        //    foreach (var t in AssumedDishRecipe)
+        //    {
+        //        if (t.IsthisDish(ingredients))
+        //            return t.OutputDish;
+        //    }
+        //    return Dishes.trash;
+        //}
         return FinalDish;
+
     }
 
     public void AddEvent()
@@ -81,15 +98,16 @@ public class Plate : MonoBehaviour, IHandHeld
             {
                 ingredients.Add(step);
                 //merge here
-                if (AssumedDishRecipe.Count == 1&& ingredients.Count == AssumedDishRecipe[0].items.Count)// final Dish
-                {
-                    FinalDish = AssumedDishRecipe[0].OutputDish;
-                }
+                //if (AssumedDishRecipe.Count == 1&& ingredients.Count == AssumedDishRecipe[0].items.Count)// final Dish
+                //{
+                //    FinalDish = AssumedDishRecipe[0].OutputDish;
+                //}
                 AssumedDishRecipe = templist;
             }
             else//cant be merge
             {
                 //Toast here Cant be merge
+                HUDManagerDNDL.Instance.ShowToastMsg("Cant Be Merge");
                 return false;
             }
             isPlateEmpty = false;
@@ -98,20 +116,58 @@ public class Plate : MonoBehaviour, IHandHeld
         }
         //return false;
     }
-    public void MergeRecipes()
-    {
-
-    }
+   
     public float GetFinalPrice()
     {
         return Price + (Price * (PriceMultiplier / 10));
     }
+    public float GetPriceMultiplier()
+    {
+        return PriceMultiplier/10;
+    }
     public void pickupDish(Dishes dish, float price, float multi)
     {
         FinalDish = dish;
+        isDishDone = true;
         Price = price; 
         PriceMultiplier = multi;
         this.gameObject.GetComponent<Dish>().SetaDishActive(dish);
         isPlateEmpty = false;
+    }
+    public void RateTheDish()
+    {
+
+    }
+    public void ResetPlate()
+    {
+        FinalDish = Dishes.none;
+        //Visual Set them Off here
+    }
+    public void MergeTheDish()
+    {
+        if (AssumedDishRecipe != null && AssumedDishRecipe.Count > 1)
+        {
+            foreach (var t in AssumedDishRecipe)
+            {
+                if (t.IsthisDish(ingredients))
+                {
+                    FinalDish= t.OutputDish;
+                    isDishDone = true;
+                    return;
+                }
+            }
+            return;
+        }
+        FinalDish = AssumedDishRecipe[0].OutputDish;
+        isDishDone = true;
+
+
+    }
+
+    public void OPSetting_Reset()
+    {
+        //throw new System.NotImplementedException();
+        ResetPlate();
+        this.gameObject.SetActive(false);
     }
 }

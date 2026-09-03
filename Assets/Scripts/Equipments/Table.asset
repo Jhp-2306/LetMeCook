@@ -13,6 +13,19 @@ MonoBehaviour:
   m_Name: Table
   m_EditorClassIdentifier: 
   DisplayFuntionName: Pick
-  HoldFuntionName: '-'
+  HoldFuntionName: Combine
   HandFullDisplayFuntionName: Place
   Type: 11
+  upgradeData:
+  - Upgrades:
+    - ValueDes: Combine Time -
+      ValueName: 1
+      ValueInPercentage: 5
+  - Upgrades:
+    - ValueDes: Combine Time -
+      ValueName: 1
+      ValueInPercentage: 10
+  - Upgrades:
+    - ValueDes: Combine Time -
+      ValueName: 1
+      ValueInPercentage: 15

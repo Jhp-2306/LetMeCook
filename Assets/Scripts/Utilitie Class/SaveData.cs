@@ -100,11 +100,12 @@ public class UserDataLocal
     public string StartTime;
     public string GameCloseTime;
     public string CurrentTime;
-    public Dictionary<perkSystem_Value,int> Perkdata;
+    public Dictionary<perkSystem_Value, int> Perkdata;
     public List<IngredientType> ingredientsUnlocked;
 
-    public UserDataLocal() {        
-    ingredientsUnlocked = new List<IngredientType>();
+    public UserDataLocal()
+    {
+        ingredientsUnlocked = new List<IngredientType>();
     }
 
     public UserDataLocal(UserDataLocal copydata)
@@ -117,8 +118,8 @@ public class UserDataLocal
         GameCloseTime = copydata.GameCloseTime;
         CurrentTime = copydata.CurrentTime;
         Stars = copydata.Stars;
-        Perkdata=copydata.Perkdata;
-        ingredientsUnlocked=copydata.ingredientsUnlocked;
+        Perkdata = copydata.Perkdata;
+        ingredientsUnlocked = copydata.ingredientsUnlocked;
     }
 }
 

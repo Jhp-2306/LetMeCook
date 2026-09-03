@@ -182,13 +182,15 @@ public class Refrigerator : InteractiveBlock
         else
         {
             CustomLogs.CC_Log("Opening inventory", "red");
+            HUDManagerDNDL.Instance.HideinteractionButton();
             HUDManagerDNDL.Instance.OpenInventory(storageSystem,storageSystem.Refresh);
         }
     }
     
     public override bool IsInteractionSatisfied()
     {
-        return true;
+        var player = GameDataDNDL.Instance.GetPlayer();
+        return !player.isHandsfull || player.InHand.IGetType() == typeofhandheld.box;
     }
    
     public override void LoadLevelUpgrades()

@@ -7,6 +7,8 @@ using Util;
 
 public class HUDManagerDNDL : Singletonref<HUDManagerDNDL>
 {
+    public GameObject ParentHUD;
+
     public InteractionBTN interactionBTN;
     BasicStorageSystem<IStorageItem> currentOpenStorage;
     [Header("Toast Message")]
@@ -63,6 +65,18 @@ public class HUDManagerDNDL : Singletonref<HUDManagerDNDL>
 
     [Header("DishSelector UI")]
     public DishSelectorUI dishSelectorUI;
+
+    public void DisableHUD()
+    {
+        ParentHUD.SetActive(false);
+    }
+
+    public void Init()
+    {
+        ParentHUD.SetActive(true);
+        OnCameraSettingButtonClicked();
+    }
+
     public void OnCameraSettingButtonClicked()
     {
         isplayerCam = !isplayerCam;
@@ -259,6 +273,10 @@ public class HUDManagerDNDL : Singletonref<HUDManagerDNDL>
     public void ShowDishSelector()
     {
         dishSelectorUI.Init();
+    }
+    public void HideinteractionButton()
+    {
+        interactionBTN.hideButtons();
     }
 
 }

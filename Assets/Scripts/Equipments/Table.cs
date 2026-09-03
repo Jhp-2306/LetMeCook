@@ -35,23 +35,38 @@ public class Table : InteractiveBlock
     // public GameObject PlateVisuals;
     public Transform PlacementPositions;
     public bool IsEmpty => myPlate == null;
+    [SerializeField]
+    private float HoldDurationbase = 4.5f;
 
     public override bool IsInteractionSatisfied()
     {
         //return base.IsInteractionSatisfied();
-        var player = GameDataDNDL.Instance.GetPlayer();
+        //var player = GameDataDNDL.Instance.GetPlayer();
         if (player.isHandsfull && (player.InHand.IGetType() == typeofhandheld.plate || player.InHand.IGetType() == typeofhandheld.ingredients)) return true;
         if (!player.isHandsfull && !IsEmpty) return true;
         return false;
+    }
+
+    public override bool IsHoldInteractionSatisfied()
+    {
+        if (!player.isHandsfull&&!IsEmpty&& myPlate.canCombine())return true;
+        return false;
+    }
+    public override float GetOverrideHoldDuration()
+    {
+       return HoldDurationbase;
+    }
+    public override bool IsOverrideHoldInteraction()
+    {
+        return true;
     }
     public override void OnClick()
     {
         var player = GameDataDNDL.Instance.GetPlayer();
         //if (IsEmpty)
-
         if (player.isHandsfull)
         {
-            if (player.InHand.IGetType() == typeofhandheld.plate)
+            if (player.InHand.IGetType() == typeofhandheld.plate && IsEmpty)
             {
                 //myPlate.DestroyMe();
                 myPlate = player.InHand.GetGameObject().GetComponent<Plate>();
@@ -63,10 +78,12 @@ public class Table : InteractiveBlock
                 // if there is no plate then we got to create a new one
                 if (myPlate == null)
                 {
-                    var go = Instantiate(AssetLoader.Instance.PlatesPrefab);
+                    var go = ObjectPoolingManager.Instance.GetaPool(ObjectPoolingManager.PrefabTags.Plate);
+                    //var go = Instantiate(AssetLoader.Instance.PlatesPrefab);
                     go.transform.SetParent(this.transform);
                     go.transform.localPosition = PlacementPositions.localPosition;
                     myPlate = go.GetComponent<Plate>();
+                    myPlate.gameObject.SetActive(true);
                 }
                 // here we need to check is it possible to merge the we can add it here else it will there
                 if (!myPlate.tryMergeRecipes(player.InHand.GetGameObject().GetComponent<Ingredient>().ingrendient))
@@ -77,14 +94,17 @@ public class Table : InteractiveBlock
                 else
                 {
                     myPlate.gameObject.SetActive(true);
-                    player.MovetheHandheld(PlacementPositions);
+                    player.RemoveFromHand(ObjectPoolingManager.PrefabTags.Ingredients);
+                    //player.MovetheHandheld(PlacementPositions);
                 }
             }
+            else
+            {
+                //Swap the plates
+            }
         }
-
         //else
-
-        else if (!player.isHandsfull)
+        else if (!player.isHandsfull)//Pick Up the plate
         {
             //pick up the dish from the table
             player.PickSomeThing(myPlate, myPlate.gameObject);
@@ -93,5 +113,10 @@ public class Table : InteractiveBlock
 
     }
 
+    public override void OnHold()
+    {
+        //Combine
+        myPlate.MergeTheDish();
+    }
 
 }

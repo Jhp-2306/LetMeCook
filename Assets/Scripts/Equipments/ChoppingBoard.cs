@@ -33,7 +33,11 @@ public class ChoppingBoard : InteractiveBlock
 
     #region Main Mechanics
     public ProcedureStep CurrentIngredientAdded;
+
+    public List<IngredientType> AccessableIngredient;
+
    
+
     public override void OnClick()
     {
         CustomLogs.CC_Log("Chopping", "red");
@@ -41,11 +45,13 @@ public class ChoppingBoard : InteractiveBlock
         if (HUDManagerDNDL.Instance.MiniGame.isMiniGameRunning)
         {
             HUDManagerDNDL.Instance.MiniGame.onClick();
+            HUDManagerDNDL.Instance.HideinteractionButton();
             return;
         }
         if ((Ingredient)_player.InHand != null)
         {
             //Remove from hand
+            InputManager.Instance.DisablePlayerMovement(true);
             CurrentIngredientAdded=((Ingredient)_player.InHand).ingrendient;
             _player.RemoveFromHand();
             Debug.Log(CustomLogs.CC_Log("Starting Mini Game", "cyan"));
@@ -55,7 +61,7 @@ public class ChoppingBoard : InteractiveBlock
             HUDManagerDNDL.Instance.MiniGame.OnMiniGameOver -= OnMiniGameDone;
             HUDManagerDNDL.Instance.MiniGame.OnMiniGameOver += OnMiniGameDone;
             return;
-        }      
+        }   
 
     }
     public void init_FTUT()
@@ -80,7 +86,8 @@ public class ChoppingBoard : InteractiveBlock
         //Pick up
         Debug.Log(CustomLogs.CC_Log($"Ending {result}", "cyan"));
         CurrentIngredientAdded.processed = result == 0 ? ProcessStatus.Chopped : ProcessStatus.FineChopped;
-        var go = Instantiate(AssetLoader.Instance.itemPrefab);
+        //var go = Instantiate(AssetLoader.Instance.itemPrefab);
+        var go = ObjectPoolingManager.Instance.GetaPool(ObjectPoolingManager.PrefabTags.Ingredients);
         var details = AssetLoader.Instance.GetIngredientSO(CurrentIngredientAdded.Ingredient, CurrentIngredientAdded.processed);
         go.GetComponent<Ingredient>().Setup(details.mesh, details.type, details.handheldtype, details.material, details.process);
         GameDataDNDL.Instance.GetPlayer().PickSomeThing(go.GetComponent<IHandHeld>(), go);
@@ -88,17 +95,26 @@ public class ChoppingBoard : InteractiveBlock
     }
    
 
+    //public override bool IsInteractionSatisfied()
+    //{
+    //    var player = GameDataDNDL.Instance.GetPlayer();
+    //    if (!player.isPlayerHandEmpty)
+    //    {
+    //        if ((player.InHand.IGetType() != typeofhandheld.box || !player.isHandsfull))
+    //            return true;
+    //    }
+    //    else
+    //        return true;
+    //    return false;
+    //}
     public override bool IsInteractionSatisfied()
     {
-        var player = GameDataDNDL.Instance.GetPlayer();
-        if (!player.isPlayerHandEmpty)
-        {
-            if ((player.InHand.IGetType() != typeofhandheld.box || !player.isHandsfull))
-                return true;
-        }
-        else
-            return true;
+        var _player = GameDataDNDL.Instance.GetPlayer();
+        if (!HUDManagerDNDL.Instance.MiniGame.isMiniGameRunning&&(_player.isHandsfull == false || _player.InHand.GetGameObject().GetComponent<Ingredient>().ingrendient.processed!=ProcessStatus.None)) return false;
+        if (HUDManagerDNDL.Instance.MiniGame.isMiniGameRunning||(_player.InHand.IGetType() == typeofhandheld.ingredients &&
+            AccessableIngredient.Contains(_player.InHand.GetGameObject().GetComponent<Ingredient>().ingrendient.Ingredient))) return true;
         return false;
+        //return 
     }
     #endregion
 }

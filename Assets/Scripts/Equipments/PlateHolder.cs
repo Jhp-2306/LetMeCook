@@ -39,9 +39,11 @@ public class PlateHolder : InteractiveBlock
         {
             //if (canRemovePlate())
             {
-            //Instantiate plate in  players hands
-            var go = Instantiate(AssetLoader.Instance.PlatesPrefab);
-            GameDataDNDL.Instance.GetPlayer().PickSomeThing(go.GetComponent<IHandHeld>(), go);
+                //Instantiate plate in  players hands
+                //var go = Instantiate(AssetLoader.Instance.PlatesPrefab);
+                var go = ObjectPoolingManager.Instance.GetaPool(ObjectPoolingManager.PrefabTags.Plate);
+                //Debug.Log("Obj" + go.name);
+                GameDataDNDL.Instance.GetPlayer().PickSomeThing(go.GetComponent<IHandHeld>(), go);
             }
             //else
             //{
@@ -51,14 +53,14 @@ public class PlateHolder : InteractiveBlock
         }
         else
         {
-            if(GameDataDNDL.Instance.GetPlayer().InHand.IGetType()== typeofhandheld.plate)
+            if (GameDataDNDL.Instance.GetPlayer().InHand.IGetType() == typeofhandheld.plate)
             {
                 //the check if it only a plate then keep it back
-                if(GameDataDNDL.Instance.GetPlayer().InHand.GetGameObject().GetComponent<Plate>().isPlateEmpty)
+                if (GameDataDNDL.Instance.GetPlayer().InHand.GetGameObject().GetComponent<Plate>().isPlateEmpty)
                 {
                     //add the plate back and
                     //remove it from the hand
-                    GameDataDNDL.Instance.GetPlayer().RemoveFromHand();
+                    GameDataDNDL.Instance.GetPlayer().RemoveFromHand(ObjectPoolingManager.PrefabTags.Plate);
                 }
             }
             else

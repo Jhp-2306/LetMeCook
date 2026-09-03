@@ -16,3 +16,16 @@ MonoBehaviour:
   HoldFuntionName: Fry
   HandFullDisplayFuntionName: ADD
   Type: 5
+  upgradeData:
+  - Upgrades:
+    - ValueDes: Cooking Time
+      ValueName: 1
+      ValueInPercentage: 5
+  - Upgrades:
+    - ValueDes: Cooking Time
+      ValueName: 1
+      ValueInPercentage: 7.5
+  - Upgrades:
+    - ValueDes: Cooking Time
+      ValueName: 1
+      ValueInPercentage: 12

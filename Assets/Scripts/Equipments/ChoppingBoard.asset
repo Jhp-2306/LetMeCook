@@ -12,7 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ac5b592bebdcf349bd4b79da2803df3, type: 3}
   m_Name: ChoppingBoard
   m_EditorClassIdentifier: 
-  DisplayFuntionName: 
+  DisplayFuntionName: Chop
   HoldFuntionName: '-'
   HandFullDisplayFuntionName: 'Chopping '
   Type: 2
+  upgradeData:
+  - Upgrades:
+    - ValueDes: Perfect Width Size
+      ValueName: 4
+      ValueInPercentage: 20
+  - Upgrades:
+    - ValueDes: Perfect Width Size
+      ValueName: 4
+      ValueInPercentage: 60
+  - Upgrades:
+    - ValueDes: Perfect Width Size
+      ValueName: 4
+      ValueInPercentage: 100

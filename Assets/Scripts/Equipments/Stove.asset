@@ -12,7 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ac5b592bebdcf349bd4b79da2803df3, type: 3}
   m_Name: Stove
   m_EditorClassIdentifier: 
-  DisplayFuntionName: 
+  DisplayFuntionName: Add
   HoldFuntionName: Cook
   HandFullDisplayFuntionName: ADD
   Type: 0
+  upgradeData:
+  - Upgrades:
+    - ValueDes: Cooking Time -
+      ValueName: 1
+      ValueInPercentage: 5
+  - Upgrades:
+    - ValueDes: Cooking Time -
+      ValueName: 1
+      ValueInPercentage: 7.5
+  - Upgrades:
+    - ValueDes: Cooking Time -
+      ValueName: 1
+      ValueInPercentage: 12

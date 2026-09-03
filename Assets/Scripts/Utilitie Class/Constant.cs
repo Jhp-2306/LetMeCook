@@ -73,6 +73,7 @@ namespace Constants
         TrashBin,
         PlateTray,
         Furnitures,
+        IceCreamDispenser,
         none
     }
 
@@ -172,6 +173,7 @@ namespace Constants
         VanillaIceCream,
         StrawberryIceCream,
         trash,
+        none,
         count,
     }
 

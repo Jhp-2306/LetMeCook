@@ -30,6 +30,8 @@ public class InteractiveBlock : MonoBehaviour, IInteractable
     public bool isGizmos;
     public bool PreSpawn;
     public int Level;
+    public bool test { get; set; }
+    public Player player { get => GameDataDNDL.Instance.GetPlayer();  }
     public Transform GetLookPos()
     {
         return LookAtMe;
@@ -39,10 +41,22 @@ public class InteractiveBlock : MonoBehaviour, IInteractable
     {
         return false;
     }
+    public virtual bool IsHoldInteractionSatisfied()
+    {
+        return false;
+    }
+    public virtual bool IsOverrideHoldInteraction()
+    {
+        return false;
+    }
+    public virtual float GetOverrideHoldDuration()
+    {
+        return 0f;
+    }
     public bool isTableEmpty() => Data == null;
 
     ///this need clean up
-    public string GetInteractableName() => Data != null ?
+    public virtual string GetInteractableName() => Data != null ?
         GameDataDNDL.Instance.GetPlayer().isHandsfull ?
         Data.HandFullDisplayFuntionName : Data.DisplayFuntionName : "none";
     public string GetHoldInteractableName() => Data != null ?

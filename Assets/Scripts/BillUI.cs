@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class BillUI : MonoBehaviour
 {
+
     [SerializeField]
     private GameObject Parent;
 
@@ -21,8 +22,10 @@ public class BillUI : MonoBehaviour
     public TMPro.TextMeshProUGUI RGT1;     //"Random govt. Tax"
     public TMPro.TextMeshProUGUI FA;      //"Final Amount "
 
+    private Bill currentBill;
     public void SetBill(Bill bill)
 {
+        currentBill = new Bill(bill.GetBillData());
         var data=bill.GetBillData();    
         EO .text = string.Format(Constant.EO , data.EquipmentOwne);
         CpE.text = string.Format(Constant.CpE, data.CostPerEquipment);
@@ -45,4 +48,17 @@ public class BillUI : MonoBehaviour
         Parent.SetActive(false);
     }
 
+    public void PayTheBill()
+    {
+        if (GameDataDNDL.Instance.tryDeductingCurrency(currentBill.GetTotal()))
+        {
+            CloseBilling();
+            //passed the Day 
+            //init the Saves for the day
+        }
+        else
+        {
+            //Restart the Save popup
+        }
+    }
 }

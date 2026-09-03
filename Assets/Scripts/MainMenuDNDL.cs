@@ -20,8 +20,10 @@ public class MainMenuDNDL : Singletonref<MainMenuDNDL>
     public void NewSave()
     {
         //HUD.SetActive(false);
+        //TODO:Show Load Scene
         GameSaveDNDL.Instance.NewGame();
         SceneManagerDNDL.Instance.ReloadScene(SceneManagerDNDL.Instance.GameScene, () => { });
+        HUD.SetActive(false);
         //GameDataDNDL.Instance.NewSave();
     }
     public void Settings()

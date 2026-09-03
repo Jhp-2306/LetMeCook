@@ -2,9 +2,10 @@ using Constants;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using UnityEngine;
 
-public class Ingredient : MonoBehaviour, IHandHeld
+public class Ingredient : MonoBehaviour, IHandHeld,IObjectPoolingSettings
 {
     public ProcedureStep ingrendient;
     private typeofhandheld type;
@@ -27,8 +28,17 @@ public class Ingredient : MonoBehaviour, IHandHeld
         Filter.sharedMesh = this.mesh;
         Renderer.sharedMaterial = mat;
     }
-   
 
+
+    public void Setup(SO_IngredientData data)
+    {
+        ingrendient.Ingredient = data.type;
+        ingrendient.processed = data.process;
+        type = data.handheldtype;
+        this.mesh = data.mesh;
+        Filter.sharedMesh = this.mesh;
+        Renderer.sharedMaterial = data.material;
+    }
     public object CustomEventReturner()
     {
         throw new System.NotImplementedException();
@@ -45,5 +55,11 @@ public class Ingredient : MonoBehaviour, IHandHeld
     public GameObject GetGameObject()
     {
         return this.gameObject;
+    }
+
+    public void OPSetting_Reset()
+    {
+        //throw new NotImplementedException();
+        this.gameObject.SetActive(false);  
     }
 }

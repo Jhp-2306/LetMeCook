@@ -207,7 +207,7 @@ public class PlayerMovement : MonoBehaviour, ITriggerDoor
     public void onDoorTrigger(GameObject moveToPoint, PlayableAreas toArea, Action Callback)
     {
         // stop Player Input from Touching any other place
-        InputManager.Instance.SetClick(true);
+        InputManager.Instance.DisablePlayerMovement(true);
         // Move To the Location 
         GoToPosition(moveToPoint.transform.position, false, () =>
         {
@@ -215,7 +215,7 @@ public class PlayerMovement : MonoBehaviour, ITriggerDoor
             // Change the Touch area 
             GameDataDNDL.Instance.SwitchArea(toArea);
             // pass the call back to turn on the player input
-            InputManager.Instance.SetClick(false);
+            InputManager.Instance.DisablePlayerMovement(false);
         });
     }
 }

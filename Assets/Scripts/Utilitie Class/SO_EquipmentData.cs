@@ -30,6 +30,7 @@ public class LevelUpgradeData
 [Serializable]
 public struct UpgradeData// Equipment Upgrade Save Data
 {
+    public string ValueDes;
     public E_ValueName ValueName;
     public float ValueInPercentage;
 }

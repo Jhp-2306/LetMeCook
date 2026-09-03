@@ -21,9 +21,12 @@ public class Player : MonoBehaviour
         obj.transform.localPosition = Vector3.zero;
         isHandsfull=true;
     }
-    public void RemoveFromHand()
+    public void RemoveFromHand(ObjectPoolingManager.PrefabTags _tag=ObjectPoolingManager.PrefabTags.none)
     {
-        inHand.DestroyMe();
+        if (_tag == ObjectPoolingManager.PrefabTags.none)
+            inHand.DestroyMe();
+        else
+            ObjectPoolingManager.Instance.AddOrCreate(_tag, InHand.GetGameObject());
         inHand = null;
         isHandsfull = false;
     }

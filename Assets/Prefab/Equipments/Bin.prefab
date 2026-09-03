@@ -130,8 +130,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   equipmentType: 12
   LookAtMe: {fileID: 1976524576839902572}
+  ActiveGridPositions: []
   Tag: 0
-  Data: {fileID: 0}
+  Data: {fileID: 11400000, guid: 82dfae981ae79dc4599e3ad6e6613a2c, type: 2}
+  CellSize: 2
+  isGizmos: 0
+  PreSpawn: 0
+  Level: 0
 --- !u!1 &6260775343139826092
 GameObject:
   m_ObjectHideFlags: 0

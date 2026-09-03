@@ -33,6 +33,10 @@ public class Stove : InteractiveBlock
     Dishes Currentcookingdish;
     float CurrentcookingdishPrice;
     float CurrentcookingdishPriceMulti;
+    public Sprite itemHolder_grayScale;
+
+    public GameObject NormalVFX;
+    public GameObject BurnedVFX;
     private void Start()//testing purpose
     {
         //Init();
@@ -94,7 +98,20 @@ public class Stove : InteractiveBlock
     }
     public override bool IsInteractionSatisfied()
     {
-        return isInteractable;
+        //return isInteractable;
+        var player=GameDataDNDL.Instance.GetPlayer();
+        return (player.isHandsfull && ((player.InHand.IGetType() == typeofhandheld.plate && ((isCooking && !isPicked) || (!isCooking && !isPicked))) ||
+            (player.InHand.IGetType() == typeofhandheld.ingredients && isPicked)));//Basic Condition to Add 
+            //||(!player.isHandsfull && Slots.Count > 1);//for start Cooking;
+
+    }
+    public override bool IsHoldInteractionSatisfied()
+    {
+        return !isCooking&&isPicked&& Slots.Count>1;
+    }
+    public override string GetInteractableName()
+    {
+        return " ";
     }
     public override void OnClick()
     {
@@ -156,11 +173,13 @@ public class Stove : InteractiveBlock
             Debug.Log(CustomLogs.CC_TagLog("Stove", $"Start Cooking{Currentcookingdish},{cooktimer},{CurrentcookingdishPrice}{CurrentcookingdishPriceMulti}"));
             CookingCoroutine = StartCoroutine(StartCooking(cooktimer));
             TickMark.gameObject.SetActive(false);
+           
             if (isFTUT)
             {
                 Debug.Log(CustomLogs.CC_TagLog("Stove", "init phase 3"));
                 GameDataDNDL.Instance.FTUT_Phase3();
             }
+            
         }
         else
         {
@@ -177,7 +196,8 @@ public class Stove : InteractiveBlock
             {
                 GetFoodcookMulti();
                 player.InHand.GetGameObject().GetComponent<Plate>().pickupDish(Currentcookingdish, CurrentcookingdishPrice, CurrentcookingdishPriceMulti);
-                Slots = new List<ProcedureStep>();
+                //Refresh the Slots
+                ResetStove();
                 return true;
             }
             //throw a toast here or try to merge the dish?
@@ -190,6 +210,16 @@ public class Stove : InteractiveBlock
             Debug.Log(CustomLogs.CC_TagLog("Stove", "issue with the player hands"));
             return false;
         }
+    }
+    public void ResetStove()
+    {
+        Slots = new List<ProcedureStep>();
+        foreach (var t in SlotsIcon)
+        {
+            t.sprite = itemHolder_grayScale;
+        }
+        NormalVFX.SetActive(false);
+        BurnedVFX.SetActive(false);
     }
     void GetFoodcookMulti()
     {
@@ -209,6 +239,7 @@ public class Stove : InteractiveBlock
     IEnumerator StartCooking(float maxCookingTime)
     {
         isInteractable = false;
+        NormalVFX.gameObject.SetActive(true);
         float timer = 0;
         float underCookTimer = maxCookingTime - (maxCookingTime * undercookPercentage);//First Point from here on its undercooked
         float beforeOverCookTimer = maxCookingTime * perfectcookingPercentage;//third Point from here on its overcooked point
@@ -229,7 +260,6 @@ public class Stove : InteractiveBlock
             $"[RedZone{RedZone.fillAmount},{overcooktimer}]" +
             $"[GreenZone{GreenZone.fillAmount},{beforeOverCookTimer}]" +
             $"[BlueZone{BlueZone.fillAmount},{(maxCookingTime * undercookPercentage)}]"));
-
         dishStatus = ProcessStatus.None;
         while (timer < underCookTimer)
         {
@@ -283,6 +313,8 @@ public class Stove : InteractiveBlock
         Debug.Log(CustomLogs.CC_TagLog("Stove", $"burned{timer}"));
         dishStatus = ProcessStatus.Burned;
         //Burned food
+        NormalVFX.SetActive(false);
+        BurnedVFX.SetActive(true); 
         isCooking = false;
     }
 

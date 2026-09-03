@@ -1,5 +1,6 @@
 using Constants;
 using HandHeld;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -29,7 +30,7 @@ public class Pc_Market : MonoBehaviour
 
     //Scalablity 
     public GridLayout gridvis;
-    
+    private bool isRewardedAd;
 
     public void checkout()
     {
@@ -160,11 +161,14 @@ public class Pc_Market : MonoBehaviour
     }
     public void PayViaADs(){
         //TODO Ads Implementation here
+        //disable button
+        AdManagerDNDL.Instance.ShowAds(ConfirmPurchase, failedPurchase);
         ConfirmPurchase();
     }
     private void ConfirmPurchase()
     {
-        // get free space for the delivery box to drop 
+        // get free space for the delivery box to drop
+        HUDManagerDNDL.Instance.PcPowerOn();//Close the Pc 
         // add the items which are requested 
         var DBox=AssetLoader.Instance.GetEquipmetPrefab("Delivery box");
         if (DBox != null) {            
@@ -176,7 +180,16 @@ public class Pc_Market : MonoBehaviour
                 GameDataDNDL.Instance.UnlockedIngredients(item.Type);
                 box.AddBoxItem(item);
             }
+            //Reset the slider and all
+            foreach(var t in Sliders)
+                t.ResetSlider();
+            onCart = new Dictionary<string, cartData>();
         }
+    }
+
+    private void failedPurchase()
+    {
+        //Show failed ad popup
     }
 }
 

@@ -10,7 +10,6 @@ public class Pc_Market_IngredientSliders : MonoBehaviour
     [SerializeField] private TextMeshProUGUI title;
     [SerializeField] private TextMeshProUGUI des;
     [SerializeField] private TextMeshProUGUI cartCounter;
-    //[SerializeField] private GameObject cartCounter_Parent;
 
     [SerializeField] private int cartCounter_Count;
     [SerializeField] private GameObject cartController;
@@ -55,4 +54,10 @@ public class Pc_Market_IngredientSliders : MonoBehaviour
         cartController_Plus.SetActive(!(cartCounter_Count > 0));
     }
 
+    public void ResetSlider()
+    {
+        cartCounter_Count = 0;
+        Market.RemoveFromCart(title.text);
+        CartCounterVisuals();
+    }
 }

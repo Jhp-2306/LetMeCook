@@ -26,13 +26,13 @@ public class ShopItemHolderUI : MonoBehaviour
     }
     public void BuyThisProduct()
     {
-        //TODO:Buy Currency check 
-        //if (!GameDataDNDL.Instance.DoIHaveEnoughCurrency(cost))
-        //{
-        //    //Failed to purchase
-        //    HUDManagerDNDL.Instance.ShowToastMsg("Not Enough currency");
-        //    return;
-        //}
+        //TODO:Buy Currency check--Done
+        if (!GameDataDNDL.Instance.DoIHaveEnoughCurrency(cost))
+        {
+            //Failed to purchase
+            HUDManagerDNDL.Instance.ShowToastMsg("Not Enough currency");
+            return;
+        }
         //close the shop
         ShopManager.Instance.CloseShop();
         //go into building mode

@@ -83,7 +83,8 @@ public class BasicStorageSystem<T> where T : IStorageItem
     //TODO Add Refresh methode that re allocats the empty slots
     public void Refresh()
     {
-        foreach (var item in items)
+        var templist =new List<T>(items);//Clone for a invalid ref
+        foreach (var item in templist)
         {
             if(item.GetQuanitity() <= 0) RemoveItemAt(GetIndexOfItem(item));
         }
