@@ -204,6 +204,7 @@ GameObject:
   - component: {fileID: 2607695803630188202}
   - component: {fileID: 1356169450119133064}
   - component: {fileID: 3876526692185050180}
+  - component: {fileID: 8441487012798544903}
   m_Layer: 2
   m_Name: Delivery box
   m_TagString: Untagged
@@ -293,6 +294,52 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 1.2
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &8441487012798544903
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4481620782809728104}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a37c02494922da240952a68be61376ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  duration: 0.35
+  popupCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.7
+      value: 1.35
+      inSlope: 1.2674377
+      outSlope: 1.2674377
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &4586248053329086351
 GameObject:
   m_ObjectHideFlags: 0

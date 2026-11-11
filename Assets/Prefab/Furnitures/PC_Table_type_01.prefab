@@ -84,6 +84,7 @@ MonoBehaviour:
   CellSize: 2
   isGizmos: 0
   PreSpawn: 0
+  Level: 0
   iD: 
 --- !u!1 &8621663607298164115
 GameObject:

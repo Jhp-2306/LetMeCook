@@ -37,7 +37,7 @@ public class Table : InteractiveBlock
     public bool IsEmpty => myPlate == null;
     [SerializeField]
     private float HoldDurationbase = 4.5f;
-
+    private float lvlUpgradeDurationPercentage;
     public override bool IsInteractionSatisfied()
     {
         //return base.IsInteractionSatisfied();
@@ -54,7 +54,7 @@ public class Table : InteractiveBlock
     }
     public override float GetOverrideHoldDuration()
     {
-       return HoldDurationbase;
+       return HoldDurationbase-(HoldDurationbase* lvlUpgradeDurationPercentage);
     }
     public override bool IsOverrideHoldInteraction()
     {
@@ -117,6 +117,19 @@ public class Table : InteractiveBlock
     {
         //Combine
         myPlate.MergeTheDish();
+        myPlate.MergerVFX.SetActive(false);
     }
-
+    public override void OnHoldStart()
+    {
+        myPlate.MergerVFX.SetActive(true);
+    }
+    public override void OnHoldFailed()
+    {
+        myPlate.MergerVFX.SetActive(false);
+    }
+    public override void LoadLevelUpgrades()
+    {
+        var temp = Data.upgradeData[savedata.level];
+        lvlUpgradeDurationPercentage = temp.GetUpgradeValue(E_ValueName.Speed) / 100;
+    }
 }

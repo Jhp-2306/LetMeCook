@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Localization-Locales
+  m_EditorClassIdentifier: 
+  m_GroupName: Localization-Locales
+  m_GUID: e68b1b8d6d8152f4cb7b78e93d305296
+  m_SerializeEntries:
+  - m_GUID: 73f150554e7d0b84b8c22bcc2cc745d6
+    m_Address: Tamil (ta)
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b90c8478bed88ec4db4ec03d018ed708
+    m_Address: English (en)
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f51cd6619efc50d4284d91558a18099c
+    m_Address: Hindi (hi)
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 1
+  m_Settings: {fileID: 11400000, guid: a836759115da1c24590b8610924c161a, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: ca41afa55aa03e548b8b2bf76212f8d4, type: 2}
+    - {fileID: 11400000, guid: 489bbbee4b746a2469b8fa5beb1c5ff0, type: 2}
+    - {fileID: 11400000, guid: 7b795c2a2a325c84d858273b1801dc5a, type: 2}

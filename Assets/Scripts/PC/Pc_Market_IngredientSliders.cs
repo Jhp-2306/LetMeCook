@@ -14,13 +14,22 @@ public class Pc_Market_IngredientSliders : MonoBehaviour
     [SerializeField] private int cartCounter_Count;
     [SerializeField] private GameObject cartController;
     [SerializeField] private GameObject cartController_Plus;
+    [SerializeField] private Button cartController_Big_Plus_Btn;
+    [SerializeField] private Button cartController_Minus_Btn;
+    [SerializeField] private Button cartController_Plus_Btn;
     private Pc_Market Market;
-    public void SetUp(string _name, string _price, string _icon, Pc_Market market)
+    public void SetUp(string _name, string _price, string _icon, Pc_Market market, bool isDisable)
     {
         title.text = _name;
         des.text = _price;
         icon.sprite = AssetLoader.Instance.GetIcons(_icon);
         Market = market;
+        cartController_Big_Plus_Btn.interactable = !isDisable;
+        if (GameDataDNDL.Instance.isFTUT)
+        {
+            cartController_Minus_Btn.interactable = false;
+            cartController_Plus_Btn.interactable = false;
+        }
     }
     public void OnAdd()
     {

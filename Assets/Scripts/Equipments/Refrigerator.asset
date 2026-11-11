@@ -18,14 +18,20 @@ MonoBehaviour:
   Type: 10
   upgradeData:
   - Upgrades:
-    - ValueDes: 'Capacity '
+    - ValueDes: ' Capacity Increase <color=green> {0}</color>'
       ValueName: 3
       ValueInPercentage: 4
   - Upgrades:
-    - ValueDes: Capacity
+    - ValueDes: ' Capacity Increase <color=green> {0}</color>'
       ValueName: 3
       ValueInPercentage: 6
   - Upgrades:
-    - ValueDes: ' Capacity'
+    - ValueDes: ' Capacity Increase <color=green> {0}</color>'
       ValueName: 3
       ValueInPercentage: 8
+  - Upgrades:
+    - ValueDes: ' Capacity Increase <color=green> {0}</color>'
+      ValueName: 3
+      ValueInPercentage: 10
+  IconID: Refrigerator_Icon
+  LevelupgradeDes: ' Capacity Increase <color=cyan> {0}</color>'

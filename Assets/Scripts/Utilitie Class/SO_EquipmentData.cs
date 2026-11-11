@@ -14,6 +14,17 @@ public class SO_EquipmentData : ScriptableObject
     public EquipmentType Type;
     public List<LevelUpgradeData> upgradeData;
 
+    public string IconID;
+    public string LevelupgradeDes;
+    public List<string> GetUpgradeDes()
+    {
+        List<string> ret = new List<string>();
+        foreach (LevelUpgradeData upgradeData in upgradeData)
+        {
+            ret.Add(upgradeData.GetUpgradeDes());
+        }
+        return ret;
+    }
 }
 [Serializable]
 public class LevelUpgradeData
@@ -26,6 +37,16 @@ public class LevelUpgradeData
         }
         return -1f;
     }
+    public string GetUpgradeDes()
+    {
+        string val="";
+        foreach (var upgrade in Upgrades)
+        {
+            val = $"{string.Format(upgrade.ValueDes, upgrade.ValueInPercentage)}\n";
+        }
+        return val;
+    }
+
 }
 [Serializable]
 public struct UpgradeData// Equipment Upgrade Save Data

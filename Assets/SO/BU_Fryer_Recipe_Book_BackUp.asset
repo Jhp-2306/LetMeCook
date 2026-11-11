@@ -21,7 +21,8 @@ MonoBehaviour:
     dishes: 
     OutputDish: 22
     CookingTime: 0
-    price: 0
+    price: 175
+    arr: 
   - items:
     - Ingredient: 10
       processed: 8
@@ -30,7 +31,8 @@ MonoBehaviour:
     dishes: 
     OutputDish: 23
     CookingTime: 0
-    price: 0
+    price: 175
+    arr: 
   - items:
     - Ingredient: 10
       processed: 6
@@ -39,22 +41,25 @@ MonoBehaviour:
     dishes: 
     OutputDish: 24
     CookingTime: 0
-    price: 0
+    price: 175
+    arr: 
   - items:
     - Ingredient: 12
-      processed: 5
+      processed: 0
       Descriptions: 
     DishMix: 0
     dishes: 
     OutputDish: 20
     CookingTime: 0
-    price: 0
+    price: 35
+    arr: 
   - items:
     - Ingredient: 9
-      processed: 7
+      processed: 0
       Descriptions: 
     DishMix: 0
     dishes: 
     OutputDish: 10
     CookingTime: 0
-    price: 0
+    price: 160
+    arr: 

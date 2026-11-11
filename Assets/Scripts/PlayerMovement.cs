@@ -12,11 +12,12 @@ public class PlayerMovement : MonoBehaviour, ITriggerDoor
     Rigidbody rb;
 
     public float speed = 20f;
+    public AnimationCurve Speedcurve;
     public float turnSpeed = 5f;
     public float turnDst = 2f;
     public float stoppingDst = 0.5f;
     bool isInputActive;
-    bool isPlayerMoving;
+    public bool isPlayerMoving;
     Path path;
     Vector3 target;
     Coroutine followPathCoroutine;
@@ -24,6 +25,8 @@ public class PlayerMovement : MonoBehaviour, ITriggerDoor
     const float pathUpdateMoveThreshold = 0.5f;
     const float minPathUpdateTime = 0.2f;
     Action OnReachCallback = delegate { };
+
+    public GameObject walkFXs;
     private void Awake()
     {
         InputManager.OnMovementInput -= GoToPosition;
@@ -93,7 +96,7 @@ public class PlayerMovement : MonoBehaviour, ITriggerDoor
             }
         }
     }
-
+    public float SpeeedAnimationTimer = 0f;
     IEnumerator FollowPath()
     {
         if (path == null || path.lookPoints == null || path.lookPoints.Length == 0)
@@ -104,7 +107,7 @@ public class PlayerMovement : MonoBehaviour, ITriggerDoor
         int pathIndex = 0;
         float speedPercent = 1f;
         bool followingPath = true;
-
+        
         while (followingPath)
         {
             Vector2 pos2D = new Vector2(transform.position.x, transform.position.z);
@@ -141,23 +144,25 @@ public class PlayerMovement : MonoBehaviour, ITriggerDoor
             {
                 transform.position = GetHeightAdjusted(path.lookPoints[pathIndex]);
                 pathIndex++;
-                if (pathIndex == path.finishLineIndex)
+                if (pathIndex == path.finishLineIndex)//is a half stop
                 {
                     followingPath = false;
-                    Debug.Log($"Player Comments We Are At Stop");
+                    //Debug.Log($"Player Comments We Are At Stop");
                     isPlayerMoving = false;
                     break;
                 }
             }
             if (followingPath)
             {
+                walkFXs.SetActive(true);
+                SpeeedAnimationTimer += Time.deltaTime;
                 if (pathIndex <= path.finishLineIndex)
                 {
 
                     Vector3 targetPoint = GetHeightAdjusted(path.lookPoints[pathIndex]);
                     Quaternion targetRotation = Quaternion.LookRotation(targetPoint - transform.position);
                     transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * turnSpeed);
-                    transform.Translate(Vector3.forward * Time.deltaTime * speed * speedPercent, Space.Self);
+                    transform.Translate(Vector3.forward * Time.deltaTime * speed * speedPercent * Speedcurve.Evaluate(SpeeedAnimationTimer), Space.Self);
 
                     if (pathIndex >= path.slowDownIndex && stoppingDst > 0 && path.turnBoundaries.Length > 1)
                     {
@@ -167,7 +172,7 @@ public class PlayerMovement : MonoBehaviour, ITriggerDoor
                         if (speedPercent < 0.05f)
                         {
                             followingPath = false;
-                            Debug.Log($"Player Comments We Are At Stop");
+                            //Debug.Log($"Player Comments We Are At Stop");
                             isPlayerMoving = false;
                             transform.position = GetHeightAdjusted(path.lookPoints[pathIndex]);
                             break;
@@ -178,9 +183,11 @@ public class PlayerMovement : MonoBehaviour, ITriggerDoor
             }
             if (transform.position == target)//PlayerStoped in Location
             {
-                Debug.Log($"Player Comments We Are At Stop");
+                //Debug.Log($"Player Comments We Are At Stop---");
+                walkFXs.SetActive(false);
                 followingPath = false;
                 isPlayerMoving = false;
+                SpeeedAnimationTimer = 0f;
                 OnReachCallback?.Invoke();
             }
 

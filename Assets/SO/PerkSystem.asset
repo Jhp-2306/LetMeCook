@@ -18,49 +18,49 @@ MonoBehaviour:
     Type: 1
     isBool: 0
     Value: 30
-    Des: You have to pay <color=red>30%<\red> Tax rate on your income
+    Des: You have to pay <color=red>30%</color> Tax rate on your income
   - Rank: 1
     PerkName: Tax 2
     Type: 1
     isBool: 0
     Value: 25
-    Des: You have to pay <color=red>25%<\red> Tax rate on your income
+    Des: You have to pay <color=red>25%</color> Tax rate on your income
   - Rank: 2
     PerkName: Tax 3
     Type: 1
     isBool: 0
     Value: 20
-    Des: You have to pay <color=red>20%<\red> Tax rate on your income
+    Des: You have to pay <color=red>20%</color> Tax rate on your income
   - Rank: 3
     PerkName: Tax 4
     Type: 1
     isBool: 0
     Value: 15
-    Des: You have to pay <color=red>15%<\red> Tax rate on your income
+    Des: You have to pay <color=red>15%</color> Tax rate on your income
   - Rank: 4
     PerkName: Tax 5
     Type: 1
     isBool: 0
     Value: 10
-    Des: You have to pay <color=red>10%<\red> Tax rate on your income
+    Des: You have to pay <color=red>10%</color> Tax rate on your income
   - Rank: 0
     PerkName: Electric Price 1
     Type: 0
     isBool: 0
     Value: 3
-    Des: You have to pay <color=cyan>3<\color> Coin Per Equipment Owned
+    Des: You have to pay <color=cyan>3</color> Coin Per Equipment Owned
   - Rank: 1
     PerkName: Electric Price 2
     Type: 0
     isBool: 0
     Value: 2
-    Des: You have to pay <color=cyan>2<\color> Coin Per Equipment Owned
+    Des: You have to pay <color=cyan>2</color> Coin Per Equipment Owned
   - Rank: 2
     PerkName: Electric Price 3
     Type: 0
     isBool: 0
     Value: 1
-    Des: You have to pay <color=cyan>1<\color> Coin Per Equipment Owned
+    Des: You have to pay <color=cyan>1</color> Coin Per Equipment Owned
   - Rank: 0
     PerkName: Instant Chop
     Type: 2
@@ -100,41 +100,35 @@ MonoBehaviour:
     PerkName: Waiting Period 1
     Type: 5
     isBool: 0
-    Value: 20
-    Des: This Adds 20% more waiting time on NPC
+    Value: 10
+    Des: This Adds 10% more waiting time on NPC
   - Rank: 1
     PerkName: Waiting Period 2
     Type: 5
     isBool: 0
-    Value: 10
-    Des: This Adds 10% more waiting time on NPC
+    Value: 25
+    Des: This Adds 25% more waiting time on NPC
   - Rank: 0
     PerkName: Reduec Random Govt Tax 1
     Type: 6
-    isBool: 1
-    Value: 0
-    Des: You have to pay <color=red>20%</red> Tax rate on your Random Govt
+    isBool: 0
+    Value: 20
+    Des: You have to pay <color=red>20%</color> Tax rate on your Random Govt
   - Rank: 1
     PerkName: Reduec Random Govt Tax 2
     Type: 6
     isBool: 0
-    Value: 0
-    Des: You have to pay <color=red>20%<\red> Tax rate on your Random Govt
+    Value: 10
+    Des: You have to pay <color=red>10%</color> Tax rate on your Random Govt
   - Rank: 2
     PerkName: Reduec Random Govt Tax 3
     Type: 6
     isBool: 0
-    Value: 0
-    Des: You have to pay <color=red>20%<\red> Tax rate on your Random Govt
-  - Rank: 2
-    PerkName: Reduec Random Govt Tax 3
-    Type: 6
-    isBool: 0
-    Value: 0
-    Des: You have to pay <color=red>20%<\red> Tax rate on your Random Govt
+    Value: 5
+    Des: You have to pay <color=red>5%</color> Tax rate on your Random Govt
   - Rank: 3
     PerkName: Remove Random Govt Tax
     Type: 6
-    isBool: 0
+    isBool: 1
     Value: 0
-    Des: Remove Govt Tax
+    Des: This perk will remove Random Govt. tax

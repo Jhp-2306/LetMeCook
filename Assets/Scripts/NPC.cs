@@ -10,7 +10,7 @@ using UnityEngine.UI;
 namespace NPC
 {
 
-    //[RequireComponent(typeof(NavMeshAgent))]
+    
     public class NPC : MonoBehaviour, ITriggerDoor
     {
         int id;
@@ -40,12 +40,17 @@ namespace NPC
         bool ispathwayinprogress;
 
         //AngerMeter
-        float waitingfororderTimer = 90f;
+        float waitingfororderTimer = 120f;
         List<Dishes> currentOrder;
         public Image OrderTimerProgressBar;
         float FoodCost;
 
-        int TotalOrder;
+        int m_TotalOrder;
+
+        float m_DishRating;
+        float m_TotalTimeTaken;
+
+        
 
         public void Start()
         {
@@ -69,7 +74,7 @@ namespace NPC
                 StopCoroutine(myCor);
             }
             gameObject.SetActive(true);
-            TotalOrder = totalOrder;
+            m_TotalOrder = totalOrder;
             isRoaming = isroaming;
             CurrentPlatform = myplatform;
             Vector3 snappedPos = new Vector3(pos.x, transform.position.y, pos.z);
@@ -82,21 +87,26 @@ namespace NPC
         IEnumerator WaitingForTheOrder(float waitTimer)
         {
             FoodCost = 0;
+            m_DishRating = 0f;
             var timer = 0f;
+            m_TotalTimeTaken = waitTimer;
             while (timer < waitTimer)
             {
                 yield return null;
                 timer += Time.deltaTime;
+                m_TotalTimeTaken -= Time.deltaTime;
                 //update the waiting progress bar
                 var timercal = (waitTimer - timer) / waitTimer;
                 OrderTimerProgressBar.fillAmount = Mathf.Clamp01(timercal);
             }
             //once timer runs out leave;
             SetNPC(NPCManager.Instance.DoorExitPosition.position, true, CurrentPlatform);
+            //Give 0star rating 
 
         }
-        public void OnOrderComplete(Dishes dish, float cost)
+        public bool OnOrderComplete(Dishes dish, float cost,float dishRating)
         {
+            m_DishRating += dishRating;
             currentOrder.Remove(dish);
             FoodCost += cost;
             if (currentOrder.Count <= 0)
@@ -105,27 +115,20 @@ namespace NPC
                     StopCoroutine(orderWaitingCoroutine);
                 SetNPC(NPCManager.Instance.DoorExitPosition.position, true, CurrentPlatform);
                 //Give Coins
-                GameDataDNDL.Instance.AddCurrency((int)cost);
+                GameDataDNDL.Instance.AddCurrency((int)FoodCost);
                 //Food Rating
+                m_DishRating = m_DishRating / m_TotalOrder;//get the Average of the Total Dish
+                var tempTimeRating = m_TotalTimeTaken / waitingfororderTimer;
+                m_DishRating += tempTimeRating >= 0.4 ? 2f : tempTimeRating > 0.2 ? 1.5f : 1f;
+                GameDataDNDL.Instance.AddStarXP(m_DishRating);
                 //TODO:-coins visual here
-                Debug.Log(CustomLogs.CC_TagLog($"NPC{id}", $"Giving Coins{cost} "));
+                return true;
+                //Debug.Log(CustomLogs.CC_TagLog($"NPC{id}", $"Giving Coins{FoodCost} "));
             }
+            return false;
         }
 
 
-        //IEnumerator GoToPositions(Vector3 _pos)
-        //{
-        //    //Agent = GetComponent<NavMeshAgent>();
-        //    //Vector3Int newint = new Vector3Int((int)_pos.x, (int)_pos.y, (int)_pos.z);
-        //    //Agent.SetDestination(newint);
-        //    //while (isRoaming)
-        //    //{
-        //    //    Agent.SetDestination(newint);
-        //    //yield return new WaitUntil(() => Agent.velocity == Vector3.zero);
-        //    yield return null;
-        //    //    newint = NPCManager.Instance.GetNPCRandomCood();
-        //    //}
-        //}
         #region A* Pathfinding
 
         public void OnPathFound(Vector3[] waypoints, bool pathSuccessful)
@@ -315,10 +318,10 @@ namespace NPC
                             {
                                 var DishInMenu = GameDataDNDL.Instance.CurrentDaysDishes;
                                 if(DishInMenu != null)
-                                if( DishInMenu.Count>TotalOrder)
-                                for (int i = 0; i < TotalOrder; i++)
+                                if( DishInMenu.Count>m_TotalOrder)
+                                for (int i = 0; i < m_TotalOrder; i++)
                                 {
-                                    //TODO:-get the Current Active Dishes
+                                    //TODO:-get the Current Active Dishes--done
                                     //currentOrder.Add((Dishes)UnityEngine.Random.RandomRange(0, ((int)Dishes.count - 1)));
                                     currentOrder.Add(DishInMenu[UnityEngine.Random.Range(0, DishInMenu.Count)]);
                                 }
@@ -327,11 +330,11 @@ namespace NPC
                                     currentOrder.Add(DishInMenu[0]);
                                 }
                             }
-                            var timer = GameDataDNDL.Instance.GetCookingTime(currentOrder[0]);
-                            namedis.text = currentOrder[0].ToString();
+                            //var timer = GameDataDNDL.Instance.GetCookingTime(currentOrder[0]);
+                            namedis.text = currentOrder.Count > 1 ? $"{currentOrder[0]}\n{currentOrder[1]}" :currentOrder[0].ToString();
                             CurrentPlatform.GetComponent<Counter>().SetClient(this);
-                            orderWaitingCoroutine = StartCoroutine(WaitingForTheOrder(timer + waitingfororderTimer));
-                        },TotalOrder);//Callback should trigger ording and waiting phase
+                            orderWaitingCoroutine = StartCoroutine(WaitingForTheOrder(waitingfororderTimer));
+                        },m_TotalOrder);//Callback should trigger ording and waiting phase
                         Callback?.Invoke();
                     }
                     else
@@ -345,12 +348,12 @@ namespace NPC
                 {
                     //request a End Roaming Point
                     Debug.Log(CustomLogs.CC_TagLog("NPC", "Exiting the Shop"));
-                    NPCManager.Instance.NPCMovingOutsideTheShop(this, CurrentPlatform,TotalOrder);
+                    NPCManager.Instance.NPCMovingOutsideTheShop(this, CurrentPlatform,m_TotalOrder);
                     Callback?.Invoke();
                     SetNPC(NPCManager.Instance.GetNPCRandomCood(), true);
                     CurrentPlatform = null;
                 }
-            },TotalOrder);
+            },m_TotalOrder);
         }
     }
 }

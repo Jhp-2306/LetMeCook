@@ -1,0 +1,93 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 987cff63cb7c039408e67ae09e9024cb, type: 3}
+  m_Name: FurnitureDataList
+  m_EditorClassIdentifier: 
+  equipmentDataList:
+  - DisplayFuntionName: PC Table Type 01
+    Type: 14
+    name: PC Table Type 01
+    price: 0
+    Prefab: PC_Table_type_01
+    Icon: PC_Table_type_01_Icon
+  - DisplayFuntionName: PC Table Type 02
+    Type: 14
+    name: PC Table Type 02
+    price: 0
+    Prefab: PC_Table_type_02
+    Icon: PC_Table_type_02_Icon
+  - DisplayFuntionName: PC Table Type 03
+    Type: 14
+    name: PC Table Type 03
+    price: 0
+    Prefab: PC_Table_type_03
+    Icon: PC_Table_type_03_Icon
+  - DisplayFuntionName: Couch Type 01
+    Type: 14
+    name: Couch Type 01
+    price: 0
+    Prefab: Couch_type_01
+    Icon: Couch_type_01_Icon
+  - DisplayFuntionName: Couch Type 02
+    Type: 14
+    name: Couch Type 02
+    price: 0
+    Prefab: Couch_type_02
+    Icon: Couch_type_02_Icon
+  - DisplayFuntionName: Double Bed Type 01
+    Type: 14
+    name: Double Bed Type 01
+    price: 0
+    Prefab: Double_Bed_type_01
+    Icon: Double_Bed_type_01_Icon
+  - DisplayFuntionName: Double Bed Type 02
+    Type: 14
+    name: Double Bed Type 02
+    price: 0
+    Prefab: Double_Bed_type_02
+    Icon: Double_Bed_type_02_Icon
+  - DisplayFuntionName: SideTable Type 01
+    Type: 14
+    name: SideTable Type 01
+    price: 0
+    Prefab: Side_Table_type_01
+    Icon: Side_Table_type_01_Icon
+  - DisplayFuntionName: SideTable Type 02
+    Type: 14
+    name: SideTable Type 02
+    price: 0
+    Prefab: Side_Table_type_02
+    Icon: Side_Table_type_02_Icon
+  - DisplayFuntionName: Single Bed Type 01
+    Type: 14
+    name: Single Bed Type 01
+    price: 0
+    Prefab: Single_Bed_type_01
+    Icon: Single_Bed_type_01_Icon
+  - DisplayFuntionName: Single Bed Type 02
+    Type: 14
+    name: Single Bed Type 02
+    price: 0
+    Prefab: Single_Bed_type_02
+    Icon: Single_Bed_type_02_Icon
+  - DisplayFuntionName: Single Couch Type 01
+    Type: 14
+    name: Single Couch Type 01
+    price: 0
+    Prefab: Single_Couch_type_01
+    Icon: Single_Couch_type_01_Icon
+  - DisplayFuntionName: Single Couch Type 02
+    Type: 14
+    name: Single Couch Type 02
+    price: 0
+    Prefab: Single_Couch_type_02
+    Icon: Single_Couch_type_02_Icon

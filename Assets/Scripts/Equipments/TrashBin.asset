@@ -15,17 +15,6 @@ MonoBehaviour:
   DisplayFuntionName: Throw
   HoldFuntionName: '-'
   HandFullDisplayFuntionName: Throw
-  Type: 2
-  upgradeData:
-  - Upgrades:
-    - ValueDes: Perfect Width Size
-      ValueName: 4
-      ValueInPercentage: 20
-  - Upgrades:
-    - ValueDes: Perfect Width Size
-      ValueName: 4
-      ValueInPercentage: 60
-  - Upgrades:
-    - ValueDes: Perfect Width Size
-      ValueName: 4
-      ValueInPercentage: 100
+  Type: 12
+  upgradeData: []
+  IconID: Bin_Icon

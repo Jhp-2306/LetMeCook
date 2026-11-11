@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Util;
-using static UnityEngine.Rendering.HDROutputUtils;
 
 
 public class SceneManagerDNDL : Singletonref<SceneManagerDNDL>
@@ -19,6 +18,7 @@ public class SceneManagerDNDL : Singletonref<SceneManagerDNDL>
         base.Awake();
         DontDestroyOnLoad(this);
         StartCoroutine(Starter());
+        Application.targetFrameRate = 120;
     }
     IEnumerator Starter()
     {
@@ -41,7 +41,7 @@ public class SceneManagerDNDL : Singletonref<SceneManagerDNDL>
         yield return new WaitUntil(() => temp.isDone);
         temp=SceneManager.LoadSceneAsync(scene, LoadSceneMode.Additive);
         yield return new WaitUntil(() => temp.isDone);
+        Callback();
     }
-
 
 }

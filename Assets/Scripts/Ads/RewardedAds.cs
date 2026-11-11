@@ -42,6 +42,7 @@ public class RewardedAds : MonoBehaviour,IUnityAdsInitializationListener,IUnityA
     {
         Debug.Log(CustomLogs.CC_TagLog("Ads", $"Rewarded Ads Failed to show{message}"));
         RewardAdFailedCallback();
+        FirebaseAnalyticsDNDL.Instance.Log("ADs", "Rewarded Ads", "Failed");
         RewardAdFailedCallback = delegate { };
     }
 
@@ -57,6 +58,7 @@ public class RewardedAds : MonoBehaviour,IUnityAdsInitializationListener,IUnityA
     {
         if(placementId==_RewardAdUnitID&&showCompletionState.Equals(UnityAdsShowCompletionState.COMPLETED)) {
         Debug.Log(CustomLogs.CC_TagLog("Ads", "Rewarded Ads completed Successfully"));
+            FirebaseAnalyticsDNDL.Instance.Log("ADs", "Rewarded Ads", "Success");
             //Give rewards here
             RewardAdCallback();
             RewardAdCallback = delegate { };
@@ -89,7 +91,8 @@ public class RewardedAds : MonoBehaviour,IUnityAdsInitializationListener,IUnityA
     public void ShowAd(Action _callback,Action _failedCallback)
     {
         RewardAdCallback= _callback;
-        RewardAdFailedCallback= _failedCallback;    
+        RewardAdFailedCallback= _failedCallback;
+        FirebaseAnalyticsDNDL.Instance.Log("ADs", "Rewarded Ads", "Show");
         Advertisement.Show(_RewardAdUnitID, this);
         LoadAd();
     }

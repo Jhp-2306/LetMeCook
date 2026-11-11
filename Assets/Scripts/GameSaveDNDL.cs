@@ -18,7 +18,10 @@ public class GameSaveDNDL : Singletonref<GameSaveDNDL>
     {
         base.Awake();
         DontDestroyOnLoad(this);
+        DataUpdateBeforeSave =  delegate { };
         SaveData.Instance.Init();
+        GameSettingsData.Instance.init();
+        if(!GameSettingsData.Instance.LoadInstance())GameSettingsData.Instance.SaveInstance();
         //StartCoroutine(SaveTick());
         Debug.Log($"check {SaveData.Instance.LocalData == null}");
     }
@@ -34,9 +37,13 @@ public class GameSaveDNDL : Singletonref<GameSaveDNDL>
     }
     public bool ForceSave()
     {
-        //SaveData.Instance.LocalData.Playername = "hallow";
         DataUpdateBeforeSave();
         return SaveData.Instance.SaveInstance();
+    }
+    public bool ForceSaveSettings()
+    {
+        //DataUpdateBeforeSave();
+        return GameSettingsData.Instance.SaveInstance();
     }
     public void NewGame()
     {

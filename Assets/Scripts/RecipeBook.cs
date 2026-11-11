@@ -17,6 +17,7 @@ public class RecipeBook
     public Dishes GetDishes(List<ProcedureStep> steps)
     {
         //_recipes = _RecipeBook.items;
+        Debug.Log(CustomLogs.CC_TagLog("Frying Pan", $"checking internal{steps.Count},{steps[0].Ingredient},{_recipes.Count}"));
         foreach (Recipes recipe in _recipes)
         {
             if (recipe.IsthisDish(steps))

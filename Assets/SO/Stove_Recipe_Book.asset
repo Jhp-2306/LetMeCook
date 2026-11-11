@@ -23,9 +23,12 @@ MonoBehaviour:
     - Ingredient: 0
       processed: 1
       Descriptions: 
+    DishMix: 0
+    dishes: 
     OutputDish: 0
-    CookingTime: 30
+    CookingTime: 45
     price: 125
+    arr: 
   - items:
     - Ingredient: 1
       processed: 1
@@ -39,9 +42,12 @@ MonoBehaviour:
     - Ingredient: 2
       processed: 1
       Descriptions: 
+    DishMix: 0
+    dishes: 
     OutputDish: 1
-    CookingTime: 30
+    CookingTime: 45
     price: 55
+    arr: 
   - items:
     - Ingredient: 3
       processed: 1
@@ -49,19 +55,25 @@ MonoBehaviour:
     - Ingredient: 3
       processed: 1
       Descriptions: 
+    DishMix: 0
+    dishes: 
     OutputDish: 3
-    CookingTime: 7
-    price: 35
-  - items:
-    - Ingredient: 2
-      processed: 1
-      Descriptions: 
-    - Ingredient: 2
-      processed: 1
-      Descriptions: 
-    OutputDish: 4
     CookingTime: 10
     price: 35
+    arr: 
+  - items:
+    - Ingredient: 2
+      processed: 1
+      Descriptions: 
+    - Ingredient: 2
+      processed: 1
+      Descriptions: 
+    DishMix: 0
+    dishes: 
+    OutputDish: 4
+    CookingTime: 20
+    price: 35
+    arr: 
   - items:
     - Ingredient: 3
       processed: 1
@@ -72,9 +84,12 @@ MonoBehaviour:
     - Ingredient: 5
       processed: 1
       Descriptions: 
+    DishMix: 0
+    dishes: 
     OutputDish: 5
-    CookingTime: 30
+    CookingTime: 45
     price: 80
+    arr: 
   - items:
     - Ingredient: 3
       processed: 1
@@ -85,9 +100,12 @@ MonoBehaviour:
     - Ingredient: 1
       processed: 1
       Descriptions: 
+    DishMix: 0
+    dishes: 
     OutputDish: 6
     CookingTime: 12
     price: 55
+    arr: 
   - items:
     - Ingredient: 3
       processed: 1
@@ -98,9 +116,12 @@ MonoBehaviour:
     - Ingredient: 9
       processed: 1
       Descriptions: 
+    DishMix: 0
+    dishes: 
     OutputDish: 7
     CookingTime: 20
     price: 125
+    arr: 
   - items:
     - Ingredient: 7
       processed: 0
@@ -111,9 +132,12 @@ MonoBehaviour:
     - Ingredient: 9
       processed: 1
       Descriptions: 
+    DishMix: 0
+    dishes: 
     OutputDish: 8
-    CookingTime: 35
+    CookingTime: 50
     price: 160
+    arr: 
   - items:
     - Ingredient: 7
       processed: 0
@@ -124,13 +148,9 @@ MonoBehaviour:
     - Ingredient: 0
       processed: 1
       Descriptions: 
+    DishMix: 0
+    dishes: 
     OutputDish: 9
-    CookingTime: 25
+    CookingTime: 45
     price: 90
-  - items:
-    - Ingredient: 9
-      processed: 0
-      Descriptions: 
-    OutputDish: 10
-    CookingTime: 20
-    price: 90
+    arr: 

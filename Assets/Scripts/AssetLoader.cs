@@ -83,7 +83,7 @@ public class AssetLoader : Singletonref<AssetLoader>
     {
         foreach (var obj in sprites)
         {
-            Debug.Log(_id + " " + obj.name + " " + obj.name.Equals(_id));
+            //Debug.Log(_id + " " + obj.name + " " + obj.name.Equals(_id));
             if (obj.name.Equals(_id)) return obj;
         }
         return null;

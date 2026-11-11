@@ -39,11 +39,11 @@ public class TimeManagementDNDL : Singletonref<TimeManagementDNDL>
         {
             _currentSec += Time.deltaTime;
             //Starting Ai Roaming At morning Hrs
-            if (_currentSec >= (IRLMinsForInGameDay * ((6f / 24f) * 60f)) && !DayFlag) 
+            if (_currentSec >= (IRLMinsForInGameDay * ((3f / 24f) * 60f)) && !DayFlag && !isRoaminghrs) 
             {
                 isRoaminghrs = true;
                 StartOfTheDay();
-                //Debug.Log(CustomLogs.CC_TagLog("Time Manager", $"Current Day Phase{m_phase}, {GetTime(true)}"));
+                Debug.Log("Loging at TimeManager");
             }
             if (_currentSec >= (IRLMinsForInGameDay * ((8f/24f)*60f)) && !DayFlag)
             {
@@ -51,8 +51,7 @@ public class TimeManagementDNDL : Singletonref<TimeManagementDNDL>
                 m_phase = DayPhase.KitchenOpen;
                 DayFlag = true;
                 OnKitchenOpen();
-                //HUDManagerDNDL.Instance.ShopDisable();//Change this to an Event
-                //Debug.Log(CustomLogs.CC_TagLog("Time Manager",$"Current Day Phase{m_phase}, {GetTime(true)}"));
+                
             }
             if (_currentSec >= (IRLMinsForInGameDay * ((18f / 24f) * 60f)) && !KitchenFlag)
             {
@@ -60,14 +59,13 @@ public class TimeManagementDNDL : Singletonref<TimeManagementDNDL>
                 m_phase = DayPhase.KitchenClosed;
                 KitchenFlag = true;
                 OnKitchenClose();
-                //HUDManagerDNDL.Instance.ShopEnable();//Change this to an Event
-                //Debug.Log(CustomLogs.CC_TagLog("Time Manager", $"Current Day Phase{m_phase}, {GetTime(true)}"));
+                
             }
             //Stoping Ai Roaming At night Hrs
             if (_currentSec >= (IRLMinsForInGameDay * ((22f / 24f) * 60f)) && !DayFlag)
             {
                 isRoaminghrs = false;
-                //Debug.Log(CustomLogs.CC_TagLog("Time Manager", $"Current Day Phase{m_phase}, {GetTime(true)}"));
+                
             }
             if (_currentSec >= IRLMinsForInGameDay*60)
             {
@@ -80,7 +78,7 @@ public class TimeManagementDNDL : Singletonref<TimeManagementDNDL>
                 KitchenFlag = false;
                 _currentday++;
                 HUDManagerDNDL.Instance.ShopEnable();//Change this to an Event
-                //Debug.Log(CustomLogs.CC_TagLog("Time Manager", $"Current Day Phase{_currentday}, {GetTime(true)}"));
+                
             }
         }
 

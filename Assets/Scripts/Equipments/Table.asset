@@ -18,14 +18,20 @@ MonoBehaviour:
   Type: 11
   upgradeData:
   - Upgrades:
-    - ValueDes: Combine Time -
+    - ValueDes: Combine Time Reduced <color=red> {0} </color>
+      ValueName: 1
+      ValueInPercentage: 0
+  - Upgrades:
+    - ValueDes: Combine Time Reduced <color=red> {0} </color>
       ValueName: 1
       ValueInPercentage: 5
   - Upgrades:
-    - ValueDes: Combine Time -
+    - ValueDes: Combine Time Reduced <color=red> {0} </color>
       ValueName: 1
       ValueInPercentage: 10
   - Upgrades:
-    - ValueDes: Combine Time -
+    - ValueDes: Combine Time Reduced <color=red> {0} </color>
       ValueName: 1
       ValueInPercentage: 15
+  IconID: Empty_Tabel_Icon
+  LevelupgradeDes: Combine Time Reduced <color=red> {0} </color>

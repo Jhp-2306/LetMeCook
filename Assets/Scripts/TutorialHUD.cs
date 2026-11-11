@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -25,6 +26,9 @@ public class TutorialHUD : MonoBehaviour
     private GameObject FocusUI;
     private Transform PreviousParent;
     [SerializeField] private Transform SubParent;
+    bool isFTUTListTXt;
+    int dialogidx;
+    List<string> dialoglist;
     public void SetTutorialHUD(string _dialog, Action _callback, bool isclose = false)//used for dialog
     {
         this.gameObject.SetActive(true);
@@ -34,6 +38,25 @@ public class TutorialHUD : MonoBehaviour
         isLerpActive = false;
         OnClickCallBack = () =>
         {
+            isLerpActive = false;
+            _callback();
+            if (isclose)
+                CloseTutorial();
+        };
+    }
+    public void SetTutorialHUD(List<string> _dialog, Action _callback, bool isclose = false)//used for dialog
+    {
+        isFTUTListTXt=true;
+        dialogidx=0;
+        this.gameObject.SetActive(true);
+        MaskImg.gameObject.SetActive(false);
+        dialoglist = new List<string>(_dialog);
+        DialogText.text = dialoglist[dialogidx];
+        DialogParent.SetActive(true);
+        isLerpActive = false;
+        OnClickCallBack = () =>
+        {
+            isFTUTListTXt = false;
             isLerpActive = false;
             _callback();
             if (isclose)
@@ -73,7 +96,7 @@ public class TutorialHUD : MonoBehaviour
         DialogParent.SetActive(true);
         isLerpActive = false;
         childposition=focusUI.gameObject.transform.GetSiblingIndex();
-
+        OnClickCallBack = delegate { };
         PreviousParent = focusUI.gameObject.transform.parent;
         focusUI.transform.SetParent(SubParent);
         FocusUI=focusUI;
@@ -86,7 +109,17 @@ public class TutorialHUD : MonoBehaviour
     }
     public void OnClick()
     {
-        OnClickCallBack();
+        GameMusicNSoundsDNDL.Instance.playClickSFX();
+        if (isFTUTListTXt&&dialogidx<dialoglist.Count-1)
+        {
+            dialogidx++;
+            DialogText.text = dialoglist[dialogidx];
+        }
+        else
+        {
+            //isFTUTListTXt=false;
+            OnClickCallBack();
+        }
     }
     public void CloseTutorial()
     {

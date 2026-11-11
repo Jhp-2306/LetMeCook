@@ -301715,7 +301715,9 @@ MonoBehaviour:
   HrsHand: {fileID: 1410591617}
   MinHand: {fileID: 89369062}
   animationtimer: 1.3
-  HUD: {fileID: 0}
+  parentObj: {fileID: 0}
+  InitPosition: {x: 0, y: 0, z: 0}
+  FinalPosition: {x: 0, y: 0, z: 0}
 --- !u!114 &506842178
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -307560,6 +307562,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f2ca9da2ffd7de42bf03ceeec62b3ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Hud: {fileID: 0}
+  _Slider: {fileID: 0}
+  Timertxt: {fileID: 0}
 --- !u!65 &516325181
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -330299,8 +330304,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   equipmentType: 10
   LookAtMe: {fileID: 1968025330}
+  ActiveGridPositions: []
   Tag: 0
   Data: {fileID: 0}
+  CellSize: 2
+  isGizmos: 0
+  PreSpawn: 0
+  Level: 0
 --- !u!65 &557477452
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -337782,6 +337792,7 @@ MonoBehaviour:
   Row2: {fileID: 1928313445}
   Row3: {fileID: 1831415666}
   Items: []
+  Slots: {fileID: 0}
 --- !u!1 &574643745
 GameObject:
   m_ObjectHideFlags: 0
@@ -435866,9 +435877,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 10
+  Speedcurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   turnSpeed: 200
   turnDst: 0.3
   stoppingDst: 0.001
+  isPlayerMoving: 0
+  walkFXs: {fileID: 0}
+  SpeeedAnimationTimer: 0
 --- !u!136 &744489207
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -568272,6 +568292,15 @@ MonoBehaviour:
   SafeAreaMin: {fileID: 2032275620}
   SafeAreaMax: {fileID: 1404203711}
   _cam: {fileID: 963194227}
+  Zoomval: 0
+  ZoomCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  checkval: 0
+  offset: {x: 0, y: 0, z: 0}
 --- !u!4 &969436853
 Transform:
   m_ObjectHideFlags: 0
@@ -569162,6 +569191,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f2ca9da2ffd7de42bf03ceeec62b3ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Hud: {fileID: 0}
+  _Slider: {fileID: 0}
+  Timertxt: {fileID: 0}
 --- !u!65 &970552236
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -605084,7 +605116,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1036840855
 Transform:
   m_ObjectHideFlags: 0
@@ -802706,13 +802738,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ButtonText: {fileID: 1786667569}
+  HoldButtonText: {fileID: 0}
   InventoryUIObj: {fileID: 574417968}
   inventoryUI: {fileID: 574417971}
+  purplebtn: {fileID: 0}
+  cyanbtn: {fileID: 0}
+  btnmask: {fileID: 0}
+  ClickInfo: {fileID: 0}
   Fill: {fileID: 1515204079}
   ProgressValueTXT: {fileID: 688856608}
   ProgressParent: {fileID: 1212713148}
   HoldFiller: {fileID: 126942258}
   HoldUI: {fileID: 381824903}
+  HoldInfo: {fileID: 0}
+  HoldDuration: 2.4
 --- !u!114 &1380534856
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -829692,17 +829731,30 @@ MonoBehaviour:
   - {fileID: 2083624684}
   - {fileID: 2082961127}
   ItemList: {fileID: 11400000, guid: 5578ca1c84ac24b42acb321d9238737c, type: 2}
+  FurnitureItemList: {fileID: 0}
   Navmesh: {fileID: 1527160755}
   AINavmesh: {fileID: 0}
   Stovebook:
     _RecipeBook: {fileID: 0}
     _recipes: []
-  book:
-    _RecipeBook: {fileID: 11400000, guid: 6239b6afd7c91084d80d28f678b612b6, type: 2}
+  plateBook:
+    _RecipeBook: {fileID: 0}
+    _recipes: []
+  FryerBook:
+    _RecipeBook: {fileID: 0}
     _recipes: []
   KitchenArea: []
   RoomArea: []
   CurrentArea: 0
+  SaveSpawnerParent: {fileID: 0}
+  CurrentDaysDishes: 
+  isFTUT: 0
+  FTUT_Pc: {fileID: 0}
+  FTUT_MarketAppIcon: {fileID: 0}
+  RoomDoor: {fileID: 0}
+  RoomDoorEntryPoint: {fileID: 0}
+  isDoorCallbackFlag: 0
+  isPhase3done: 0
 --- !u!4 &1432052785
 Transform:
   m_ObjectHideFlags: 0
@@ -829750,6 +829802,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_gameTimer: 1
   IRLMinsForInGameDay: 1
+  m_phase: 0
   isRoaminghrs: 0
 --- !u!114 &1432052788
 MonoBehaviour:
@@ -829797,6 +829850,9 @@ MonoBehaviour:
   RightSide: []
   DoorEntryPosition: {fileID: 0}
   DoorExitPosition: {fileID: 0}
+  AiTrafficParameters: []
+  CurrentAICount: 0
+  TotalOrderDone: 0
 --- !u!114 &1432052790
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -829824,9 +829880,13 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 17160865132d37b4698292f011c0d801, type: 2}
   - {fileID: 11400000, guid: 47fdfd68f3ea1dd428632b5ef047bf9a, type: 2}
   - {fileID: 11400000, guid: ffcdb7c5e6f81d0489afbc2341ced475, type: 2}
+  EquipmentPrefab: []
   iconMissing: {fileID: 0}
   itemPrefab: {fileID: 435855150258446101, guid: 5fceec9fe92fc544b87317a01d852d17, type: 3}
   PlatesPrefab: {fileID: 0}
+  isAddressableLoaded: 0
+  TMPLockedMaterial: {fileID: 0}
+  IconLockedMaterial: {fileID: 0}
 --- !u!114 &1432052791
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -829839,6 +829899,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41b6a2df72b5af246a4d28ae392412ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ParentHUD: {fileID: 0}
   interactionBTN: {fileID: 1380534855}
   ToastGameObject: {fileID: 1999768542}
   ToastMsg: {fileID: 1248206424}
@@ -829846,7 +829907,24 @@ MonoBehaviour:
   ShopUI: {fileID: 448741532}
   ShopButton: {fileID: 1695890128}
   CameraSettingButton: {fileID: 287348548}
+  tutorialhud: {fileID: 0}
   MiniGame: {fileID: 94299009}
+  PcParent: {fileID: 0}
+  ApplicationScreenParent: {fileID: 0}
+  NewsApplicationScreen: {fileID: 0}
+  StatsApplicationScreen: {fileID: 0}
+  MarketApplicatinScreen: {fileID: 0}
+  MarketApplicationHomePageScreen: {fileID: 0}
+  MarketApplicationCheckoutPageScreen: {fileID: 0}
+  UpgradeApplicationScreen: {fileID: 0}
+  BlackApplicationScreen: {fileID: 0}
+  PerksystemApplicationScreen: {fileID: 0}
+  ProficiencyApplicationScreen: {fileID: 0}
+  ApplicationTitle: {fileID: 0}
+  CurrencyCounter: {fileID: 0}
+  BillUi: {fileID: 0}
+  dishSelectorUI: {fileID: 0}
+  Stars: []
 --- !u!1 &1432059327
 GameObject:
   m_ObjectHideFlags: 0
@@ -882827,6 +882905,8 @@ MonoBehaviour:
   m_GridSize: {x: 30, y: 30}
   file_name: Nav_mesh
   gridOffset: {x: 0, y: 0, z: 0}
+  isAI: 0
+  AiObst: {fileID: 0}
 --- !u!4 &1527160756
 Transform:
   m_ObjectHideFlags: 0
@@ -1238529,8 +1238609,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   equipmentType: 0
   LookAtMe: {fileID: 8639455489541468172}
+  ActiveGridPositions: []
   Tag: 0
   Data: {fileID: 0}
+  CellSize: 2
+  isGizmos: 0
+  PreSpawn: 0
+  Level: 0
   Slots: []
   Progress: {fileID: 7656298924489804143}
   RedZone: {fileID: 2874775116185271254}
@@ -1238545,7 +1238630,12 @@ MonoBehaviour:
   HUD: {fileID: 8657989526846391491}
   ProgressbarHUD: {fileID: 4048294531244822670}
   SlotsHUD: {fileID: 4282911507023531815}
-  DoneHUD: {fileID: 0}
+  itemHolder_grayScale: {fileID: 0}
+  NormalVFX: {fileID: 0}
+  BurnedVFX: {fileID: 0}
+  Red: {r: 0, g: 0, b: 0, a: 0}
+  Blue: {r: 0, g: 0, b: 0, a: 0}
+  Green: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1001 &8944276914614136224
 PrefabInstance:
   m_ObjectHideFlags: 0

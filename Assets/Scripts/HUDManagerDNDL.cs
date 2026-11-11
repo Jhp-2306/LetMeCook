@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using Util;
 
 public class HUDManagerDNDL : Singletonref<HUDManagerDNDL>
@@ -74,6 +75,8 @@ public class HUDManagerDNDL : Singletonref<HUDManagerDNDL>
     public void Init()
     {
         ParentHUD.SetActive(true);
+        ToastGameObject.SetActive(true);
+        ToastGameObject.SetActive(false);
         OnCameraSettingButtonClicked();
     }
 
@@ -163,8 +166,11 @@ public class HUDManagerDNDL : Singletonref<HUDManagerDNDL>
     IEnumerator ShowToast(float maxTimer, string msg)
     {
         var timer = 0f;
-        ToastGameObject.SetActive(true);
+        //ToastGameObject.SetActive(true);
+        //ToastGameObject.SetActive(false);
+        //yield return new WaitForSeconds(0.25f);
         ToastMsg.text = msg;
+        ToastGameObject.SetActive(true);
         while (timer <= maxTimer)
         {
             yield return null;
@@ -193,9 +199,14 @@ public class HUDManagerDNDL : Singletonref<HUDManagerDNDL>
         ApplicationTitle.text = $"{application.ToString()}";
         switch (application)
         {
-            case PC_Application.News: NewsApplicationScreen.SetActive(Activate); break;
-            case PC_Application.Stats: StatsApplicationScreen.SetActive(Activate); break;
+            case PC_Application.News: NewsApplicationScreen.SetActive(Activate);
+                NewsApplicationScreen.GetComponent<Pc_NewsPage>().init();
+                break;
+            case PC_Application.Stats: StatsApplicationScreen.SetActive(Activate);
+                StatsApplicationScreen.GetComponent<Pc_StatsPage>().init();
+                break;
             case PC_Application.Market: MarketApplicatinScreen.SetActive(Activate);
+                if(Activate)
                 MarketApplicatinScreen.GetComponent<Pc_Market>().Init();
                 break;
             case PC_Application.Upgrade: 
@@ -207,8 +218,9 @@ public class HUDManagerDNDL : Singletonref<HUDManagerDNDL>
                 //UpgradeApplicationScreen.GetComponent<Pc_UpgradeWindow>().init();
                 break;
             case PC_Application.Recipe:
+                ProficiencySystem.Instance.RefreshProficiency();
                 ProficiencyApplicationScreen.SetActive(Activate);
-                //UpgradeApplicationScreen.GetComponent<Pc_UpgradeWindow>().init();
+                //ProficiencyApplicationScreen.GetComponent<Pr>().init();
                 break;
             case PC_Application.Black_Market:
                 BlackApplicationScreen.SetActive(Activate);
@@ -226,6 +238,14 @@ public class HUDManagerDNDL : Singletonref<HUDManagerDNDL>
         
         SetApplicationScreen((PC_Application)currentApplications, false);
     }
+    public void GotoYoutubePage()
+    {
+        SocialConnectManagerDNDL.Instance.OpenYouTube();
+    }
+    public void GotoTwichPage()
+    {
+        SocialConnectManagerDNDL.Instance.OpenTwitch();
+    }
     #endregion
 
     #region Tutorial HUD
@@ -234,6 +254,11 @@ public class HUDManagerDNDL : Singletonref<HUDManagerDNDL>
     {
         tutorialhud.SetTutorialHUD(_dialog, _callback,isclose);
        
+    }
+    public void SetTutorialHUD(List<string> _dialog, Action _callback, bool isclose = false)
+    {
+        tutorialhud.SetTutorialHUD(_dialog, _callback, isclose);
+
     }
     public void SetTutorialHUD(Transform position, Action _callback, bool isclose = false, bool isUI = false)
     {
@@ -260,14 +285,24 @@ public class HUDManagerDNDL : Singletonref<HUDManagerDNDL>
     }
     #endregion
 
-    public List<GameObject> Stars;
+    public List<Image> Stars;
     public void SetStarsVisual()
     {
         var stars=GameDataDNDL.Instance.GetStars();
+        int idx = 0;
         foreach (var star in Stars) { 
+            if(Stars.IndexOf(star) < stars)
+            {
             star.gameObject.SetActive(Stars.IndexOf(star)<stars);
+
+            }
+            if (Stars.IndexOf(star) == stars)
+            {
+                //get the star progress
+            }
         
         }
+       
     }
 
     public void ShowDishSelector()
@@ -279,4 +314,9 @@ public class HUDManagerDNDL : Singletonref<HUDManagerDNDL>
         interactionBTN.hideButtons();
     }
 
+    public void openSetting()
+    {
+        GameMusicNSoundsDNDL.Instance.playClickSFX();
+        SettingDNDL.Instance.OpenSettings();
+    }
 }

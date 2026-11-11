@@ -26,10 +26,12 @@ namespace HandHeld
             //AddBoxItem(new RefrigeratorItems(IngredientType.Chicken, 2));
             //AddBoxItem(new RefrigeratorItems(IngredientType.Carrot, 7));
             //AddBoxItem(new RefrigeratorItems(IngredientType.BurgerBun, 8));
+           
         }
 
         public void init(int cap, float timerInSec)
         {
+            
             if (storageSystem == null)
             {
                 storageSystem = new BasicStorageSystem<IStorageItem>(cap);

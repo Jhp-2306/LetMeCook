@@ -13,18 +13,25 @@ public class Pc_UpgradeWindow_Slider : MonoBehaviour
 
     private string id;
     private int _lvl;
-    public void SetUp(string name,int level,string _id/*,Sprite icon*/)
+    public void SetUp(string name, int level, string _id, string icon, List<string> Des, int maxlevel)
     {
         id = _id;
-        NameTxt.text = name;
-       // Icon.sprite = icon;
-       _lvl= level;
-        LvlTxt.text = $"Level {_lvl+1}";
+        _lvl = level;
+        NameTxt.text = string.Format(name, _lvl == maxlevel - 1 ? "<color=red>Max</color>" : _lvl + 1);
+        Icon.sprite = AssetLoader.Instance.GetIcons(icon);
+        LvlTxt.text = _lvl == maxlevel - 1 ? "<color=red>Max</color>" : Des[_lvl+1];
         upgradeBtn.onClick.RemoveAllListeners();
-        upgradeBtn.onClick.AddListener(delegate () {
-            _lvl++;
-            LvlTxt.text = $"Level {_lvl + 1}";
-            GameDataDNDL.Instance.LevelUpCallback(id,_lvl); });
+        upgradeBtn.onClick.AddListener(delegate ()
+        {
+            if (_lvl < maxlevel - 1)
+            {
+                _lvl++;
+                NameTxt.text = string.Format(name, _lvl == maxlevel - 1 ? "<color=red>Max</color>" : _lvl + 1);
+                LvlTxt.text = _lvl == maxlevel - 1 ? "<color=red>Max</color>" : Des[_lvl + 1];
+                GameDataDNDL.Instance.LevelUpCallback(id, _lvl);
+            }
+
+        });
     }
 
     public void onClick()

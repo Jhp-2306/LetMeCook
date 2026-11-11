@@ -1,11 +1,9 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Constants;
-using UnityEngine.UI;
-using Unity.VisualScripting;
 using JetBrains.Annotations;
+
 
 [Serializable]
 public class SaveData
@@ -31,20 +29,24 @@ public class SaveData
         }
     }
 
-    public PresistenUserData userData;
+    public PresistenUserData userPresistedData;
     public UserDataLocal LocalData;
     public SaveDataType<SaveDataTemplate> saveDataType;
     public void Init()
     {
         LocalData = new UserDataLocal();
         saveDataType = new SaveDataType<SaveDataTemplate>();
-
+        userPresistedData = new PresistenUserData();
         Debug.Log("Init on SaveData");
     }
     public void NewGameSaveData()
     {
         LocalData = new UserDataLocal();
         saveDataType = new SaveDataType<SaveDataTemplate>();
+        if (userPresistedData.prestigePerk.Count > 0)
+        {
+            LocalData.Perkdata = userPresistedData.prestigePerk;
+        }
         SaveInstance();
     }
     public bool SaveInstance()
@@ -59,6 +61,7 @@ public class SaveData
             Debug.Log($"check {t.LocalData == null},{LocalData == null}{t.saveDataType.GetAllTheData().Count}");
             LocalData = t.LocalData;
             saveDataType = t.saveDataType;
+            userPresistedData = t.userPresistedData;
             return true;
         }
         catch (Exception e)
@@ -67,8 +70,6 @@ public class SaveData
             return false;
         }
     }
-
-
 
 }
 /// <summary>
@@ -79,13 +80,25 @@ public class PresistenUserData
 {
     public string Playername;
     public int PlayerLevel;
-    public PresistenUserData() { }
+
+    public Dictionary<perkSystem_Value, int> prestigePerk;
+    public Dictionary<int, int> GameUserStats;
+    public Dictionary<Dishes, int> DishesXP;
+    public PresistenUserData()
+    {
+        prestigePerk = new Dictionary<perkSystem_Value, int>();
+        GameUserStats = new Dictionary<int, int>();
+        DishesXP=new Dictionary<Dishes, int>();
+    }
     public PresistenUserData(PresistenUserData copydata)
     {
         Playername = copydata.Playername;
         PlayerLevel = copydata.PlayerLevel;
+        prestigePerk = copydata.prestigePerk;
+        GameUserStats = copydata.GameUserStats;
     }
 }
+
 /// <summary>
 /// this data will GET Deleted when loading a new save
 /// </summary>
@@ -93,7 +106,7 @@ public class PresistenUserData
 public class UserDataLocal
 {
     public int CurrencyAmount;
-    public int Stars;
+    public int StarsXP;
     public int Day;
     public int Time;
     public bool isNGDataSet;
@@ -117,7 +130,7 @@ public class UserDataLocal
         StartTime = copydata.StartTime;
         GameCloseTime = copydata.GameCloseTime;
         CurrentTime = copydata.CurrentTime;
-        Stars = copydata.Stars;
+        StarsXP = copydata.StarsXP;
         Perkdata = copydata.Perkdata;
         ingredientsUnlocked = copydata.ingredientsUnlocked;
     }

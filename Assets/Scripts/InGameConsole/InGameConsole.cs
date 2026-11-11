@@ -115,6 +115,13 @@ public class InGameConsole : MonoBehaviour
                 NPCManager.Instance.IGC_NPC_ROAMING();
             })
         },
+         {
+            "Request_NPC",
+            new ConsoleCommand( "Request_NPC", "NPC Request", args =>
+            {
+                NPCManager.Instance.RequestFTUTNPC();
+            })
+        },
         {
             IGCCommands.UpdateASPFGrid,
             new ConsoleCommand(IGCCommands.UpdateASPFGrid, "update the NaveMesh A*path Data", args =>
@@ -191,6 +198,21 @@ public class InGameConsole : MonoBehaviour
                 TimeManagementDNDL.Instance.TesterTool_SetIRLMinsForInGameDay(int.Parse(args[1]));
             })
         },
+         {
+            "ShowRewardedADs",
+            new ConsoleCommand("ShowRewardedADs", "shows in game rewarded ADs", args =>
+            {
+                AdManagerDNDL.Instance.ShowAds(()=>{SendMsg("Ad successful");},()=>{SendMsg("Ad Failed");});
+            })
+        },
+
+         {
+            "UnlockAllDishes",
+            new ConsoleCommand("UnlockAllDishes", "Unlocks all the dishes", args =>
+            {
+                //AdManagerDNDL.Instance.ShowAds(()=>{SendMsg("Ad successful");},()=>{SendMsg("Ad Failed");});
+            })
+        },
     };
     }
     public virtual void ProcessCommand()
@@ -223,6 +245,12 @@ public class InGameConsole : MonoBehaviour
 
     public GameObject SliderPrefab;
     public TMPro.TMP_InputField input_Field;
+    [SerializeField] private TMP_Text fpsText;
+    [SerializeField] private float updateInterval = 0.5f;
+
+    private float timer;
+    private int frames;
+    private float fps;
 
     public GameObject ParentforText;
 
@@ -248,70 +276,25 @@ public class InGameConsole : MonoBehaviour
         input_Field.onValueChanged.AddListener(OnInputChanged);
         //StartCoroutine(InitMsg());
     }
+    private void Update()
+    {
+        frames++;
+        timer += Time.unscaledDeltaTime;
 
-    //IEnumerator InitMsg()
-    //{
-    //    SendMsg("Setting up...");
-    //    yield return new WaitForSeconds(10);
-    //    SendMsg("Welcome world");
-    //}
+        if (timer >= updateInterval)
+        {
+            fps = frames / timer;
 
-    //public void ProcessCommand()
-    //{
-    //    if (input_Field.text != null)
-    //    {
-    //        char[] spliter = { ' ', };
-    //        string[] Processedtext=input_Field.text.Split(spliter);
-    //        string commandKey = Processedtext[0];
-    //        switch (commandKey)
-    //        {
-    //            case IGCCommands.Fsave:
-    //                ExecuteCommand("Force Save", () => { GameSaveDNDL.Instance.ForceSave(); });
-    //                break;
-    //            case IGCCommands.NewGame:
-    //                ExecuteCommand( "New Game", () => { GameSaveDNDL.Instance.NewGame();
-    //                    SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-    //                });
-    //                break;
-    //            case IGCCommands.GetCustomer:
-    //                ExecuteCommand(IGCCommands.GetCustomer, () => { NPCManager.Instance.IGC_Get_NPC_Customer(); });
-    //                break;
-    //            case IGCCommands.KickCustomer:
-    //                ExecuteCommand(IGCCommands.KickCustomer, () => { NPCManager.Instance.IGC_NPC_Back_Roaming(int.Parse(Processedtext[1])); });
-    //                break;
-    //            case IGCCommands.Npc_Roaming:
-    //                ExecuteCommand(IGCCommands.Npc_Roaming, () => { NPCManager.Instance.IGC_NPC_ROAMING(); });
-    //                break;
-    //            case IGCCommands.UpdateASPFGrid:
-    //                ExecuteCommand(IGCCommands.UpdateASPFGrid, () => { ASPF.updateGrid(); });
-    //                break;
-    //            case IGCCommands.CreateASPFGrid:
-    //                ExecuteCommand(IGCCommands.CreateASPFGrid, () => { ASPF.CreateGrid(); });
-    //                break;
-    //            case IGCCommands.help:
-    //                ExecuteCommand(IGCCommands.help, () => { foreach (var t in IGCCommands.CommandsList) SendMsg(t); });
-    //                break;
-    //            default:
-    //                SendMsg($"Failed to execute: Wrong command {input_Field.text}");
-    //                break;
-    //        }
+            if (fpsText != null)
+            {
+                fpsText.text = $"{fps:0}";
+            }
 
-    //    }
-    //}
-
-    //void ExecuteCommand(string commandname,Action method)
-    //{
-    //    SendMsg($"Executing {commandname}");
-    //    try
-    //    {
-    //        method();
-    //        SendMsg($"Executed {commandname}");
-    //    }
-    //    catch
-    //    {
-    //        SendMsg($"Failed to execute {commandname}");
-    //    }
-    //}
+            frames = 0;
+            timer = 0f;
+        }
+    }
+    
 
     public void ConsoleOpenCloseControleClicked()
     {

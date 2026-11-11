@@ -29,10 +29,13 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
 
     public List<InteractiveBlock> TableObjects;
     public SO_EquipmentDataList ItemList;
+    public SO_EquipmentDataList FurnitureItemList;
+
     public ASPFGrid Navmesh;
     public ASPFGrid AINavmesh;
     public RecipeBook Stovebook;
-    public RecipeBook book;
+    public RecipeBook plateBook;
+    public RecipeBook FryerBook;
 
     public List<GameObject> KitchenArea, RoomArea;
     public PlayableAreas CurrentArea;
@@ -54,7 +57,12 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
 
     public List<Dishes> CurrentDaysDishes;
 
-    
+    public List<Dishes> GetUnlockedDishes
+    {
+        get =>
+            ProficiencySystem.Instance.getUnlockDish();
+    }
+
 
     #region Init
     private void Awake()
@@ -71,7 +79,8 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
         Navmesh.Init();
         AINavmesh.Init();
         Stovebook.init();
-        book.init();
+        plateBook.init();
+        FryerBook.init();
     }
     private void OnApplicationQuit()
     {
@@ -103,6 +112,8 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
         }
         m_UserDataLocal.ingredientsUnlocked.Add(IngredientType.Tomato);
         upgradableObjects = new Dictionary<string, ObjectLevelDetails>();
+
+        //All the save Data and pre init-here-
         PerkSystemManager.Instance.init();
         ProficiencySystem.Instance.init();
 
@@ -159,7 +170,14 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
         GameSaveDNDL.Instance.NewGame();
         NewSaveSetup();
         if (!DisableFTUT)
-            StartCoroutine(WaitForState(isGamePlay, FTUT_Phase1));
+        {
+            StartCoroutine(WaitForState(isGamePlay, FTUT_Phase1)); //Main Line Of code
+
+            //Testing Line
+            //StartCoroutine(WaitForState(isGamePlay,()=> { 
+            //    isFTUT=true;
+            //    FTUT_Phase5(); }));
+        }
         //FTUT_Phase1();
     }
     void BeforeSaving()
@@ -200,9 +218,86 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
     }
     public int GetStars()
     {
-        return m_UserDataLocal.Stars;
+        var xp = m_UserDataLocal.StarsXP;
+        if (xp < 100)
+        {
+            return 1;
+        }
+        if (xp < 200)
+        {
+            return 2;
+        }
+        if (xp < 800)
+        {
+            return 3;
+        }
+        if (xp < 1600)
+        {
+            return 4;
+        }
+        if (xp >= 1600)
+        {
+            return 5;
+        }
+        return 0;
     }
-    public int GetDifficultyBonus()
+    public void AddStarXP(float Rating)
+    {
+        var stars = GetStars();
+        switch (Rating)
+        {
+            case 3:
+                m_UserDataLocal.StarsXP += 25;
+                break;
+            case 2.5f:
+                m_UserDataLocal.StarsXP += stars >= 5 ? 22 : 17;
+                break;
+            case 2:
+                m_UserDataLocal.StarsXP += stars >= 5 ? 20 : 15;
+                break;
+            case 1.5f:
+                m_UserDataLocal.StarsXP += stars >= 5 ? 15 : 12;
+                break;
+            case 1:
+                m_UserDataLocal.StarsXP += stars >= 5 ? 12 : 10;
+                break;
+            case 0.5f:
+                m_UserDataLocal.StarsXP += stars >= 5 ? 5 : 2;
+                break;
+            case 0:
+                switch (stars)
+                {
+                    case 0:
+                        
+                        break;
+                    case 1:
+                        m_UserDataLocal.StarsXP -= 1;
+                        break;
+                    case 2:
+                        m_UserDataLocal.StarsXP -= 10;
+                        break;
+                    case 3:
+                        m_UserDataLocal.StarsXP -= 12;
+                        break;
+                    case 4:
+                        m_UserDataLocal.StarsXP -= 15;
+                        break;
+                    case 5:
+                        m_UserDataLocal.StarsXP -= 17;
+                        break;
+                    default: break;
+                }
+                break;
+        }
+        
+    }
+    public float fillRate()
+    {
+        var star = GetStars();
+        //Finish here
+        return 0;
+    }
+    private int GetDifficultyBonus()
     {
         var stars = GetStars();
         switch (stars)
@@ -213,7 +308,6 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
             case 3: return 2;
             case 4: return 3;
             case 5: return 4;
-            case 6: return 5;
             default: return 1;
         }
     }
@@ -230,6 +324,7 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
         {
             if (!m_UserDataLocal.ingredientsUnlocked.Contains(type))
             {
+                Debug.Log($"Adding,,,,{type} ");
                 m_UserDataLocal.ingredientsUnlocked.Add(type);
             }
         }
@@ -296,10 +391,17 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
 
     public List<Recipes> GetAllThePossibleDishes(List<ProcedureStep> procedureStep)
     {
-        var dishes = book.GetAllThePossibleDishes(procedureStep);
+        var dishes = plateBook.GetAllThePossibleDishes(procedureStep);
         return dishes;
     }
-
+    public Dishes GetFryerDish(ProcedureStep procedureSteps)
+    {
+        return FryerBook.GetDishes(new List<ProcedureStep> { procedureSteps, });
+    }
+    public float GetFryerDishPrice(Dishes dish)
+    {
+        return FryerBook.GetPrice(dish);
+    }
     //Open Selection panel
     public void SelectDish()
     {
@@ -309,7 +411,7 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
     }
     public void StartTheDay(List<Dishes> CurrentSelected)
     {
-        CurrentDaysDishes=CurrentSelected;
+        CurrentDaysDishes = CurrentSelected;
         m_GameState = GameState.PlayGame;
     }
 
@@ -336,12 +438,18 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
     [Space(10)]
     [Header("FTUT")]
     public bool isFTUT;
-    public bool DisableFTUT;
+    public bool DisableFTUT { get => SettingDNDL.Instance.FTUT; }
     private GameObject FTUT_Refrigerator;
     private GameObject FTUT_ChoppingBoard;
     private GameObject FTUT_Stove;
     private GameObject FTUT_PlateTray;
+    [SerializeField] private GameObject FTUT_Pc;
+    [SerializeField] private GameObject FTUT_MarketAppIcon;
+
     private NPC.NPC FTUT_Npc;
+    [SerializeField] private GameObject RoomDoor;
+    [SerializeField] private GameObject RoomDoorEntryPoint;
+    public bool isDoorCallbackFlag;
     public void NewSaveSetup()
     {
         //Set Refrigerator
@@ -362,6 +470,7 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
     //First Time User Tutorial
     void FTUT_Phase1()
     {
+        if (DisableFTUT) return;
         isFTUT = true;
         ///Part 1
         //Start with intro msg
@@ -493,15 +602,10 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
                                 {
                                     HUDManagerDNDL.Instance.SetTutorialHUD("wow you earned some currency", () =>
                                     {
-                                        //Move Cam to PC
-                                        // Part 2 Ftut Starts
-                                        ///Part 2
-                                        //use the money in the room to purchase ingredient
-                                        //player level msg
-                                        //restarunt Rating msg
-                                        //day end Bills
-                                        ///------
-                                    }, true);
+
+                                        FTUT_Phase5();
+
+                                    });
                                 });
                             });
                         });
@@ -509,6 +613,63 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
                 });
             });
         });
+    }
+    void FTUT_Phase5()
+    {
+        //Move the Player To the Room
+        HUDManagerDNDL.Instance.SetTutorialHUD("now Move to Your Room", () =>
+        {
+            InputManager.Instance.DisablePlayerMovement(true);
+            //Move Cam to Room Enteranc
+            InputManager.Instance._cameraControle.SetTarget(RoomDoor, () =>
+            {
+                InputManager.Instance.DisablePlayerMovement(false);
+                HUDManagerDNDL.Instance.SetTutorialHUD(RoomDoor.transform, () =>
+                {
+                    InputManager.Instance._cameraControle.SetTarget(GetPlayer().gameObject);
+                    var pos = GetGrid().GetRoundAnchorPositionFromWorldPosition(RoomDoor.transform.position);
+                    isDoorCallbackFlag = true;
+                    InputManager.Instance.FTUT_MovePlayer(pos, () =>
+                    {
+
+
+                    });
+                    InputManager.Instance.DisablePlayerMovement(true);
+                }, true);
+            });
+        }, true);
+    }
+    public void FTUT_Phase6()
+    {
+        HUDManagerDNDL.Instance.SetTutorialHUD(FTUT_Pc.transform, () =>
+        {
+            InputManager.Instance.FTUT_MovePlayer(FTUT_Pc.GetComponent<InteractiveBlock>(), () =>
+            {
+                //StartCoroutine(DelayInvoke(0.75f, () => { 
+                //}));
+                HUDManagerDNDL.Instance.SetTutorialHUD(InputManager.Instance.Interactionbtn.transform, () =>
+                {
+                    InputManager.Instance.Interactionbtn.InvokeClick();
+                    HUDManagerDNDL.Instance.SetTutorialHUD(new List<string>() { "This Your Computer Where you have different apps which will help you grow",
+                        "Now Let Buy Some Ingredients" }, () =>
+                    {
+                        HUDManagerDNDL.Instance.SetTutorialHUD("Open Market App", FTUT_MarketAppIcon, () =>
+                        {
+                            //HUDManagerDNDL.Instance.TutorialHUDDisableFocus();
+                            //HUDManagerDNDL.Instance.SetTutorialHUD("Add 1xCarrot, 1xTomato, 1xOnion", () =>
+                            //{
+
+                            //});
+                        });
+
+                    });
+                }, false, true);
+            });
+        });
+    }
+    public void FTUT_Phase7()
+    {
+
     }
     #endregion
 
@@ -518,6 +679,14 @@ public class GameDataDNDL : Singletonref<GameDataDNDL>
         var trigger = false;
         //while (!trigger) { 
         yield return new WaitUntil(condition);
+        callback();
+        //}
+    }
+    public IEnumerator DelayInvoke(float delaysec, Action callback)
+    {
+        //var trigger = false;
+        //while (!trigger) { 
+        yield return new WaitForSeconds(delaysec);
         callback();
         //}
     }

@@ -6,7 +6,8 @@ public class Pc_PerkSystemWindow_Slider_Button : MonoBehaviour
 {
     public perkSystem_Value Value;
     public int Rank;
-    
+    public Image icon;
+    public Image badge;
     
     public bool isNeededUnlock()=> PerkSystemManager.Instance.GetCurrentRankforValue(Value)+1==Rank /*&& PerkSystemManager.Instance.GetCurrentRankforValue(Value)<= Rank*/;
     public bool isUnlocked()=> /*PerkSystemManager.Instance.GetCurrentRankforValue(Value)+1==Rank /*&&*/ PerkSystemManager.Instance.GetCurrentRankforValue(Value)<= Rank;

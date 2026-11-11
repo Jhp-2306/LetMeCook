@@ -18,14 +18,20 @@ MonoBehaviour:
   Type: 2
   upgradeData:
   - Upgrades:
-    - ValueDes: Perfect Width Size
+    - ValueDes: Perfect Width Size Increase <color=green> {0} </color>
+      ValueName: 4
+      ValueInPercentage: 0
+  - Upgrades:
+    - ValueDes: Perfect Width Size Increase <color=green> {0} </color>
       ValueName: 4
       ValueInPercentage: 20
   - Upgrades:
-    - ValueDes: Perfect Width Size
+    - ValueDes: Perfect Width Size Increase <color=green> {0} </color>
       ValueName: 4
       ValueInPercentage: 60
   - Upgrades:
-    - ValueDes: Perfect Width Size
+    - ValueDes: Perfect Width Size Increase <color=green> {0} </color>
       ValueName: 4
       ValueInPercentage: 100
+  IconID: Chopping_Board_Icon
+  LevelupgradeDes: Perfect Width Size Increase <color=cyan> {0} </color>

@@ -15,7 +15,7 @@ MonoBehaviour:
   m_DefaultGroup: 0234677e0be8bdd47a87894fc87887fa
   m_currentHash:
     serializedVersion: 2
-    Hash: bd5bf7cd5b761336c6aa5583738d5f6b
+    Hash: 041254adc633a6ce7be12af2c2ee2bd1
   m_OptimizeCatalogSize: 0
   m_BuildRemoteCatalog: 0
   m_CatalogRequestsTimeout: 0
@@ -61,8 +61,10 @@ MonoBehaviour:
   m_overridePlayerVersion: '[UnityEditor.PlayerSettings.bundleVersion]'
   m_GroupAssets:
   - {fileID: 11400000, guid: b50eac0e7c35d2448985a7c448dd74f6, type: 2}
+  - {fileID: 11400000, guid: ece4130370196534cb08096b18a1ab8f, type: 2}
   - {fileID: 11400000, guid: 65b0f8096e96f014daa8911bb5487869, type: 2}
   - {fileID: 11400000, guid: 3c761cbf6f27e594b97cbffdbeae3642, type: 2}
+  - {fileID: 11400000, guid: 3b28a230b3a66f24ca45bad0526c9f32, type: 2}
   m_BuildSettings:
     m_LogResourceManagerExceptions: 1
     m_BundleBuildPath: Temp/com.unity.addressables/AssetBundles
@@ -104,6 +106,7 @@ MonoBehaviour:
     - default
     - Equipments
     - Icons
+    - Locale
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: 7e9b7ba37b2485d40a76e14c370b9cea, type: 2}

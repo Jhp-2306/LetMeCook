@@ -28,7 +28,7 @@ namespace ASPathFinding
         //public GameObject GuiPrefab;
         //public GameObject PrefabGridUIParent;
         public bool isAI;
-        
+        public GameObject AiObst;
         public void Init()
         {
             nodeDiameter = m_PlayerRadius * 2;
@@ -38,18 +38,38 @@ namespace ASPathFinding
             {
                 Debug.Log(CustomLogs.CC_TagLog($"<color=cyan>ASPF Grid</color>", $"Creating New Grid for {gameObject.name}"));
                 CreateGrid();
+                if (isAI)
+                {
+                    AiObst.SetActive(true);
+                    UpdateGrid();
+                    AiObst.SetActive(false);
+                }
             }
             else
             {
                 Debug.Log(CustomLogs.CC_TagLog($"<color=cyan>ASPF Grid</color>", $"Load was Successful for {gameObject.name}"));
                 grid = new ASPFNode[gridSizeX, gridSizeY];
-                if(isAI)
-                grid = (ASPFNode[,])SerializationManager.Load(file_name, Application.dataPath + "/Resources/saves");
-                else
+//                if (isAI)
+//                {
+//#if UNITY_EDITOR
+//                    grid = (ASPFNode[,])SerializationManager.Load(file_name, Application.dataPath + "/Resources/saves");
+//#else
+//                    grid = (ASPFNode[,])SerializationManager.Load(file_name, Application.dataPath + "/Resources/saves");                   
+//#endif
+                    
+//                    Debug.Log(Application.dataPath);
+//                }
+                //else
                 grid = (ASPFNode[,])SerializationManager.Load(file_name);
                 isGridCreated = true;
                 if(!isAI)
                 UpdateGrid();
+                //else
+                //{
+                //    AiObst.SetActive(true);
+                //    UpdateGrid();
+                //    AiObst.SetActive(false);
+                //}
             }
         }
         

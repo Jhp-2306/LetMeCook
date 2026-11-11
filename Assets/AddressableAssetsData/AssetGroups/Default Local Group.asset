@@ -14,61 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_GroupName: Default Local Group
   m_GUID: 0234677e0be8bdd47a87894fc87887fa
-  m_SerializeEntries:
-  - m_GUID: 0f1fc4582f3454944966826a8c36a62d
-    m_Address: Mixing_Bowl_Icon
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Icons
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 39f5e4171f45b37429af64f3a2d99872
-    m_Address: Empty_Tabel_Icon
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Icons
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 41fd89f89ed367240904de6d8104836f
-    m_Address: Stove_Icon
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Icons
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 44707321f7ca2514b91a5450934de398
-    m_Address: Oven_Icon
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Icons
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 7319d3d7ff1355a4182280b9b7647d8d
-    m_Address: Bin_Icon
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Icons
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 9df855989f194cd40b3d63f6cd7a7177
-    m_Address: Platetray_Icon
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Icons
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 9f7d5b50d70c58f4e960d036b0806d14
-    m_Address: Fryer_Icon
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Icons
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: a4a0c0ff7799b3547ad7fc94b7b22d03
-    m_Address: Chopping_Board_Icon
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Icons
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: df738a66af761874bbbf0a2c101ae589
-    m_Address: Refrigerator_Icon
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Icons
-    FlaggedDuringContentUpdateRestriction: 0
+  m_SerializeEntries: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: a836759115da1c24590b8610924c161a, type: 2}
   m_SchemaSet:

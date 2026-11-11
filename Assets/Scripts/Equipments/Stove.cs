@@ -37,6 +37,8 @@ public class Stove : InteractiveBlock
 
     public GameObject NormalVFX;
     public GameObject BurnedVFX;
+    private float lvlUpgradeDurationPercentage;
+    public Color Red, Blue, Green;
     private void Start()//testing purpose
     {
         //Init();
@@ -99,15 +101,15 @@ public class Stove : InteractiveBlock
     public override bool IsInteractionSatisfied()
     {
         //return isInteractable;
-        var player=GameDataDNDL.Instance.GetPlayer();
+        var player = GameDataDNDL.Instance.GetPlayer();
         return (player.isHandsfull && ((player.InHand.IGetType() == typeofhandheld.plate && ((isCooking && !isPicked) || (!isCooking && !isPicked))) ||
             (player.InHand.IGetType() == typeofhandheld.ingredients && isPicked)));//Basic Condition to Add 
-            //||(!player.isHandsfull && Slots.Count > 1);//for start Cooking;
+                                                                                   //||(!player.isHandsfull && Slots.Count > 1);//for start Cooking;
 
     }
     public override bool IsHoldInteractionSatisfied()
     {
-        return !isCooking&&isPicked&& Slots.Count>1;
+        return !isCooking && isPicked && Slots.Count > 1;
     }
     public override string GetInteractableName()
     {
@@ -117,18 +119,8 @@ public class Stove : InteractiveBlock
     {
         if (isCooking && !isPicked)
         {
-            isCooking = false;
-            StopCoroutine(CookingCoroutine);
-            ProgressbarHUD.SetActive(false);
-            switch (dishStatus)
-            {
-                case ProcessStatus.UnderCooked:
-                    TickMark.color = BlueZone.color;
-                    break;
-                case ProcessStatus.OverCooked: TickMark.color = RedZone.color; break;
-                case ProcessStatus.Cooked: TickMark.color = GreenZone.color; break;
-            }
-            TickMark.gameObject.SetActive(true);
+
+            stopStove();
             isPicked = tryPickupDish();
             Debug.Log(CustomLogs.CC_TagLog("Stove", $"Done Cooking Dish-- status{dishStatus}"));
         }
@@ -157,6 +149,21 @@ public class Stove : InteractiveBlock
         }
 
     }
+    void stopStove()
+    {
+        isCooking = false;
+        StopCoroutine(CookingCoroutine);
+        switch (dishStatus)
+        {
+            case ProcessStatus.UnderCooked:TickMark.color = Blue;break;
+            case ProcessStatus.OverCooked: TickMark.color = Red; break;
+            case ProcessStatus.Cooked: TickMark.color = Green; break;
+            case ProcessStatus.Burned: TickMark.color = Red; break;
+        }
+        TickMark.gameObject.SetActive(true);
+        //isPicked = tryPickupDish();
+        Debug.Log(CustomLogs.CC_TagLog("Stove", $"Done Cooking Dish-- status{dishStatus}"));
+    }
 
     public override void OnHold()
     {
@@ -170,16 +177,16 @@ public class Stove : InteractiveBlock
             CurrentcookingdishPrice = GameDataDNDL.Instance.GetStoveDishPrice(Currentcookingdish);
             CurrentcookingdishPriceMulti = GameDataDNDL.Instance.GetStoveDishPriceMulti(Currentcookingdish, Slots);
             var cooktimer = GameDataDNDL.Instance.GetCookingTime(Currentcookingdish);
-            Debug.Log(CustomLogs.CC_TagLog("Stove", $"Start Cooking{Currentcookingdish},{cooktimer},{CurrentcookingdishPrice}{CurrentcookingdishPriceMulti}"));
-            CookingCoroutine = StartCoroutine(StartCooking(cooktimer));
+            Debug.Log(CustomLogs.CC_TagLog("Stove", $"Start Cooking{Currentcookingdish},{cooktimer - (cooktimer * lvlUpgradeDurationPercentage)},{CurrentcookingdishPrice}{CurrentcookingdishPriceMulti}"));
+            CookingCoroutine = StartCoroutine(StartCooking(cooktimer - (cooktimer * lvlUpgradeDurationPercentage)));
             TickMark.gameObject.SetActive(false);
-           
+
             if (isFTUT)
             {
                 Debug.Log(CustomLogs.CC_TagLog("Stove", "init phase 3"));
                 GameDataDNDL.Instance.FTUT_Phase3();
             }
-            
+
         }
         else
         {
@@ -214,6 +221,9 @@ public class Stove : InteractiveBlock
     public void ResetStove()
     {
         Slots = new List<ProcedureStep>();
+        //progress bar
+        ProgressbarHUD.SetActive(false);
+        Progress.fillAmount = 0;
         foreach (var t in SlotsIcon)
         {
             t.sprite = itemHolder_grayScale;
@@ -235,6 +245,7 @@ public class Stove : InteractiveBlock
             case ProcessStatus.Burned:
                 CurrentcookingdishPriceMulti = 1; break;
         }
+        CurrentcookingdishPriceMulti /= 2;
     }
     IEnumerator StartCooking(float maxCookingTime)
     {
@@ -283,6 +294,7 @@ public class Stove : InteractiveBlock
         //Cooking Done
 
         dishStatus = ProcessStatus.Cooked;
+        if (PerkSystemManager.Instance.CheckPerkUnlocked(perkSystem_Value.Auto,0)) stopStove();//Auto Stop for the Perk System
         if (isFTUT)
         {
             if (GameDataDNDL.Instance.isPhase3done)
@@ -296,6 +308,7 @@ public class Stove : InteractiveBlock
                 yield return null;
             }
         }
+
         while (timer < maxCookingTime + beforeOverCookTimer)
         {
             yield return null;
@@ -314,8 +327,9 @@ public class Stove : InteractiveBlock
         dishStatus = ProcessStatus.Burned;
         //Burned food
         NormalVFX.SetActive(false);
-        BurnedVFX.SetActive(true); 
-        isCooking = false;
+        BurnedVFX.SetActive(true);
+        //isCooking = false;
+        stopStove();
     }
 
     bool isFTUT;
@@ -330,7 +344,7 @@ public class Stove : InteractiveBlock
         {
             HUDManagerDNDL.Instance.SetTutorialHUD("Now Hold to Start Cooking", InputManager.Instance.Interactionbtn.gameObject, () =>
                 {
-                    InputManager.Instance.Interactionbtn.AddEventsspc(null,() =>
+                    InputManager.Instance.Interactionbtn.AddEventsspc(null, () =>
                     {
                         HUDManagerDNDL.Instance.TutorialHUDDisableFocus();
 
@@ -338,5 +352,10 @@ public class Stove : InteractiveBlock
                 }
                 );
         });
+    }
+    public override void LoadLevelUpgrades()
+    {
+        var temp = Data.upgradeData[savedata.level];
+        lvlUpgradeDurationPercentage = temp.GetUpgradeValue(E_ValueName.Speed) / 100;
     }
 }

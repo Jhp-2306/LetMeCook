@@ -143,7 +143,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1aad6f853025b8943ac96a6eb0618a96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  equipmentType: 0
+  equipmentType: 13
   LookAtMe: {fileID: 1338087117247379575}
   ActiveGridPositions: []
   Tag: 0
@@ -151,6 +151,7 @@ MonoBehaviour:
   CellSize: 2
   isGizmos: 0
   PreSpawn: 0
+  Level: 0
 --- !u!33 &906244736120853022
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -631,6 +632,7 @@ MonoBehaviour:
   CellSize: 2
   isGizmos: 0
   PreSpawn: 0
+  Level: 0
 --- !u!4 &5739124174708199998 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 02d381d67009ab54c807fe1ec8458bdb, type: 3}

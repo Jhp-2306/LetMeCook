@@ -1,0 +1,11 @@
+lastUpgrade=20100
+proj.pluginVersion=2.1.0
+proj.AppId=589987315193
+and.BundleId=com.fallengames.letmecook
+proj.classDir=Assets
+proj.ConstantsClassName=GPGSIds
+and.ResourceData=%3c%3fxml+version%3d%221.0%22+encoding%3d%22utf-8%22%3f%3e%0a%3c%21--Google+Play+game+services+IDs.+Save+this+file+as+res%2fvalues%2fgames-ids.xml+in+your+project.--%3e%0a%3cresources%3e%0a++%3c%21--app_id--%3e%0a++%3cstring+name%3d%22app_id%22+translatable%3d%22false%22%3e589987315193%3c%2fstring%3e%0a++%3c%21--package_name--%3e%0a++%3cstring+name%3d%22package_name%22+translatable%3d%22false%22%3ecom.fallengames.letmecook%3c%2fstring%3e%0a%3c%2fresources%3e
+and.ClientId=589987315193-e9r7uhp3ala0n1d1bpj8t7hm4qe84qgc.apps.googleusercontent.com
+android.SetupDone=true
+App.NearbdServiceId=com.fallengames.letmecook
+android.NearbySetupDone=true

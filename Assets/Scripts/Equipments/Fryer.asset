@@ -18,14 +18,20 @@ MonoBehaviour:
   Type: 5
   upgradeData:
   - Upgrades:
-    - ValueDes: Cooking Time
+    - ValueDes: Cooking Time Reduced <color=red> {0} </color>
+      ValueName: 1
+      ValueInPercentage: 0
+  - Upgrades:
+    - ValueDes: Cooking Time Reduced <color=red> {0} </color>
       ValueName: 1
       ValueInPercentage: 5
   - Upgrades:
-    - ValueDes: Cooking Time
+    - ValueDes: Cooking Time Reduced <color=red> {0} </color>
       ValueName: 1
       ValueInPercentage: 7.5
   - Upgrades:
-    - ValueDes: Cooking Time
+    - ValueDes: Cooking Time Reduced <color=red> {0} </color>
       ValueName: 1
       ValueInPercentage: 12
+  IconID: Fryer_Icon
+  LevelupgradeDes: Cooking Time Reduced <color=red> {0} </color>

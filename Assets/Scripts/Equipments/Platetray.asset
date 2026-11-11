@@ -16,3 +16,5 @@ MonoBehaviour:
   HoldFuntionName: '-'
   HandFullDisplayFuntionName: Place
   Type: 13
+  upgradeData: []
+  IconID: Platetray_Icon

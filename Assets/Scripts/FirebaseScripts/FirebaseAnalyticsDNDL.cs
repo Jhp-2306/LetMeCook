@@ -33,12 +33,22 @@ public class FirebaseAnalyticsDNDL : Singletonref<FirebaseAnalyticsDNDL>
                   string.Format("Could not resolve all Firebase dependencies: {0}", dependencyStatus)));
             }
         });
-
+        
     }
 
     public void Log(string message,string Para,string para)
     {
-        FirebaseAnalytics.LogEvent(message, Para, para);    
+        //FirebaseAnalytics.LogEvent(message, Para, para);    
+        FirebaseAnalytics.LogEvent(message, new Parameter[]
+        {
+            new Parameter(Para,para)
+        });
+
+    }
+    public void Log(string message, Parameter[] Para)
+    {
+        FirebaseAnalytics.LogEvent(message, Para);
+
     }
 
 

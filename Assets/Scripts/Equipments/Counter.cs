@@ -20,30 +20,36 @@ public class Counter : InteractiveBlock
     {
         //if(myClient==null) 
         //    myClient=new NPC.NPC();
+
         myClient = client;
-        Debug.Log("Setting client here"+client.GetOrderList().Count);
+        Debug.Log("Setting client here"+ myClient.GetOrderList().Count+ this.gameObject.name);
         //trigger the and send the npc out
     }
     private void Update()
     {
-        //if(myClient != null)
-        //{
-        //    Debug.Log(CustomLogs.CC_TagLog("Counter", $"{myClient.namedis.text}"));
-        //}
+        if(myClient != null)
+        {
+            Debug.Log(CustomLogs.CC_TagLog("Counter", $"{myClient.namedis.text}"));
+        }
     }
     public void OnPlayerReached()
     {
         //if Player entered then check for the dish in hand
-        var player = GameDataDNDL.Instance.GetPlayer();
+        //var player = GameDataDNDL.Instance.GetPlayer();
         if (player != null)
         {
             if (player.InHand.GetGameObject().GetComponent<Plate>() != null)
             {
                 var plate = player.InHand.GetGameObject().GetComponent<Plate>();
+                Debug.Log("PlayerReached the Counter");
 
                 if (myClient!=null&& myClient.GetOrderList().Contains(plate.GetFinalDish()))
                 {
-                    myClient.OnOrderComplete(plate.GetFinalDish(), plate.GetFinalPrice());
+                    Debug.Log("Setting client here" + myClient.GetOrderList().Count + this.gameObject.name);
+                    if(myClient.OnOrderComplete(plate.GetFinalDish(), plate.GetFinalPrice(),plate.RateTheDish()))
+                    {
+                        myClient=null;
+                    }
                     player.RemoveFromHand();
                 }
             }
@@ -51,7 +57,6 @@ public class Counter : InteractiveBlock
     }
     public void CalculateQualityOfFood()
     {
-        //Here Calculate the Quality For the AI 
-        //here Star and Review initials
+        
     }
 }

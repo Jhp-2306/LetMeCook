@@ -57,14 +57,14 @@ public class GridMaker : MonoBehaviour
             //need to update for the paritcal occupie
         }
     }
-    //public bool ProcessCoordsList(List<Vector3> coordsList)
-    //{
-    //    foreach (var pos in coordsList)
-    //    {
-    //        if (!processCoords(pos)) return false;
-    //    }
-    //    return true;
-    //}
+    public bool processCoords(List<Vector3> coordsList,string tag)
+    {
+        foreach (var pos in coordsList)
+        {
+            if (!processCoords(pos,tag)) return false;
+        }
+        return true;
+    }
     public bool processCoords(Vector3 pos,string tag)
     {
         var cell = GetGridFromPos(pos);
@@ -118,7 +118,7 @@ public class GridMaker : MonoBehaviour
             var anchorpos = Layout.GetAtIndex((int)Mathf.Clamp(temppos.x, 0, 15), (int)Mathf.Clamp(temppos.y, 0, 15)).GetCoordinates2D();
             return new Vector3(anchorpos.x, pos.y, anchorpos.y);
         }
-        return Vector3.zero;
+        return Vector3.one*900;
 
     }
     public static Vector2 GetIndexFromAnchorPosition(Vector2 pos)

@@ -2,7 +2,7 @@ using Constants;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine.UIElements.Experimental;
+using UnityEngine;
 using Util;
 
 public class ProficiencySystem : Singletonref<ProficiencySystem>
@@ -31,14 +31,14 @@ public class ProficiencySystem : Singletonref<ProficiencySystem>
 
         }
         
-        public int GetLevel()
+        public string GetLevel()
         {
             var temp=ProficiencySystem.Instance.XPRequried.Keys.ToList();
             foreach (int xp in temp)
             {
-                if (XP < xp) return temp.IndexOf(xp)+1;               
+                if (XP < xp) return temp.IndexOf(xp)+1==temp.Count? "Max": $"{temp.IndexOf(xp)+1}";               
             }
-           return 0;
+           return string.Empty;
         }
         public float GetMultipler()
         {
@@ -58,7 +58,26 @@ public class ProficiencySystem : Singletonref<ProficiencySystem>
             }
             return 0;
         }
-        public float GetCurrentXp()
+        public float GetXpMaxCapDiff()
+        {
+            var temp = ProficiencySystem.Instance.XPRequried.Keys.ToList();
+            for (int i = 0; i < temp.Count; i++)
+            {
+                if(XP< temp[i])
+                {
+                    if (i != 0)
+                    {
+                        return temp[i] - temp[i-1];
+                    }
+                    else
+                    {
+                        return temp[i];
+                    }
+                }
+            }
+            return 0;
+        }
+        public float GetCurrentXpDiff()
         {
             var temp = ProficiencySystem.Instance.XPRequried.Keys.ToList();
             int idx=0;
@@ -66,18 +85,21 @@ public class ProficiencySystem : Singletonref<ProficiencySystem>
             {
                 if (XP < xp)
                 {
-                    if(idx != 0)
+                    if (idx != 0)
                     {
-                        return XP-temp[idx-1];
+                        return XP - temp[idx - 1];
                     }
+                    else return XP;
                 }
                 idx++;
             }
             return 0;
         }
         public void AddXP(int xp) {
+
             XP += xp;
         }
+
     }
     private Dictionary<Dishes, ProficiencyStats> dictionary;
     private List<ProficiencyStats> m_UnlockedDishes;
@@ -86,6 +108,18 @@ public class ProficiencySystem : Singletonref<ProficiencySystem>
     public static Action OnInit = delegate { };
 
     public List<Pc_ProficiencySystemWindow_Slider> slider;
+    public List<Dishes> DisableDishes=new List<Dishes> {  
+        Dishes.Milkshake,
+        Dishes.ChocolateMilkshake,
+        Dishes.VanillaMilkshake,
+        Dishes.StrawberryMilkshake,
+        Dishes.BreadOmelette,
+        Dishes.BreadOmeletteWithCheese,
+        Dishes.ChocolateIceCream,
+        Dishes.VanillaIceCream,
+        Dishes.StrawberryIceCream,
+
+    };
     public void init()
     {
         if (XPRequried == null)
@@ -93,10 +127,10 @@ public class ProficiencySystem : Singletonref<ProficiencySystem>
             XPRequried = new Dictionary<int, float>()
             {
                 {100  ,0.05f},
-                {200  ,0.1f},
-                {400  ,0.1f},
-                {800  ,0.2f},
-                {1600 ,0.3f}
+                {200  ,0.15f},
+                {400  ,0.25f},
+                {800  ,0.45f},
+                {1600 ,0.75f}
             };
         }
         if (dictionary == null)
@@ -293,27 +327,57 @@ public class ProficiencySystem : Singletonref<ProficiencySystem>
                 , "Scoop one serving of strawberry ice cream.\nPlace it on a plate. ");
             dictionary.Add(Dishes.StrawberryIceCream, temp);
         }
-        
+        var tempSaveData = SaveData.Instance.userPresistedData.DishesXP;
         //TODO: Get the Save From the Doc       
         if (m_UnlockedDishes == null) //if Fail to retrive save data then Run this
         {
             m_UnlockedDishes = new List<ProficiencyStats>();
             foreach (var dish in dictionary)
             {
-                if (dish.Value.isUnlocked()) m_UnlockedDishes.Add(dish.Value);
+                if (dish.Value.isUnlocked())
+                {
+                    
+                    if (tempSaveData!=null&&tempSaveData.ContainsKey(dish.Value.Dish))
+                        dish.Value.AddXP(tempSaveData[dish.Value.Dish]);
+                    m_UnlockedDishes.Add(dish.Value);
+                }
             }
-
         }
         foreach(var temp in slider)
         {
-            temp.EventSub();
+            temp.init();
 
         }
-        OnInit();
+        GameSaveDNDL.DataUpdateBeforeSave -= BeforeSaving;
+        GameSaveDNDL.DataUpdateBeforeSave += BeforeSaving;
+        //OnInit();
     }
-    public List<ProficiencyStats> getUnlockedDishStats()=>m_UnlockedDishes;
+
+    //Setter
+    public void SetDishXP(Dishes dish, int XP)
+    {
+        foreach (var temp in m_UnlockedDishes)
+        {
+            if (dish == temp.Dish)
+            {
+                temp.AddXP(XP);
+                return;
+            }
+
+        }
+        Debug.Log(CustomLogs.CC_TagLog("Proficiency System", $"{dish} not unlocked or not found"));
+    }
+
+
+    //Getter
+    public List<ProficiencyStats> getUnlockedDishStats()
+    {
+        RefreshProficiency();
+        return m_UnlockedDishes;
+    }
     public List<Dishes> getUnlockDish()
     {
+        RefreshProficiency();
         var temp = new List<Dishes>();
         foreach (var dish in m_UnlockedDishes)
         {
@@ -322,6 +386,31 @@ public class ProficiencySystem : Singletonref<ProficiencySystem>
         return temp;
     }
     public ProficiencyStats GetProficiencyStats(Dishes dishes) => dictionary[dishes];
+    public void RefreshProficiency()
+    {
+        foreach (var dish in dictionary)
+        {
+            if (dish.Value.isUnlocked()&&!m_UnlockedDishes.Contains(dish.Value)) m_UnlockedDishes.Add(dish.Value);
+        }
+        foreach (var temp in slider)
+        {
+            temp.init();
+
+        }
+    }
+    
+    
+    // Save data 
+    void BeforeSaving()
+    {
+        RefreshProficiency();
+        Dictionary<Dishes,int> list=new Dictionary<Dishes,int>();
+        foreach( var temp in m_UnlockedDishes)
+        {
+            list.Add(temp.Dish,temp.XP);
+        }
+        SaveData.Instance.userPresistedData.DishesXP = list;
+    }
 }
 
 

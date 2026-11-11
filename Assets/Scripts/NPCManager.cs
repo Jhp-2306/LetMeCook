@@ -144,7 +144,7 @@ namespace NPC
         {
             NPCMovingInsideTheShop();
         }
-        public void IGC_NPC_ROAMING()
+        public void     IGC_NPC_ROAMING()
         {
             NpcRoaming();
         }
@@ -203,7 +203,7 @@ namespace NPC
                 TotalOrderFortheday -= 2;
                 return 2;
             }
-            return 0;
+            //return 0;
         }
     }
 }

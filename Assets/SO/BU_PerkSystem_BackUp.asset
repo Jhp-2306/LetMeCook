@@ -16,7 +16,7 @@ MonoBehaviour:
   - Rank: 0
     PerkName: Tax 1
     Type: 1
-    isBool: 0
+    isBool: 1
     Value: 30
     Des: You have to pay <color=red>30%<\red> Tax rate on your income
   - Rank: 1

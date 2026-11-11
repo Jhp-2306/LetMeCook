@@ -23,6 +23,7 @@ public class Pc_ProficiencySystemWindow_Slider : MonoBehaviour
     public TMPro.TextMeshProUGUI Recipe;
     public List<ingredientDisplay> displayList;
     public TMPro.TextMeshProUGUI XP;
+    public Slider XPSlider;
     public RectTransform Popout;
     public RectTransform Parent;
 
@@ -41,12 +42,17 @@ public class Pc_ProficiencySystemWindow_Slider : MonoBehaviour
 
     public GameObject Locked, Unlocked;
     public Material unlockedMaterial;
-    void init()
+    public void init()
     {
+        if (ProficiencySystem.Instance.DisableDishes.Contains(dish)){
+            this.gameObject.SetActive(false);
+            return;
+        }
         var temp = ProficiencySystem.Instance.GetProficiencyStats(dish);
         DishNameTXt.text=dish.ToString();
         Level.text = $"Level {temp.GetLevel()}";
-        XP.text = $"{temp.GetCurrentXp()}/{temp.GetXpMaxCap()}";
+        XP.text = $"{temp.XP}/{temp.GetXpMaxCap()}";
+        XPSlider.value= temp.GetCurrentXpDiff()/temp.GetXpMaxCapDiff();
         Recipe.text= temp.recipe;
         for (int i = 0; i < displayList.Count; i++) {
             if (i < temp.Ingredients.Count)
@@ -95,16 +101,17 @@ public class Pc_ProficiencySystemWindow_Slider : MonoBehaviour
         
 
     }
-    public void EventSub()
-    {
-        ProficiencySystem.OnInit -= init;
-        ProficiencySystem.OnInit += init;
-    }
-    public void OnDestroy()
-    {
-    ProficiencySystem.OnInit -= init;
-        
-    }
+    //public void EventSub()
+    //{
+    //    ProficiencySystem.OnInit -= init;
+    //    ProficiencySystem.OnInit += init;
+    //}
+    //public void OnDestroy()
+    //{
+    //ProficiencySystem.OnInit -= init;
+    //    Debug.Log("Called");
+    //}
+    
     //Popout Animations
     IEnumerator PlayPopoutAnimation()
     {

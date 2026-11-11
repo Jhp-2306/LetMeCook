@@ -41,13 +41,17 @@ public class PerkSystemManager : Singletonref<PerkSystemManager>
         }
     }
 
-    #region Getter
+    #region Getter`
     public int GetCurrentRankforValue(perkSystem_Value value) => CurrentPerkValues[value];
     public string GetdesForValue(perkSystem_Value value, int rank) => GetPerk(value, rank).Des;
     public string GetPerkNameForValue(perkSystem_Value value, int rank) => GetPerk(value, rank).PerkName;
     public int GetPerkValue(perkSystem_Value val)
     {
         return GetPerkValueFromTheList(val,CurrentPerkValues[val]);
+    }
+    public int GetPerkValue(perkSystem_Value val, int rank)
+    {
+        return GetPerkValueFromTheList(val, rank);
     }
     int GetPerkValueFromTheList(perkSystem_Value val, int rank)
     {
@@ -69,6 +73,11 @@ public class PerkSystemManager : Singletonref<PerkSystemManager>
         return new PerkData();
     }
     #endregion
+    public bool CheckPerkUnlocked(perkSystem_Value val,int rank)
+    {
+        if(GetCurrentRankforValue(val) >=rank)return true;
+        return false;
+    }
     public void UpgradePerk(perkSystem_Value val, int rank)
     {
         AddorUpdateValue(val, rank);

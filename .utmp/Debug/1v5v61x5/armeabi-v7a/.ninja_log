@@ -1,0 +1,23 @@
+# ninja log v5
+0	1186	8148794575784007	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	21c0c7e577711590
+51	198	8148794565982626	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	6562eff58a8a9375
+37	1154	8148794575480297	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	521d3b1dfaaf1d86
+6	1000	8148794573964082	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	188282cb3f3468a4
+201	390	8148794567852538	E:/Work/Unity/Projects/LetMeCook/LetMeCook/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/Debug/1v5v61x5/obj/armeabi-v7a/libswappywrapper.so	870ebbfe53429aa5
+16	1041	8148794574370403	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	bf78dca53ee343b0
+29	1057	8148794574526175	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	d9200c5df02f5874
+11	1074	8148794574722232	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	b6accd10cdf32401
+44	1071	8148794574682153	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	84b9442f1717a291
+22	1165	8148794575605580	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	735ac12c9f312bf4
+1186	1272	8148794576675313	E:/Work/Unity/Projects/LetMeCook/LetMeCook/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/Debug/1v5v61x5/obj/armeabi-v7a/libgame.so	c6a334311eca6428
+57	189	8148918903034575	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	6562eff58a8a9375
+189	783	8148918908948550	E:/Work/Unity/Projects/LetMeCook/LetMeCook/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/Debug/1v5v61x5/obj/armeabi-v7a/libswappywrapper.so	870ebbfe53429aa5
+6	1007	8148918911169634	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	188282cb3f3468a4
+36	1033	8148918911451396	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	d9200c5df02f5874
+18	1039	8148918911491582	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	b6accd10cdf32401
+14	1049	8148918911607162	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	bf78dca53ee343b0
+43	1090	8148918912003341	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	84b9442f1717a291
+50	1100	8148918912103577	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	521d3b1dfaaf1d86
+29	1194	8148918913025493	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	735ac12c9f312bf4
+22	1199	8148918913055902	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	21c0c7e577711590
+1199	1377	8148918914880943	E:/Work/Unity/Projects/LetMeCook/LetMeCook/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/Debug/1v5v61x5/obj/armeabi-v7a/libgame.so	c6a334311eca6428

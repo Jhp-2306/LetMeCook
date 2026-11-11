@@ -206,7 +206,7 @@ public class InputManager : Singletonref<InputManager>
                 //Move With in playable area
                 if (ray.transform.tag == GameDataDNDL.Instance.CurrentArea.ToString())
                 {
-                    Debug.Log(_grid.GetGridFromPos(_grid.GetRoundAnchorPositionFromWorldPosition(ray.point)).GetCoordinates2D());
+                    //Debug.Log(_grid.GetGridFromPos(_grid.GetRoundAnchorPositionFromWorldPosition(ray.point)).GetCoordinates2D());
                     if (GameDataDNDL.Instance.GetPlayer().isHandsfull)
                         GameDataDNDL.Instance.GetPlayer().InHand.AddEvent();
                     else
@@ -339,6 +339,7 @@ public class InputManager : Singletonref<InputManager>
     {
         //GameObject SelectedObject = null;
         FinalPosition = Vector3.zero;
+        var issinglepos=SelectedObject.GetComponent<InteractiveBlock>().ActiveGridPositions.Count==0;
         while (true)
         {
             yield return null;
@@ -349,8 +350,10 @@ public class InputManager : Singletonref<InputManager>
             {
                 //Debug.Log("is occp"+_grid.processCoords(_grid.GetRoundAnchorPositionFromWorldPosiion(new Vector3(rayFloor.point.x, 1.69f, rayFloor.point.z))));
                 var gridpos = _grid.GetRoundAnchorPositionFromWorldPosition(new Vector3(rayFloor.point.x, 1.69f, rayFloor.point.z));
-                if (_grid.processCoords(gridpos,
-                    SelectedObject.GetComponent<InteractiveBlock>().Tag.ToString())&& GameDataDNDL.Instance.GetPlayer().transform.position!=gridpos)
+                var Iblock = SelectedObject.GetComponent<InteractiveBlock>();
+                var canplace = issinglepos ? _grid.processCoords(gridpos,
+                    Iblock.Tag.ToString()) : _grid.processCoords(Iblock.GetGridActivePositionForPos(gridpos), Iblock.Tag.ToString());
+                if (canplace&& GameDataDNDL.Instance.GetPlayer().transform.position!=gridpos&&gridpos!=Vector3.one*900)
                 {
                     //Debug.Log("Check update here");
                     FinalPosition = gridpos;
@@ -454,8 +457,17 @@ public class InputManager : Singletonref<InputManager>
             {
                 block.transform.GetComponent<Counter>().OnPlayerReached();
             }
+            Debug.Log("Trigger Callback from InputManager");
             callback?.Invoke();
             //give 
+        });
+    }
+    public void FTUT_MovePlayer(Vector3 ray,Action callback)
+    {
+        var pos = GameDataDNDL.Instance.GetGrid().GetRoundAnchorPositionFromWorldPosition(ray);
+        OnMovementInput(pos, false, () =>
+        {
+            callback?.Invoke();
         });
     }
     public void InteractionButtonClick(InteractiveBlock table)

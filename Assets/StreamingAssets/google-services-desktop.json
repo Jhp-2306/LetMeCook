@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "148531184066",
-    "project_id": "let-me-cook-test",
-    "storage_bucket": "let-me-cook-test.firebasestorage.app"
+    "project_number": "829055690779",
+    "project_id": "let-me-cook-main",
+    "storage_bucket": "let-me-cook-main.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:148531184066:android:07c7951b3dda5ba483165b",
+        "mobilesdk_app_id": "1:829055690779:android:0d0c0677d8592a22a470be",
         "android_client_info": {
-          "package_name": "com.fallen.LetMeCook"
+          "package_name": "com.fallengames.letmecook"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDhJ1jl3MXPcjkt7cXFU9tiTrjqV3mr5V4"
+          "current_key": "AIzaSyAApwZUWhu0g9ovdpfSYTbdiRjX9a-Rx1Q"
         }
       ],
       "services": {

@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Unity.VisualScripting;
 using UnityEngine;
+
 
 
 namespace Constants
@@ -183,6 +183,7 @@ namespace Constants
         public int Level;
         public string Name;
         public string Icon;
+        public List<string> Description;
     }
 
     [System.Serializable]
@@ -202,11 +203,12 @@ namespace Constants
         public Dishes OutputDish;
         public int CookingTime;
         public float price;
-
+        public int[] arr;
         public bool IsthisDish(List<ProcedureStep> _items)
         {
             if (items.Count != _items.Count) return false;
             var templist = GetthisDishIngreident();
+            Debug.Log(CustomLogs.CC_TagLog("Frying Pan", $"checking internal{_items.Count},{templist.Count}"));
             foreach (var item in _items)
             {
                 if (!templist.Contains(item.Ingredient))
@@ -253,7 +255,7 @@ namespace Constants
             {
                 multi += isIngreidentProcessedcorrectly(item);
             }
-            return multi;
+            return multi / _items.Count;
         }
         //Quality Check here
         float isIngreidentProcessedcorrectly(ProcedureStep _step)
@@ -282,6 +284,15 @@ namespace Constants
                         if (_step.processed == ProcessStatus.OverCooked)// normal bonus
                             return 1f;
                         if (_step.processed == ProcessStatus.Cooked)// perfect bonus
+                            return 1.5f;
+                        if (_step.processed == ProcessStatus.UnderCooked)// worst bonus
+                            return 0.75f;
+                    }
+                    if (item.processed == ProcessStatus.Fryed)
+                    {
+                        if (_step.processed == ProcessStatus.OverCooked)// normal bonus
+                            return 1f;
+                        if (_step.processed == ProcessStatus.Fryed)// perfect bonus
                             return 1.5f;
                         if (_step.processed == ProcessStatus.UnderCooked)// worst bonus
                             return 0.75f;
@@ -375,7 +386,7 @@ namespace Constants
         }
 
         public int GetEquipmentsurgeFee() => data.EquipmentOwne * data.CostPerEquipment;
-        public int GetTaxsurgeFee() => (data.IncomeTax/100) * data.TotalIncome;
+        public int GetTaxsurgeFee() => (data.IncomeTax / 100) * data.TotalIncome;
         public int GetBonusFeeDeduction() => data.Difficulty * data.DifficultyBonus;
         public int GetRandomGovtTax() => data.RandomGovtTax;
 
@@ -414,6 +425,140 @@ namespace Constants
         Govt_Tax,
         Count
     }
-    
 
+    public class Npc_Review
+    {
+        public string[] PositiveReview = {
+"The {0} was absolutely delicious!",
+"I loved every bite of that {0}!",
+"That {0} was exactly what I was craving.",
+"The {0} was fantastic. I’d order it again!",
+"Whoever made this {0} deserves a compliment.",
+"The {0} was even better than I expected.",
+"That was one of the best {0} I’ve had in a long time.",
+"The {0} was perfect from start to finish.",
+"I’m definitely coming back for another {0}.",
+"That {0} really made my day.",
+"The {0} was packed with flavour!",
+"I couldn’t stop eating that {0}!",
+"The {0} was absolutely worth the price.",
+"Now that’s how you make a good {0}!",
+"I didn’t expect the {0} to be this good.",
+"The {0} was incredible. Five stars!",
+"I’m already thinking about my next {0}.",
+"That {0} was cooked perfectly.",
+"The {0} tasted amazing!",
+"I have no complaints. That {0} was perfect.",
+"The {0} was exactly what I needed today.",
+"I’d recommend this {0} to anyone.",
+"That was a seriously tasty {0}.",
+"The {0} exceeded my expectations.",
+"I came hungry and left very happy!",
+"That {0} was worth every bite.",
+"I could honestly eat another one right now.",
+"The {0} was delicious and satisfying.",
+"I’m giving that {0} a solid five stars!",
+"Absolutely wonderful {0}. I’ll be back!",
+        };
+        public string[] NegativeReview = {
+"I really didn’t enjoy that {0}.",
+"The {0} was disappointing.",
+"I expected much better from the {0}.",
+"That was probably the worst {0} I’ve had.",
+"The {0} just didn’t taste right.",
+"I couldn’t finish the {0}.",
+"Something was definitely wrong with that {0}.",
+"The {0} was a huge disappointment.",
+"I wouldn’t recommend the {0}.",
+"The {0} was completely underwhelming.",
+"I regret ordering the {0}.",
+"The {0} really wasn’t good.",
+"I expected more from this place.",
+"The {0} was lacking flavour.",
+"I’ve had much better {0} elsewhere.",
+"The {0} was not worth the money.",
+"I don’t think I’ll be ordering that again.",
+"The {0} was a letdown.",
+"I struggled to finish that {0}.",
+"The {0} tasted nothing like I expected.",
+"I’m not sure what happened with that {0}.",
+"The {0} definitely needs some improvement.",
+"I wasn’t impressed with the {0}.",
+"That {0} left a lot to be desired.",
+"I wish I had ordered something else.",
+"The {0} was far from satisfying.",
+"I really wanted to like the {0}.",
+"That was not a good {0}.",
+"The {0} needs some serious work.",
+"I won’t be rushing back for another {0}.",
+        };
+        public string[] NeutralReview = {
+"The {0} was pretty good.",
+"The {0} was okay. Nothing special.",
+"I’ve had better {0}, but this was fine.",
+"The {0} was decent.",
+"Not bad. I’d probably order it again.",
+"The {0} was alright.",
+"It wasn’t amazing, but it did the job.",
+"The {0} was okay for the price.",
+"I didn’t love it, but I didn’t hate it either.",
+"The {0} was fairly decent.",
+"Nothing to complain about with this {0}.",
+"The {0} was fine. Just fine.",
+"It was an acceptable {0}.",
+"The {0} tasted alright.",
+"I expected a little more from the {0}.",
+"The {0} was decent, but forgettable.",
+"Not the best {0}, but certainly not the worst.",
+"The {0} filled me up, at least.",
+"It was a perfectly average {0}.",
+"The {0} was okay, I suppose.",
+"I might order the {0} again sometime.",
+"The {0} was nothing extraordinary.",
+"It tasted fine to me.",
+"The {0} could have been better.",
+"I’m not sure how I feel about that {0}.",
+"The {0} was acceptable.",
+"It was an okay meal.",
+"The {0} wasn’t bad at all.",
+"I guess the {0} was pretty decent.",
+"Nothing special, but I finished it.",
+        };
+        public string[] FunnyReview = {
+"That {0} was so good I forgot where I was.",
+"I came for food and left with a new obsession with {0}.",
+"My stomach has officially requested another {0}.",
+"I’d fight a raccoon for another {0}.",
+"That {0} just changed my life.",
+"I blinked and the {0} was gone.",
+"Who needs friends when you have {0}?",
+"I think I just discovered my new favourite food.",
+"That {0} deserves its own holiday.",
+"I would like to personally thank whoever made that {0}.",
+"My diet has been cancelled because of this {0}.",
+"I was planning to share the {0}. Then I remembered I’m hungry.",
+"That {0} disappeared faster than my paycheck.",
+"I’m pretty sure I just tasted happiness.",
+"Please don’t tell my doctor about this {0}.",
+"I need another {0}. This is an emergency.",
+"That {0} was suspiciously delicious.",
+"I may have a serious {0} addiction now.",
+"I ordered one {0}. Big mistake. Now I want ten.",
+"My stomach is already asking for an encore.",
+"That {0} was better than my last five dates.",
+"I would sell my collection of spoons for another {0}.",
+"Whoever invented {0} deserves a statue.",
+"I don’t know what was in that {0}, but I need the recipe.",
+"I came here hungry. I leave here happier and slightly poorer.",
+"That {0} hit my taste buds like a truck.",
+"I think my soul just left my body after that {0}.",
+"Forget the menu. Just give me another {0}.",
+"That {0} was so good I almost started crying.",
+"I have absolutely no regrets about that {0}.",
+        };
+        public string GetReview()
+        {
+            return " ";
+        }
+    }
 }

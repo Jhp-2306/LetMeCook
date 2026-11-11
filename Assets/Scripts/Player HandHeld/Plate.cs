@@ -4,42 +4,33 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class Plate : MonoBehaviour, IHandHeld,IObjectPoolingSettings
+public class Plate : MonoBehaviour, IHandHeld, IObjectPoolingSettings
 {
     //public typeofhandheld type;
     [SerializeField]
     List<ProcedureStep> ingredients;
     [SerializeField]
     List<Recipes> AssumedDishRecipe;
-    [SerializeField]    
+    [SerializeField]
     Dishes FinalDish;
     public bool isPlateEmpty = true;
     float Price, PriceMultiplier;
 
     public bool isDishDone;
-
+    public GameObject MergerVFX;
     public bool canCombine()
     {
-        if(AssumedDishRecipe != null)
+        if (AssumedDishRecipe != null)
         {
             foreach (var t in AssumedDishRecipe)
             {
-                if (t.IsthisDish(ingredients))return true;
+                if (t.IsthisDish(ingredients)) return true;
             }
         }
         return false;
     }
     public Dishes GetFinalDish()
     {
-        //if (AssumedDishRecipe != null && AssumedDishRecipe.Count > 1)
-        //{
-        //    foreach (var t in AssumedDishRecipe)
-        //    {
-        //        if (t.IsthisDish(ingredients))
-        //            return t.OutputDish;
-        //    }
-        //    return Dishes.trash;
-        //}
         return FinalDish;
 
     }
@@ -116,31 +107,44 @@ public class Plate : MonoBehaviour, IHandHeld,IObjectPoolingSettings
         }
         //return false;
     }
-   
+
     public float GetFinalPrice()
     {
         return Price + (Price * (PriceMultiplier / 10));
     }
     public float GetPriceMultiplier()
     {
-        return PriceMultiplier/10;
+        return PriceMultiplier / 10;
     }
     public void pickupDish(Dishes dish, float price, float multi)
     {
         FinalDish = dish;
         isDishDone = true;
-        Price = price; 
+        Price = price;
         PriceMultiplier = multi;
+        GiveProficiencyXp(PriceMultiplier);
         this.gameObject.GetComponent<Dish>().SetaDishActive(dish);
         isPlateEmpty = false;
     }
-    public void RateTheDish()
+    public float RateTheDish()
     {
-
+        if (PriceMultiplier <= 1.5 && PriceMultiplier > 1.25)
+        {
+            return 1f;
+        }
+        if (PriceMultiplier <= 1.25)
+        {
+            return 0.5f;
+        }
+        return 0f;
     }
     public void ResetPlate()
     {
         FinalDish = Dishes.none;
+        isDishDone = false;
+        Price = 0;
+        PriceMultiplier = 0;
+        ingredients.Clear();
         //Visual Set them Off here
     }
     public void MergeTheDish()
@@ -151,8 +155,11 @@ public class Plate : MonoBehaviour, IHandHeld,IObjectPoolingSettings
             {
                 if (t.IsthisDish(ingredients))
                 {
-                    FinalDish= t.OutputDish;
+                    FinalDish = t.OutputDish;
                     isDishDone = true;
+                    Price = t.price;
+                    PriceMultiplier = t.CalculatePriceBonus(ingredients);
+                    GiveProficiencyXp(PriceMultiplier);
                     return;
                 }
             }
@@ -160,9 +167,53 @@ public class Plate : MonoBehaviour, IHandHeld,IObjectPoolingSettings
         }
         FinalDish = AssumedDishRecipe[0].OutputDish;
         isDishDone = true;
+        Price = AssumedDishRecipe[0].price;
+        PriceMultiplier = AssumedDishRecipe[0].CalculatePriceBonus(ingredients);
+        GiveProficiencyXp(PriceMultiplier);
 
 
     }
+    private void GiveProficiencyXp(float multi)
+    {
+        if (multi <= 1.5 && multi > 1.25)
+        {
+            //max XP 25
+            ProficiencySystem.Instance.SetDishXP(FinalDish, 25);
+            Debug.Log(CustomLogs.CC_TagLog("Plate", $"Price{Price}, Multi{PriceMultiplier}, Dish{FinalDish}, ProXP +25"));
+        }
+        if (multi <= 1.25 && multi > 1)
+        {
+            //mid XP 15
+            ProficiencySystem.Instance.SetDishXP(FinalDish, 15);
+            Debug.Log(CustomLogs.CC_TagLog("Plate", $"Price{Price}, Multi{PriceMultiplier}, Dish{FinalDish}, ProXP +15"));
+
+
+        }
+        if (multi <= 1)
+        {
+            ProficiencySystem.Instance.SetDishXP(FinalDish, 10);
+            Debug.Log(CustomLogs.CC_TagLog("Plate", $"Price{Price}, Multi{PriceMultiplier}, Dish{FinalDish}, ProXP +10"));
+            //min 10
+        }
+        // Debug.Log(CustomLogs.CC_TagLog("Plate", $"Price{Price}, Multi{PriceMultiplier}, Dish{FinalDish}"));
+            Debug.Log(CustomLogs.CC_TagLog("Plate", $"Price{Price}, Multi{PriceMultiplier}, Dish{FinalDish}, ProXP 0"));
+    }
+    //public int RatetheFood()
+    //{
+    //    if (PriceMultiplier <= 1.5 && PriceMultiplier > 1.25)
+    //    {            
+    //        return 1;
+    //    }
+    //    if (PriceMultiplier <= 1.25 && PriceMultiplier > 1)
+    //    {           
+    //        return 2;
+    //    }
+    //    if (PriceMultiplier <= 1)
+    //    {            
+    //        return 3;
+    //    }
+    //    return 0;
+    //}
 
     public void OPSetting_Reset()
     {
@@ -170,4 +221,5 @@ public class Plate : MonoBehaviour, IHandHeld,IObjectPoolingSettings
         ResetPlate();
         this.gameObject.SetActive(false);
     }
+   
 }

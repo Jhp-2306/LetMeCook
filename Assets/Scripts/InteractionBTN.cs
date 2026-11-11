@@ -143,7 +143,7 @@ public class InteractionBTN : MonoBehaviour
     }
     public void Refreshbutton()
     {
-        Debug.Log(CustomLogs.CC_TagLog("Interactive Button", $"Running Refresh Code {currentTable.IsInteractionSatisfied()},{currentTable.IsHoldInteractionSatisfied()}"));
+        //Debug.Log(CustomLogs.CC_TagLog("Interactive Button", $"Running Refresh Code {currentTable.IsInteractionSatisfied()},{currentTable.IsHoldInteractionSatisfied()}"));
         if (currentTable.IsInteractionSatisfied() && !currentTable.IsHoldInteractionSatisfied())
         {
             //Show only click interaction
@@ -298,10 +298,10 @@ public class InteractionBTN : MonoBehaviour
     Coroutine progressionBarCoroutine;
     Coroutine onHoldCoroutine;
 
-    public void SetProgressBar(float progress)
+    public void SetProgressBar(float progress,float maxtimer)
     {
-        Fill.fillAmount = progress;
-        ProgressValueTXT.text = (progress * 100).ToString("f1");
+        Fill.fillAmount = progress/ maxtimer;
+        ProgressValueTXT.text = ((progress/maxtimer) * 100).ToString("f1");
         ProgressParent.SetActive(true);
     }
 
@@ -323,14 +323,14 @@ public class InteractionBTN : MonoBehaviour
             progressionBarCoroutine = null;
         }));
     }
-    public IEnumerator HoldTimer(float maxTimer, Action<float> update = null, Action Callback = null)
+    public IEnumerator HoldTimer(float maxTimer, Action<float,float> update = null, Action Callback = null)
     {
         var timer = 0f;
         while (timer <= maxTimer)
         {
             yield return null;
             timer += Time.deltaTime;
-            update?.Invoke(timer / maxTimer);
+            update?.Invoke(timer , maxTimer);
         }
         Callback?.Invoke();
     }
@@ -346,7 +346,7 @@ public class InteractionBTN : MonoBehaviour
     float OverrideHoldDurationAmount { get => currentTable == null ? HoldDuration : currentTable.GetOverrideHoldDuration(); }
     public void OnPressDown()
     {
-        Debug.Log(CustomLogs.CC_TagLog("Interactive Button", "Hold Stating."));
+        //Debug.Log(CustomLogs.CC_TagLog("Interactive Button", "Hold Stating."));
         isButtonActionPerformed = false;
         var _holdDuration = overrideHoldDuration ? OverrideHoldDurationAmount : HoldDuration;
         if (onHoldCoroutine != null)
@@ -355,22 +355,26 @@ public class InteractionBTN : MonoBehaviour
             onHoldCoroutine = null;
         }
         if (isHoldEnable)
-            onHoldCoroutine = StartCoroutine(HoldTimer(_holdDuration, (value) =>
+            onHoldCoroutine = StartCoroutine(HoldTimer(_holdDuration, (value,max) =>
             {
-                if (value > .2f)//Starts After 20% delay on the give seconds 
-                    HoldUI.SetActive(true);
-                HoldFiller.fillAmount = value * 0.4f;//0.4f is the Fill Size we wanted
+                if (value > .48f)//Starts After 20% delay on the give seconds 
+                   { HoldUI.SetActive(true); 
+                currentTable.OnHoldStart();
+                }
+                HoldFiller.fillAmount = (value/max) * 0.4f;//0.4f is the Fill Size we wanted
             }, OnHoldSuccessful));
     }
     public void OnPressUp()
     {
         if (isButtonActionPerformed) return;
-        Debug.Log(CustomLogs.CC_TagLog("Interactive Button", "Hold Failed. Calling the Click Action"));
+        //Debug.Log(CustomLogs.CC_TagLog("Interactive Button", "Hold Failed. Calling the Click Action"));
         isButtonActionPerformed = true;
         if (onHoldCoroutine != null)
         {
+            //HoldFailed
             StopCoroutine(onHoldCoroutine);
             onHoldCoroutine = null;
+            currentTable.OnHoldFailed();
         }
         HoldUI.SetActive(false);
         OnClick?.Invoke();

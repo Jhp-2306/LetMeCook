@@ -13,7 +13,7 @@ public class InteractiveBlock : MonoBehaviour, IInteractable
     //
     // can remove this variable not in use
 
-  
+
     public enum PlacementTags
     {
         Kitchen,
@@ -30,13 +30,14 @@ public class InteractiveBlock : MonoBehaviour, IInteractable
     public bool isGizmos;
     public bool PreSpawn;
     public int Level;
+    public string idTest;
     public bool test { get; set; }
-    public Player player { get => GameDataDNDL.Instance.GetPlayer();  }
+    public Player player { get => GameDataDNDL.Instance.GetPlayer(); }
     public Transform GetLookPos()
     {
         return LookAtMe;
     }
-   
+
     public virtual bool IsInteractionSatisfied()
     {
         return false;
@@ -54,13 +55,23 @@ public class InteractiveBlock : MonoBehaviour, IInteractable
         return 0f;
     }
     public bool isTableEmpty() => Data == null;
-
+    public List<Vector3> GetGridActivePositionForPos(Vector3 pos)
+    {
+        List<Vector3> list = new List<Vector3>();
+        Quaternion rotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y, 0f);
+        foreach (var position in ActiveGridPositions)
+        {
+            Vector3 rotatedPosition = rotation * (position * 2f);
+            list.Add(pos + rotatedPosition);
+        }
+        return list;
+    }
     ///this need clean up
     public virtual string GetInteractableName() => Data != null ?
         GameDataDNDL.Instance.GetPlayer().isHandsfull ?
         Data.HandFullDisplayFuntionName : Data.DisplayFuntionName : "none";
     public string GetHoldInteractableName() => Data != null ?
-        !Data.HoldFuntionName.Equals("-")? Data.HoldFuntionName : "none": "none";
+        !Data.HoldFuntionName.Equals("-") ? Data.HoldFuntionName : "none" : "none";
     public virtual void Init(EquipmentType _equip = EquipmentType.none, string _prefabID = "")
     {
         Level = 0;
@@ -74,14 +85,21 @@ public class InteractiveBlock : MonoBehaviour, IInteractable
             var temp = new ObjectLevelDetails();
             temp.Name = _equip.ToString();
             temp.Level = savedata.level;
-            GameDataDNDL.Instance.AddUpgradableObject(savedata.id, temp);
-            GameDataDNDL.LevelupEvent -= LvlUpCallback;
-            GameDataDNDL.LevelupEvent += LvlUpCallback;
+            temp.Icon = Data.IconID;
+            temp.Description = new List<string>();
+            temp.Description = Data.GetUpgradeDes();
+            if (Data.upgradeData.Count != 0)//Add to upgrade list
+            {
+                GameDataDNDL.Instance.AddUpgradableObject(savedata.id, temp);
+                GameDataDNDL.LevelupEvent -= LvlUpCallback;
+                GameDataDNDL.LevelupEvent += LvlUpCallback;
+            }
         }
         savedata.Type = _equip;
         savedata.PrefabString = _prefabID;
         savedata.Position = transform.position;
-        savedata.Rotation = transform.rotation;       
+        savedata.Rotation = transform.rotation;
+        idTest = savedata.id;
     }
     public virtual void ReadFromSave(SaveDataTemplate _data)
     {
@@ -89,15 +107,21 @@ public class InteractiveBlock : MonoBehaviour, IInteractable
         savedata = _data;
         transform.position = _data.Position;
         transform.rotation = _data.Rotation;
-        Level=savedata.level;
-        if(savedata.Type != EquipmentType.Furnitures)
+        Level = savedata.level;
+        if (savedata.Type != EquipmentType.Furnitures)
         {
-        var temp = new ObjectLevelDetails();
-        temp.Name = savedata.Type.ToString();
-        temp.Level = savedata.level;
-        GameDataDNDL.Instance.AddUpgradableObject(savedata.id, temp);
-            GameDataDNDL.LevelupEvent -= LvlUpCallback;
-            GameDataDNDL.LevelupEvent += LvlUpCallback;
+            var temp = new ObjectLevelDetails();
+            temp.Name = savedata.Type.ToString();
+            temp.Level = savedata.level;
+            temp.Icon = Data.IconID;
+            temp.Description = new List<string>();
+            temp.Description = Data.GetUpgradeDes();
+            if (Data.upgradeData.Count != 0)
+            {
+                GameDataDNDL.Instance.AddUpgradableObject(savedata.id, temp);
+                GameDataDNDL.LevelupEvent -= LvlUpCallback;
+                GameDataDNDL.LevelupEvent += LvlUpCallback;
+            }
         }
         //-----update the Grid------
         InputManager.Instance.UpdateGridPositions(transform.position, LookAtMe.position);
@@ -111,7 +135,14 @@ public class InteractiveBlock : MonoBehaviour, IInteractable
     {
         // Toast Say no funtionality here
     }
+    public virtual void OnHoldStart()
+    {
 
+    }
+    public virtual void OnHoldFailed()
+    {
+
+    }
     public List<Vector3> GetBlockCells(Vector3 centerPos)
     {
         return null;
@@ -145,12 +176,12 @@ public class InteractiveBlock : MonoBehaviour, IInteractable
             Gizmos.DrawCube(transform.TransformPoint(pos), Vector3.one * 2);
         }
     }
-   
+
     public void LvlUpCallback(string id, int lvl)
     {
         if (id == savedata.id)
         {
-            Level=lvl;
+            Level = lvl;
             savedata.level = lvl;
             var temp = new ObjectLevelDetails();
             temp.Name = savedata.Type.ToString();
@@ -161,7 +192,7 @@ public class InteractiveBlock : MonoBehaviour, IInteractable
     }
     public virtual void LoadLevelUpgrades()
     {
-       
+
     }
     //protected virtual void 
 }

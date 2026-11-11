@@ -21,10 +21,10 @@ public class DoorTrigger : MonoBehaviour
     public bool DontRegForGrid;
     private void Start()
     {
-       entrylog = new List<GameObject>();
+        entrylog = new List<GameObject>();
         //update me a occiied
-        if(!DontRegForGrid)
-        InputManager.Instance.UpdateGridPositions(this.transform.position, GridMaker.CellStatus.Occupied);
+        if (!DontRegForGrid)
+            InputManager.Instance.UpdateGridPositions(this.transform.position, GridMaker.CellStatus.Occupied);
     }
 
     private void OnTriggerEnter(Collider col)
@@ -45,13 +45,23 @@ public class DoorTrigger : MonoBehaviour
                 col.gameObject.GetComponent<ITriggerDoor>().onDoorTrigger(MoveToPoint, ToArea, () =>
                 {
                     entrylog.Remove(col.gameObject);
+                    if (GameDataDNDL.Instance.isDoorCallbackFlag)
+                    {
+                        GameDataDNDL.Instance.isDoorCallbackFlag = false;
+                        InputManager.Instance.DisablePlayerMovement(false);
+                        HUDManagerDNDL.Instance.SetTutorialHUD("This is your room, do as you please", () =>
+                        {
+                            //Start phase 6
+                            GameDataDNDL.Instance.FTUT_Phase6();
+                        });
+                    }
                     //oppsiteTrigger.gameObject.SetActive(true);
                     //var seconds=(starttimer-DateTime.Now).Seconds;
                     //stopwatch.Stop();
                     //Debug.Log(CustomLogs.CC_TagLog("DOOR Check", $"Total Timer of movement{stopwatch.ElapsedMilliseconds}mm"));
 
-            } );
-                }
+                });
+            }
 
         }
     }
@@ -59,7 +69,7 @@ public class DoorTrigger : MonoBehaviour
     IEnumerator PlayDoorAnimation()
     {
         var time = 0f;
-        while (time<= Dooropeningtime)
+        while (time <= Dooropeningtime)
         {
             time += Time.deltaTime;
             var rot = DoorRotation.transform.eulerAngles;

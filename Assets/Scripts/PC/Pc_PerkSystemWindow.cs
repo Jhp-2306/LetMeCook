@@ -9,6 +9,7 @@ public class Pc_PerkSystemWindow : MonoBehaviour
     public static Action Oninit = delegate { };
     public GameObject TooltipParent;
     public Image TT_Icon;
+    public Image TT_Badge;
     public TMPro.TextMeshProUGUI TT_Name;
     public TMPro.TextMeshProUGUI TT_Des;
     public GameObject TT_BuyButtton;
@@ -26,6 +27,8 @@ public class Pc_PerkSystemWindow : MonoBehaviour
         TooltipParent.SetActive(true);
         TT_Name.text = PerkSystemManager.Instance.GetPerkNameForValue(value.Value, value.Rank);
         TT_Des.text = PerkSystemManager.Instance.GetdesForValue(value.Value, value.Rank);
+        TT_Icon.sprite= value.icon.sprite;
+        TT_Badge.sprite = value.badge.sprite;
         //Debug.Log($"isUnlockd={value.isUnlocked()},Perkrank{PerkSystemManager.Instance.GetCurrentRankforValue(value.Value)},my rank{value.Rank}");
         TT_BuyButtton.SetActive(value.isNeededUnlock());
         TT_BuyButttontxt.text=m_Price.ToString();

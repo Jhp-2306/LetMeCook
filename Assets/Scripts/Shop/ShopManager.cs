@@ -41,10 +41,12 @@ public class ShopManager : Singletonref<ShopManager>
         public string GetPrefab() => PrefabID;
         public EquipmentType GetEquipmentType() => type;
     }
-    public List<ShopItems> Items;
+    public List<ShopItems> EquipmentItems;
+    public List<ShopItems> FurnitureItems;
     public int MaxShopItems;
     public ShopUI _ShopUI;
-    public List<ShopItems> GetItems() => Items;
+    public List<ShopItems> GetItems() => EquipmentItems;
+    public List<ShopItems> GetFurnitureItems() => FurnitureItems;
     public PlacementHUD buildingHud;
     GameObject CurrentPurchaseObject;
     bool isBuildMode;
@@ -52,16 +54,31 @@ public class ShopManager : Singletonref<ShopManager>
     private string _currentPrefabID;
     private void Start()
     {
-        Items = new List<ShopItems>();
+        EquipmentItems = new List<ShopItems>();
+        FurnitureItems = new List<ShopItems>();
         if (GameDataDNDL.Instance.ItemList != null)
         {
             foreach (var item in GameDataDNDL.Instance.ItemList.equipmentDataList)
             {
                 //Debug.Log(item.Prefab==null);
                 var t = new ShopItems(item.name, item.price, item.Type, item.Prefab,item.Icon);
-                Items.Add(t);
+                EquipmentItems.Add(t);
             }
-            MaxShopItems = Items.Count;
+            MaxShopItems = EquipmentItems.Count;
+        }
+        else
+        {
+            Debug.LogError("No items in the shop");
+        }
+        if (GameDataDNDL.Instance.FurnitureItemList != null)
+        {
+            foreach (var item in GameDataDNDL.Instance.FurnitureItemList.equipmentDataList)
+            {
+                //Debug.Log(item.Prefab==null);
+                var t = new ShopItems(item.name, item.price, item.Type, item.Prefab, item.Icon);
+                FurnitureItems.Add(t);
+            }
+            MaxShopItems += FurnitureItems.Count;
         }
         else
         {
